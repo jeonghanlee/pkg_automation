@@ -137,7 +137,7 @@ case "$dist" in
 	;;
     *CentOS*)
 	printf "CentOS is detected as $dist \n";
-	install_rpm_deb "${PKG_DEB_ARRAY[@]}"
+	install_pkg_rpm "${PKG_DEB_ARRAY[@]}"
 	;;
     *)
 	printf "\n";
