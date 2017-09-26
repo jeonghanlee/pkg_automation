@@ -86,6 +86,9 @@ function install_pkg_rpm()
     printf "$pkg_list\n";
 
     declare -r yum_pid="/var/run/yum.pid"
+
+    ${SUDO_CMD} systemctl stop packagekit
+    ${SUDO_CMD} systemctl disable packagekit
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
@@ -96,7 +99,8 @@ function install_pkg_rpm()
 	    ${SUDO_CMD} rm -rf ${yum_pid}
 	fi
     fi
-    
+
+    ${SUDO_CMD} yum -y remove PackageKit ;
     ${SUDO_CMD} yum -y install ${1};
 }
 
