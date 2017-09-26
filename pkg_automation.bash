@@ -75,9 +75,9 @@ function pkg_list()
 function install_pkg_deb()
 {
     declare -a pkg_list=${1}
-    printf "\n";
+    printf "\n\n";
     printf "$pkg_list\n";
-    printf "\n\n\n"
+    printf "\n\n"
      
     ${SUDO_CMD} apt-get -y install ${pkg_list};
 }
@@ -106,6 +106,25 @@ function install_pkg_rpm()
     ${SUDO_CMD} yum -y remove PackageKit ;
     ${SUDO_CMD} yum -y install ${1};
 }
+
+function yes_or_no_to_go() {
+
+    printf "\n";
+    printf  ">>>> $1\n";
+    read -p ">>>> Do you want to continue (y/n)? " answer
+    case ${answer:0:1} in
+	y|Y )
+	    printf ">>>> The following pakcages will be installed ...... ";
+	    ;;
+	* )
+            printf "Stop here.\n";
+	    exit;
+    ;;
+    esac
+
+}
+
+
 
 declare -a PKG_DEB_ARRAY
 declare -a PKG_RPM_ARRAY
@@ -139,11 +158,11 @@ dist=$(find_dist)
 
 case "$dist" in
     *Debian*)
-	printf "Debian is detected as $dist\n";
+	yes_or_no_to_go "Debian is detected as $dist"
 	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
 	;;
     *CentOS*)
-	printf "CentOS is detected as $dist \n";
+	yes_or_no_to_go "CentOS is detected as $dist";
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
     *)
