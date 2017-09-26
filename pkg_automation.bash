@@ -18,18 +18,21 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Monday, September 25 22:00:02 CEST 2017
-#  version : 0.9.0
+#  Date    : Tuesday, September 26 09:50:15 CEST 2017
+#  version : 0.9.1
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
 #   - 0.9.0  Monday, September 25 22:28:18 CEST 2017, jhlee
 #           * completely rewrite... 
-#
+#   - 0.9.1  Tuesday, September 26 09:49:56 CEST 2017, jhlee
+#           * first release 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
+
+declare -gr SUDO_CMD="sudo"
 
 
 . ${SC_TOP}/functions
@@ -69,6 +72,34 @@ function pkg_list()
 }
 
 
+function install_pkg_deb()
+{
+    declare -a pkg_list=${1}
+    printf "$pkg_list\n";
+     
+    ${SUDO_CMD} apt-get -y install ${pkg_list};
+}
+
+function install_pkg_rpm()
+{
+    declare -a pkg_list=${1}
+    printf "$pkg_list\n";
+
+    declare -r yum_pid="/var/run/yum.pid"
+    
+    # Somehow, yum is running due to PackageKit, so if so, kill it
+    #
+    if [[ -e ${yum_pid} ]]; then
+	${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	if [ $? -ne 0 ]; then
+	    printf "Remove the orphan yum pid\n";
+	    ${SUDO_CMD} rm -rf ${yum_pid}
+	fi
+    fi
+    
+    ${SUDO_CMD} yum -y install ${1};
+}
+
 declare -a PKG_DEB_ARRAY
 declare -a PKG_RPM_ARRAY
 
@@ -85,12 +116,14 @@ pkg_rpm_list=("common" "epics")
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for pkg_file in ${pkg_deb_list[@]}; do
+    PKG_DEB_ARRAY+=" ";
     PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${pkg_file}");
 done
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for pkg_file in ${pkg_rpm_list[@]}; do
+    PKG_RPM_ARRAY+=" ";
     PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${pkg_file}");
 done
 
@@ -99,17 +132,19 @@ dist=$(find_dist)
 
 case "$dist" in
     *Debian*)
-	echo "Debian is detected">&2
-	echo $PKG_DEB_ARRAY
+	printf "Debian is detected as $dist\n";
+	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
 	;;
     *CentOS*)
-	echo "CentOS is detected">&2
-	echo $PKG_RPM_ARRAY
+	printf "CentOS is detected as $dist \n";
+	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
 	;;
     *)
-	echo >&2
-	echo "Doesn't support $dist" >&2
-	echo >&2
-	exit 0
+	printf "\n";
+	printf "Doesn't support the detected $dist\n";
+	printf "Please contact jeonghan.lee@gmail.com\n";
+	printf "\n";
 	;;
 esac
+
+exit 0;

@@ -21,7 +21,7 @@ python-dev
 libnetcdf-dev
 libhdf5-dev
 libnexus0-dev
-libpng12-0-dev
+libpng12-dev
 libbz2-dev
 libxml2-dev
 libusb-dev
