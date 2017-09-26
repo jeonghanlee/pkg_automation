@@ -7,7 +7,8 @@ libXt-devel
 libXp-devel
 libXmu-devel
 libXpm-devel
-lesstif-devel
+# lesstif-devel
+motif-devel
 gcc-c++
 ncurses-devel
 perl-devel
