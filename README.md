@@ -1,7 +1,6 @@
 # pkg_automation
 
-The most cummbersome thing is to install required packages for EPICS and others application in my life.
-Since 2012, I am struggling to save my time to do this. Here is the first what I wants to do.
+It is the most cummbersome thing that is to install required packages for EPICS and other applications in different Linux flavors. Mostly, my enviornment has two-folds : CentOS and Debian. Since 2012, I am struggling to save my time to do this. Here is the first what I wants to do.
 
 It is tested with CentOS 7, and Debain 8. And sudo permission is needed. 
 
