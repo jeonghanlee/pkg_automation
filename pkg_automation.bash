@@ -75,7 +75,9 @@ function pkg_list()
 function install_pkg_deb()
 {
     declare -a pkg_list=${1}
+    printf "\n";
     printf "$pkg_list\n";
+    printf "\n\n\n"
      
     ${SUDO_CMD} apt-get -y install ${pkg_list};
 }
@@ -83,8 +85,9 @@ function install_pkg_deb()
 function install_pkg_rpm()
 {
     declare -a pkg_list=${1}
+    printf "\n";
     printf "$pkg_list\n";
-
+    printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
     ${SUDO_CMD} systemctl stop packagekit
@@ -119,16 +122,16 @@ pkg_rpm_list=("common" "epics")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for pkg_file in ${pkg_deb_list[@]}; do
+for deb_file in ${pkg_deb_list[@]}; do
     PKG_DEB_ARRAY+=" ";
-    PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${pkg_file}");
+    PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${deb_file}");
 done
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for pkg_file in ${pkg_rpm_list[@]}; do
+for rpm_file in ${pkg_rpm_list[@]}; do
     PKG_RPM_ARRAY+=" ";
-    PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${pkg_file}");
+    PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
 done
 
 
@@ -141,7 +144,7 @@ case "$dist" in
 	;;
     *CentOS*)
 	printf "CentOS is detected as $dist \n";
-	install_pkg_rpm "${PKG_DEB_ARRAY[@]}"
+	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
     *)
 	printf "\n";
