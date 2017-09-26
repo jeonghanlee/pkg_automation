@@ -32,38 +32,24 @@ declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
 
 
-# set -a
-# . ${SC_TOP}/env.conf
-# set +a
-
 . ${SC_TOP}/functions
-
-
-
-function os_release() {
-
-    eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME|NAME)=")
-    printf "Additional OS Release Information : \n";
-    printf ">> PRETTY_NAME    = %s\n" "${PRETTY_NAME}"
-    printf ">> NAME           = %s\n" "${NAME}"
-}
-
-function redhat-release() {
-    cat /etc/redhat-release 
-}
 
 
 function find_dist() {
 
-    local dist_id dist_cn dist_rs
+    local dist_id dist_cn dist_rs PRETTY_NAME
     
-    if [[ /usb/bin/lsb_release ]] ; then
-	dist_id=$(lsb_release -is)
-	dist_cn=$(lsb_release -cs)
-	dist_rs=$(lsb_release -rs)
+    if [[ -f /usr/bin/lsb_release ]] ; then
+     	dist_id=$(lsb_release -is)
+     	dist_cn=$(lsb_release -cs)
+     	dist_rs=$(lsb_release -rs)
+     	echo $dist_id ${dist_cn} ${dist_rs}
+    else
+     	eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
+	echo ${PRETTY_NAME}
     fi
 
-    echo $dist_id, ${dist_cn}, ${dist_rs}
+ 
 }
 
 
@@ -83,8 +69,8 @@ function pkg_list()
 }
 
 
-declare -a pkg_deb_array
-declare -a pkg_rpm_array
+declare -a PKG_DEB_ARRAY
+declare -a PKG_RPM_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
@@ -93,32 +79,37 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -ga pkg_deb_list
 declare -ga pkg_rpm_list
 
-
 pkg_deb_list=("epics")
 pkg_rpm_list=("common" "epics")
 
-pkg_deb_array=$(pkg_list ${COM_PATH}/common)
+PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for pkg_file in ${pkg_deb_list[@]}; do
-    pkg_deb_array+=$(pkg_list "${DEB_PATH}/${pkg_file}");
+    PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${pkg_file}");
 done
 
-pkg_rpm_array=$(pkg_list ${COM_PATH}/common)
+PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for pkg_file in ${pkg_rpm_list[@]}; do
-    pkg_rpm_array+=$(pkg_list "${RPM_PATH}/${pkg_file}");
+    PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${pkg_file}");
 done
 
-echo "DEB"
-echo $pkg_deb_array
-echo "RPM"
-echo $pkg_rpm_array
 
-echo ""
-echo ""
+dist=$(find_dist)
 
-find_dist
-
-redhat_release
-
-os_release
+case "$dist" in
+    *Debian*)
+	echo "Debian is detected">&2
+	echo $PKG_DEB_ARRAY
+	;;
+    *CentOS*)
+	echo "CentOS is detected">&2
+	echo $PKG_RPM_ARRAY
+	;;
+    *)
+	echo >&2
+	echo "Doesn't support $dist" >&2
+	echo >&2
+	exit 0
+	;;
+esac
