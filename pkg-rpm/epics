@@ -1,0 +1,25 @@
+# Required Packages for
+# EPICS installation
+#
+#
+readline-devel
+libXt-devel
+libXp-devel
+libXmu-devel
+libXpm-devel
+lesstif-devel
+gcc-c++
+ncurses-devel
+perl-devel
+net-snmp
+net-snmp-utils
+net-snmp-devel
+darcs
+libxml2-devel
+libpng12-devel
+netcdf-devel
+hdf5-devel
+lbzip2-utils
+libusb-devel
+python-devel
+m4
