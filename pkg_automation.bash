@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Tuesday, September 26 09:50:15 CEST 2017
-#  version : 0.9.1
+#  Date    : 
+#  version : 0.9.2
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -27,6 +27,8 @@
 #           * completely rewrite... 
 #   - 0.9.1  Tuesday, September 26 09:49:56 CEST 2017, jhlee
 #           * first release 
+#   - 0.9.2  
+#           * added Development tools for CentOS
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -104,6 +106,7 @@ function install_pkg_rpm()
     fi
 
     ${SUDO_CMD} yum -y remove PackageKit ;
+    ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install ${1};
 }
 
@@ -163,6 +166,7 @@ case "$dist" in
 	;;
     *CentOS*)
 	yes_or_no_to_go "CentOS is detected as $dist";
+	
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
     *)
