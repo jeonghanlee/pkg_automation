@@ -80,7 +80,8 @@ function install_pkg_deb()
     printf "\n\n";
     printf "$pkg_list\n";
     printf "\n\n"
-     
+
+    ${SUDO_CMD} aptitude update
     ${SUDO_CMD} apt-get -y install ${pkg_list};
 }
 
@@ -106,6 +107,7 @@ function install_pkg_rpm()
     fi
 
     ${SUDO_CMD} yum -y remove PackageKit ;
+    ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install ${1};
 }
