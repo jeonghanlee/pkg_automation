@@ -19,7 +19,7 @@
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
 #  Date    : 
-#  version : 0.9.2
+#  version : 0.9.3
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -29,6 +29,8 @@
 #           * first release 
 #   - 0.9.2  
 #           * added Development tools for CentOS
+#   - 0.9.3
+#           * add tclx for require
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -141,7 +143,7 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -ga pkg_deb_list
 declare -ga pkg_rpm_list
 
-pkg_deb_list=("epics")
+pkg_deb_list=("epics" "e3")
 pkg_rpm_list=("common" "epics")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
