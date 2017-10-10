@@ -173,6 +173,10 @@ case "$dist" in
 	
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
+    *Raspbian*)
+	yes_or_no_to_go "Raspbian is detected as $dist"
+	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
+	;;
     *)
 	printf "\n";
 	printf "Doesn't support the detected $dist\n";
