@@ -10,3 +10,4 @@ ipmitool
 libtool
 automake
 m4
+re2c
