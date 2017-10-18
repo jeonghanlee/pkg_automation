@@ -19,7 +19,7 @@
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
 #  Date    : 
-#  version : 0.9.3
+#  version : 0.9.4
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -143,8 +143,8 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -ga pkg_deb_list
 declare -ga pkg_rpm_list
 
-pkg_deb_list=("epics" "e3")
-pkg_rpm_list=("common" "epics")
+pkg_deb_list=("epics" "e3" "ess")
+pkg_rpm_list=("common" "epics" "ess")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
