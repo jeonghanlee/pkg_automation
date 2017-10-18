@@ -18,3 +18,7 @@ $ bash pkg_automation.bash
 >>>> Debian is detected as Debian jessie 8.9
 >>>> Do you want to continue (y/n)?
 ```
+
+## Notice
+
+Please run twice in CentOS due to epel packages...
