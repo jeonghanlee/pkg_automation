@@ -10,4 +10,7 @@ ipmitool
 libtool
 automake
 m4
+# EPICS Base
 re2c
+# E3 require needs
+tclx

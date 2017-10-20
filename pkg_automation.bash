@@ -131,8 +131,6 @@ function yes_or_no_to_go() {
 
 }
 
-
-
 declare -a PKG_DEB_ARRAY
 declare -a PKG_RPM_ARRAY
 
@@ -143,8 +141,9 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -ga pkg_deb_list
 declare -ga pkg_rpm_list
 
-pkg_deb_list=("epics" "e3" "ess")
+pkg_deb_list=("epics" "ess")
 pkg_rpm_list=("common" "epics" "ess")
+
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
