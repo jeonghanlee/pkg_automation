@@ -1,5 +1,6 @@
 # Required DEB Packages for EPICS installation
 #
+build-essential
 libreadline-dev
 libxt-dev
 x11proto-print-dev
