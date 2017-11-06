@@ -31,7 +31,9 @@
 #           * added Development tools for CentOS
 #   - 0.9.3
 #           * add tclx for require
-
+#   - 0.9.4 
+#           * Debian 9  support
+#
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -132,16 +134,20 @@ function yes_or_no_to_go() {
 }
 
 declare -a PKG_DEB_ARRAY
+declare -a PKG_DEB9_ARRAY
 declare -a PKG_RPM_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
+declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 
 declare -ga pkg_deb_list
+declare -ga pkg_deb9_list
 declare -ga pkg_rpm_list
 
 pkg_deb_list=("epics" "ess")
+pkg_deb9_list=("epics" "ess")
 pkg_rpm_list=("common" "epics" "ess")
 
 
@@ -151,6 +157,15 @@ for deb_file in ${pkg_deb_list[@]}; do
     PKG_DEB_ARRAY+=" ";
     PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${deb_file}");
 done
+
+PKG_DEB9_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_deb9_list[@]}; do
+    PKG_DEB9_ARRAY+=" ";
+    PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
+done
+
+
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -163,13 +178,16 @@ done
 dist=$(find_dist)
 
 case "$dist" in
-    *Debian*)
-	yes_or_no_to_go "Debian is detected as $dist"
+    *jessie*)
+	yes_or_no_to_go "Debian jessie is detected as $dist"
 	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
+	;;
+    *stretch*)
+	yes_or_no_to_go "Debian stretch is detected as $dist"
+	install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
 	;;
     *CentOS*)
 	yes_or_no_to_go "CentOS is detected as $dist";
-	
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
     *Raspbian*)
