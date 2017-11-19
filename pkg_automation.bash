@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 
-#  version : 0.9.4
+#  Date    : Sunday, November 19 19:38:09 CET 2017
+#  version : 0.9.5
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -34,6 +34,8 @@
 #   - 0.9.4 
 #           * Debian 9  support
 #
+#   - 0.9.5
+#           * tune CentOS pkgs - first epel-release 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -85,7 +87,7 @@ function install_pkg_deb()
     printf "$pkg_list\n";
     printf "\n\n"
 
-    ${SUDO_CMD} aptitude update
+    ${SUDO_CMD} apt-get update
     ${SUDO_CMD} apt-get -y install ${pkg_list};
 }
 
@@ -113,6 +115,8 @@ function install_pkg_rpm()
     ${SUDO_CMD} yum -y remove PackageKit ;
     ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y groupinstall "Development tools"
+    ${SUDO_CMD} yum -y install "epel-release"
+    ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y install ${1};
 }
 
@@ -148,7 +152,7 @@ declare -ga pkg_rpm_list
 
 pkg_deb_list=("epics" "ess")
 pkg_deb9_list=("epics" "ess")
-pkg_rpm_list=("common" "epics" "ess")
+pkg_rpm_list=("epics" "ess")
 
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
