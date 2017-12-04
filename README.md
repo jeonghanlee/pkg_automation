@@ -2,7 +2,12 @@
 
 It is the most cummbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. Most frequent used Linux flavors are CentOS and Debian. Thus, this script covers only these Linux one. 
 
-It is tested with CentOS 7, and Debain 8. And sudo permission is needed. 
+It is tested with
+* CentOS 7
+* Debian 8/9
+* Ubuntu xenial 16.04
+
+And sudo permission is needed. 
 
 ```
 $ bash pkg_automation.bash 
@@ -19,6 +24,13 @@ $ bash pkg_automation.bash
 >>>> Do you want to continue (y/n)?
 ```
 
+```
+$ bash pkg_automation.bash 
+
+>>>> Ubuntu xenial is detected as Ubuntu xenial 16.04
+>>>> Do you want to continue (y/n)? 
+```
+
 ## Notice
 
-Please run twice in CentOS due to epel packages...
+
