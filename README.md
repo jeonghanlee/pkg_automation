@@ -3,7 +3,7 @@
 It is the most cummbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. Most frequent used Linux flavors are CentOS and Debian. Thus, this script covers only these Linux one. 
 
 It is tested with
-* CentOS 7
+* CentOS 7.4.1708
 * Debian 8/9
 * Ubuntu xenial 16.04
 * Ubuntu artful 17.10

@@ -114,7 +114,7 @@ function install_pkg_rpm()
 	fi
     fi
 
-    ${SUDO_CMD} yum -y remove PackageKit ;
+    ${SUDO_CMD} yum -y remove PackageKit motif-devel;
     ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
