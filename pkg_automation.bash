@@ -19,7 +19,7 @@
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
 #  Date    : Sunday, November 19 19:38:09 CET 2017
-#  version : 0.9.5
+#  version : 0.9.6
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -33,9 +33,11 @@
 #           * add tclx for require
 #   - 0.9.4 
 #           * Debian 9  support
-#
 #   - 0.9.5
-#           * tune CentOS pkgs - first epel-release 
+#           * tune CentOS pkgs - first epel-release
+#   - 0.9.6
+#           * add Ubuntu 16 support
+# 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -139,19 +141,24 @@ function yes_or_no_to_go() {
 
 declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
+declare -a PKG_UBU16_ARRAY
 declare -a PKG_RPM_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
+declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
+declare -ga pkg_ubu16_list
 declare -ga pkg_rpm_list
+
 
 pkg_deb_list=("epics" "ess")
 pkg_deb9_list=("epics" "ess")
+pkg_ubu16_list=("epics" "ess")
 pkg_rpm_list=("epics" "ess")
 
 
@@ -169,6 +176,12 @@ for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
 
+PKG_UBU16_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_ubu16_list[@]}; do
+    PKG_UBU16_ARRAY+=" ";
+    PKG_UBU16_ARRAY+=$(pkg_list "${UBU16_PATH}/${deb_file}");
+done
 
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -193,6 +206,10 @@ case "$dist" in
     *CentOS*)
 	yes_or_no_to_go "CentOS is detected as $dist";
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
+	;;
+    *xenial*)
+	yes_or_no_to_go "Ubuntu xenial is detected as $dist";
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *)
 	printf "\n";

@@ -5,13 +5,11 @@ libreadline-dev
 libxt-dev
 x11proto-print-dev
 libxmu-headers
-libxp-dev
 libxmu-dev
 libxmu6
 libxpm-dev
 libxmuu-dev
 libxmuu1
-libxmu6
 libpcre++-dev
 #
 #
@@ -22,8 +20,8 @@ darcs
 python-dev
 libnetcdf-dev
 libhdf5-dev
-libnexus0-dev
-libpng12-dev
+#libnexus0-dev # NeXus scientific data file format
+libpng-dev
 libbz2-dev
 libxml2-dev
 libusb-dev
