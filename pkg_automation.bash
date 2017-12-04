@@ -36,7 +36,7 @@
 #   - 0.9.5
 #           * tune CentOS pkgs - first epel-release
 #   - 0.9.6
-#           * add Ubuntu 16 support
+#           * add Ubuntu 16/17 supports
 # 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -209,6 +209,10 @@ case "$dist" in
 	;;
     *xenial*)
 	yes_or_no_to_go "Ubuntu xenial is detected as $dist";
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+	;;
+    *artful*)
+	yes_or_no_to_go "Ubuntu artful is detected as $dist";
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *)
