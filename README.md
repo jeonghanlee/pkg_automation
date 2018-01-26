@@ -37,6 +37,7 @@ $ bash pkg_automation.bash
 
 >>>> Ubuntu artful is detected as Ubuntu artful 17.10
 >>>> Do you want to continue (y/n)? 
+```
 
 ``````
 $ bash pkg_automation.bash 
