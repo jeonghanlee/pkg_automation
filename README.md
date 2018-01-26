@@ -7,6 +7,7 @@ It is tested with
 * Debian 8/9
 * Ubuntu xenial 16.04
 * Ubuntu artful 17.10
+* LinuxMint sylvia 18.3
 
 And sudo permission is needed. 
 
@@ -37,7 +38,14 @@ $ bash pkg_automation.bash
 >>>> Ubuntu artful is detected as Ubuntu artful 17.10
 >>>> Do you want to continue (y/n)? 
 
+``````
+$ bash pkg_automation.bash 
+
+>>>> Linux Mint sylvia is detected as LinuxMint sylvia 18.3
+>>>> Do you want to continue (y/n)? 
+
 ```
+
 ## Notice
 
 
