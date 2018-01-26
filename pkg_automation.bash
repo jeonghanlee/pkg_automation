@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Sunday, November 19 19:38:09 CET 2017
-#  version : 0.9.6
+#  Date    : Saturday, January 27 00:09:17 CET 2018
+#  version : 0.9.7
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -37,7 +37,9 @@
 #           * tune CentOS pkgs - first epel-release
 #   - 0.9.6
 #           * add Ubuntu 16/17 supports
-# 
+#   - 0.9.7
+#           * add Linux Mint 18 support
+#
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -213,6 +215,10 @@ case "$dist" in
 	;;
     *artful*)
 	yes_or_no_to_go "Ubuntu artful is detected as $dist";
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+	;;
+    *sylvia*)
+	yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *)
