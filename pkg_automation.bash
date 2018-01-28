@@ -221,6 +221,10 @@ case "$dist" in
 	yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+    *Fedora*)
+	yes_or_no_to_go "Linux Fedora is detected as $dist";
+	install_pkg_rpm "${PKG_RPM_ARRAY[@]}";
+	;;
     *)
 	printf "\n";
 	printf "Doesn't support the detected $dist\n";
