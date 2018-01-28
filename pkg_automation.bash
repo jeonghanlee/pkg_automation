@@ -95,6 +95,36 @@ function install_pkg_deb()
     ${SUDO_CMD} apt-get -y install ${pkg_list};
 }
 
+
+function install_pkg_dnf()
+{
+    declare -a pkg_list=${1}
+    printf "\n";
+    printf "$pkg_list\n";
+    printf "\n\n\n"
+    declare -r yum_pid="/var/run/yum.pid"
+
+    ${SUDO_CMD} systemctl stop packagekit
+    ${SUDO_CMD} systemctl disable packagekit
+    
+    # Somehow, yum is running due to PackageKit, so if so, kill it
+    #
+    if [[ -e ${yum_pid} ]]; then
+	${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	if [ $? -ne 0 ]; then
+	    printf "Remove the orphan yum pid\n";
+	    ${SUDO_CMD} rm -rf ${yum_pid}
+	fi
+    fi
+
+    ${SUDO_CMD} dnf -y remove PackageKit motif-devel;
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y groupinstall "Development tools"
+    ${SUDO_CMD} dnf -y install ${1};
+}
+
+
+
 function install_pkg_rpm()
 {
     declare -a pkg_list=${1}
@@ -145,24 +175,27 @@ declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_RPM_ARRAY
+declare -a PKG_DNF_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
+declare -g DNF_PATH=${SC_TOP}/pkg-dnf
+
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_rpm_list
-
+declare -ga pkg_dnf_list
 
 pkg_deb_list=("epics" "ess")
 pkg_deb9_list=("epics" "ess")
 pkg_ubu16_list=("epics" "ess")
 pkg_rpm_list=("epics" "ess")
-
+pkg_dnf_list=("epics" "ess")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -194,6 +227,16 @@ for rpm_file in ${pkg_rpm_list[@]}; do
 done
 
 
+
+PKG_DNF_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for dnf_file in ${pkg_dnf_list[@]}; do
+    PKG_DNF_ARRAY+=" ";
+    PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
+done
+
+
+
 dist=$(find_dist)
 
 case "$dist" in
@@ -223,7 +266,7 @@ case "$dist" in
 	;;
     *Fedora*)
 	yes_or_no_to_go "Linux Fedora is detected as $dist";
-	install_pkg_rpm "${PKG_RPM_ARRAY[@]}";
+	install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
 	;;
     *)
 	printf "\n";
