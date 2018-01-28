@@ -8,6 +8,7 @@ It is tested with
 * Ubuntu xenial 16.04
 * Ubuntu artful 17.10
 * LinuxMint sylvia 18.3
+* Fedora 27 (Workstation Edition)
 
 And sudo permission is needed. 
 

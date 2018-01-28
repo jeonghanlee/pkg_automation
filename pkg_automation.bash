@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Saturday, January 27 00:09:17 CET 2018
-#  version : 0.9.7
+#  Date    : Sunday, January 28 01:53:02 CET 2018
+#  version : 0.9.8
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -39,6 +39,8 @@
 #           * add Ubuntu 16/17 supports
 #   - 0.9.7
 #           * add Linux Mint 18 support
+#   - 0.9.8
+#           * add Fedor 27 
 #
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
