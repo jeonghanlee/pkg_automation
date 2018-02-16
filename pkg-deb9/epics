@@ -26,3 +26,7 @@ libbz2-dev
 libxml2-dev
 libusb-dev
 remake
+libudev-dev
+libsystemd-dev 
+linux-source
+#linux-headers
