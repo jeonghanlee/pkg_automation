@@ -25,4 +25,9 @@ libpng-dev
 libbz2-dev
 libxml2-dev
 libusb-dev
+# asyn, USBTSM libusb-1.0
+libusb-1.0-0-dev
 remake
+libudev-dev
+libsystemd-dev
+linux-source
