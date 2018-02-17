@@ -41,13 +41,15 @@
 #           * add Linux Mint 18 support
 #   - 0.9.8
 #           * add Fedor 27 
-#
+#   - 0.9.9
+#           * add linux-headers-$(uname -r) in this script for Debian 
+# 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
 
 declare -gr SUDO_CMD="sudo"
-
+declare -g  KERNEL_VER=$(uname -r)
 
 . ${SC_TOP}/functions
 
@@ -81,6 +83,7 @@ function pkg_list()
 	    packagelist[i]="${line_data}"
 	    ((++i))
 	fi
+       	packagelist[i]="linux-headers-${KERNEL_VER}"
     done < $1
     echo ${packagelist[@]}
 }
