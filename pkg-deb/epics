@@ -33,3 +33,8 @@ remake
 libudev-dev
 libsystemd-dev
 linux-source
+#
+#
+#
+libboost-dev
+libboost-regex-dev
