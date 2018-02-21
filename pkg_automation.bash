@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (c) 2014 - 2017 Jeong Han Lee
+#  Copyright (c) 2014 - 2018 Jeong Han Lee
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Sunday, January 28 01:53:02 CET 2018
-#  version : 0.9.8
+#  Date    : Wednesday, February 21 12:08:00 CET 2018
+#  version : 0.9.10
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -43,7 +43,12 @@
 #           * add Fedor 27 
 #   - 0.9.9
 #           * add linux-headers-$(uname -r) in this script for Debian 
+#
+#   - 0.9.10
+#           * fix linux-headers-$(uname -r) in this script for Debian
+#           * add Yes options to skip yes_or_no
 # 
+
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -83,7 +88,6 @@ function pkg_list()
 	    packagelist[i]="${line_data}"
 	    ((++i))
 	fi
-       	packagelist[i]="linux-headers-${KERNEL_VER}"
     done < $1
     echo ${packagelist[@]}
 }
@@ -92,12 +96,14 @@ function pkg_list()
 function install_pkg_deb()
 {
     declare -a pkg_list=${1}
+    
     printf "\n\n";
-    printf "$pkg_list\n";
+    printf "The following package list will be installed:\n\n"
+    printf "$pkg_list linux-headers-${KERNEL_VER}\n";
     printf "\n\n"
 
     ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install ${pkg_list};
+    ${SUDO_CMD} apt-get -y install ${pkg_list} linux-headers-${KERNEL_VER};
 }
 
 
@@ -240,37 +246,63 @@ for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
 
+ANSWER="NO"
 
+while getopts ":y" opt; do
+    case $opt in
+	y)
+	    ANSWER="YES"
+	    ;;
+	\?)
+	    echo "Invalid option: -$OPTARG" >&2
+	    exit;
+	    ;;
+    esac
+done
 
 dist=$(find_dist)
 
 case "$dist" in
     *jessie*)
-	yes_or_no_to_go "Debian jessie is detected as $dist"
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Debian jessie is detected as $dist"
+	fi
 	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
 	;;
     *stretch*)
-	yes_or_no_to_go "Debian stretch is detected as $dist"
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Debian stretch is detected as $dist"
+	fi
 	install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
 	;;
     *CentOS*)
-	yes_or_no_to_go "CentOS is detected as $dist";
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "CentOS is detected as $dist";
+	fi
 	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	;;
     *xenial*)
-	yes_or_no_to_go "Ubuntu xenial is detected as $dist";
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Ubuntu xenial is detected as $dist";
+	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *artful*)
-	yes_or_no_to_go "Ubuntu artful is detected as $dist";
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Ubuntu artful is detected as $dist";
+	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *sylvia*)
-	yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
+	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *Fedora*)
-	yes_or_no_to_go "Linux Fedora is detected as $dist";
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Linux Fedora is detected as $dist";
+	fi
 	install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
 	;;
     *)
