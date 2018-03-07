@@ -1,4 +1,9 @@
-# pkg_automation
+
+pkg_automation
+---
+
+[![Build Status](https://travis-ci.org/jeonghanlee/pkg_automation.svg?branch=master)](https://travis-ci.org/jeonghanlee/pkg_automation)
+
 
 It is the most cummbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. Most frequent used Linux flavors are CentOS and Debian. Thus, this script covers only these Linux one. 
 
@@ -40,7 +45,7 @@ $ bash pkg_automation.bash
 >>>> Do you want to continue (y/n)? 
 ```
 
-``````
+```
 $ bash pkg_automation.bash 
 
 >>>> Linux Mint sylvia is detected as LinuxMint sylvia 18.3
