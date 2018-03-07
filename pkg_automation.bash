@@ -88,7 +88,7 @@ function pkg_list()
 	    packagelist[i]="${line_data}"
 	    ((++i))
 	fi
-    done < $1
+    done < ${1}
     echo ${packagelist[@]}
 }
 
@@ -249,12 +249,12 @@ done
 ANSWER="NO"
 
 while getopts ":y" opt; do
-    case $opt in
+    case ${opt} in
 	y)
 	    ANSWER="YES"
 	    ;;
 	\?)
-	    echo "Invalid option: -$OPTARG" >&2
+	    echo "Invalid option: -${OPTARG}" >&2
 	    exit;
 	    ;;
     esac
