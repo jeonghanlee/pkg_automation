@@ -26,4 +26,5 @@ hdf5-devel
 boost-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
+systemd-devel
 
