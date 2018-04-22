@@ -8,7 +8,6 @@ libXp-devel
 libXmu-devel
 libXpm-devel
 lesstif-devel
-#motif-devel
 gcc-c++
 ncurses-devel
 perl-devel
@@ -20,10 +19,10 @@ libpng12-devel
 libzip-devel
 libusb-devel
 python-devel
-# epel-release
 darcs
 hdf5-devel
 boost-devel
+pcre-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel
