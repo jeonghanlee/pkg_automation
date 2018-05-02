@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Wednesday, February 21 12:08:00 CET 2018
-#  version : 0.9.10
+#  Date    : Wednesday, May  2 14:43:48 CEST 2018
+#  version : 0.9.11
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -47,7 +47,10 @@
 #   - 0.9.10
 #           * fix linux-headers-$(uname -r) in this script for Debian
 #           * add Yes options to skip yes_or_no
-# 
+#
+#   - 0.9.11
+#           * add Ubuntu 18 support
+#
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -290,6 +293,12 @@ case "$dist" in
     *artful*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu artful is detected as $dist";
+	fi
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+	;;
+    *bionic*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Ubuntu bionic is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
