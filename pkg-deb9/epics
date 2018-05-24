@@ -32,3 +32,5 @@ libudev-dev
 libsystemd-dev 
 linux-source
 #
+#
+mercurial

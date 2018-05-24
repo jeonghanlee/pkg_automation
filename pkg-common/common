@@ -7,6 +7,7 @@ tree
 emacs
 xterm
 ipmitool
+autoconf
 libtool
 automake
 m4
@@ -16,3 +17,7 @@ re2c
 tclx
 #realpath
 coreutils
+#
+graphviz
+
+

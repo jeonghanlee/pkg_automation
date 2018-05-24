@@ -38,3 +38,5 @@ linux-source
 #
 libboost-dev
 libboost-regex-dev
+#
+mercurial
