@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Wednesday, May  2 14:43:48 CEST 2018
-#  version : 0.9.11
+#  Date    : Tuesday, June 26 09:44:34 CEST 2018
+#  version : 0.9.12
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -50,6 +50,9 @@
 #
 #   - 0.9.11
 #           * add Ubuntu 18 support
+#
+#   - 0.9.12
+#          * seperate rpi from debian
 #
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
@@ -107,6 +110,20 @@ function install_pkg_deb()
 
     ${SUDO_CMD} apt-get update
     ${SUDO_CMD} apt-get -y install ${pkg_list} linux-headers-${KERNEL_VER};
+}
+
+
+function install_pkg_rpi()
+{
+    declare -a pkg_list=${1}
+    
+    printf "\n\n";
+    printf "The following package list will be installed:\n\n"
+    printf "$pkg_list raspberrypi-kernel-headers\n";
+    printf "\n\n"
+
+    ${SUDO_CMD} apt-get update
+    ${SUDO_CMD} apt-get -y install ${pkg_list}  raspberrypi-kernel-headers
 }
 
 
@@ -187,6 +204,7 @@ function yes_or_no_to_go() {
 
 declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
+declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_DNF_ARRAY
@@ -194,6 +212,7 @@ declare -a PKG_DNF_ARRAY
 declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
+declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
@@ -201,12 +220,14 @@ declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
+declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_rpm_list
 declare -ga pkg_dnf_list
 
 pkg_deb_list=("epics" "ess")
 pkg_deb9_list=("epics" "ess")
+pkg_rpi_list=("epics" "ess")
 pkg_ubu16_list=("epics" "ess")
 pkg_rpm_list=("epics" "ess")
 pkg_dnf_list=("epics" "ess")
@@ -224,6 +245,14 @@ for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=" ";
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
+
+PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_rpi_list[@]}; do
+    PKG_RPI_ARRAY+=" ";
+    PKG_RPI_ARRAY+=$(pkg_list "${RPI_PATH}/${deb_file}");
+done
+
 
 PKG_UBU16_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -266,6 +295,12 @@ done
 dist=$(find_dist)
 
 case "$dist" in
+    Raspbian*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Raspbian is detected as $dist"
+	fi
+	install_pkg_rpi "${PKG_RPI_ARRAY[@]}"
+	;;
     *jessie*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Debian jessie is detected as $dist"
