@@ -32,6 +32,7 @@ remake
 libudev-dev
 libsystemd-dev 
 linux-source
-#
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
 #
 mercurial
