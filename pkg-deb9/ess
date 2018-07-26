@@ -3,3 +3,4 @@ logrotate
 curl
 net-tools
 symlinks
+dkms
