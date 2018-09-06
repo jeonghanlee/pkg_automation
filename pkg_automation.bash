@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Tuesday, June 26 09:44:34 CEST 2018
-#  version : 0.9.12
+#  Date    : Thursday, September  6 09:12:11 CEST 2018
+#  version : 1.0.0
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -54,6 +54,8 @@
 #   - 0.9.12
 #          * seperate rpi from debian
 #
+#   - 1.0.0
+#          * Updated messgages
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -187,15 +189,18 @@ function install_pkg_rpm()
 
 function yes_or_no_to_go() {
 
-    printf "\n";
-    printf  ">>>> $1\n";
-    read -p ">>>> Do you want to continue (y/n)? " answer
+    printf  "> \n";
+    printf  "> This procedure could help users to install \n"
+    printf  "> required packages for E3 installation.\n"
+    printf  "> \n";
+    printf  "> $1\n";
+    read -p ">> Do you want to continue (y/n)? " answer
     case ${answer:0:1} in
 	y|Y )
-	    printf ">>>> The following pakcages will be installed ...... ";
+	    printf ">> The following pakcages will be installed ...... ";
 	    ;;
 	* )
-            printf "Stop here.\n";
+            printf ">> One should install all required packages by oneself. Stop here.\n";
 	    exit;
     ;;
     esac

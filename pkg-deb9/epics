@@ -21,8 +21,6 @@ darcs
 python-dev
 libnetcdf-dev
 libhdf5-dev
-#libnexus0-dev # NeXus scientific data file format
-libpng-dev
 libbz2-dev
 libxml2-dev
 libusb-dev
@@ -32,7 +30,16 @@ remake
 libudev-dev
 libsystemd-dev 
 linux-source
-#ADPonitGrey Vendor lib has the libraw1394 dep.
-libraw1394-11
+#
+#
 #
 mercurial
+#
+# llrf (nds)
+libboost-dev
+libboost-regex-dev
+libboost-filesystem-dev 
+# Debian 9
+libpng-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
