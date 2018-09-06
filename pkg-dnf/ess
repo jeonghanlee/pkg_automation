@@ -8,4 +8,5 @@ xorg-x11-fonts-misc
 cpan
 kernel-devel
 symlinks
-
+procServ
+#

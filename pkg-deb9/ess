@@ -4,3 +4,5 @@ curl
 net-tools
 symlinks
 dkms
+procserv
+#

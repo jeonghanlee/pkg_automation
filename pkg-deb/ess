@@ -3,3 +3,5 @@ logrotate
 curl
 net-tools
 symlinks
+procserv
+#
