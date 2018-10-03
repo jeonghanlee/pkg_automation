@@ -33,3 +33,9 @@ libsystemd-dev
 linux-source
 #
 mercurial
+# llrf (nds)
+libboost-dev
+libboost-regex-dev
+libboost-filesystem-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
