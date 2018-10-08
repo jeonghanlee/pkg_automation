@@ -38,7 +38,9 @@ mercurial
 # llrf (nds)
 libboost-dev
 libboost-regex-dev
-libboost-filesystem-dev 
+libboost-filesystem-dev
+# ADPluginCalib/Edge
+libopencv-dev
 # Debian 9
 libpng-dev
 #ADPonitGrey Vendor lib has the libraw1394 dep.

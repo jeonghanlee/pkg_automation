@@ -38,7 +38,8 @@ mercurial
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev 
-
+# ADPluginCalib/Edge
+libopencv-dev
 # Debian 8
 libpng12-dev
 libxp-dev
