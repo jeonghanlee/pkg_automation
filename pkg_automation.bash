@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Thursday, September  6 09:12:11 CEST 2018
-#  version : 1.0.0
+#  Date    : Thursday, November 15 20:25:59 CET 2018
+#  version : 1.0.1
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -56,6 +56,9 @@
 #
 #   - 1.0.0
 #          * Updated messgages
+#   - 1.0.1
+#          * use N as default
+
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -194,7 +197,7 @@ function yes_or_no_to_go() {
     printf  "> required packages for E3 installation.\n"
     printf  "> \n";
     printf  "> $1\n";
-    read -p ">> Do you want to continue (y/n)? " answer
+    read -p ">> Do you want to continue (y/N)? " answer
     case ${answer:0:1} in
 	y|Y )
 	    printf ">> The following pakcages will be installed ...... ";
