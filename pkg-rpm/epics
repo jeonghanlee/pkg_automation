@@ -24,6 +24,7 @@ hdf5-devel
 boost-devel
 pcre-devel
 opencv-devel
+libcurl-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel

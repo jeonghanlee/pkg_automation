@@ -24,8 +24,11 @@ hdf5-devel
 boost-devel
 pcre-devel
 opencv-devel
+libcurl-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394.x86_64
 #
 hg

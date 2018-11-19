@@ -10,3 +10,5 @@ kernel-devel
 symlinks
 procServ
 #
+curl
+
