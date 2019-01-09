@@ -14,6 +14,7 @@ libpcre++-dev
 #
 #
 #
+libmotif-dev
 libsnmp-dev
 re2c
 darcs
