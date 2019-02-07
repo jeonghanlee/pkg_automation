@@ -25,6 +25,8 @@ boost-devel
 pcre-devel
 opencv-devel
 libcurl-devel
+# ADSupport libjpeg.h
+libjpeg-turbo-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel

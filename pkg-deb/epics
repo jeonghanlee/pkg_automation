@@ -44,3 +44,5 @@ libopencv-dev
 libpng12-dev
 libxp-dev
 libnexus0-dev
+# ADSupport
+libjpeg62-turbo-dev
