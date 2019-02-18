@@ -2,6 +2,7 @@
 # EPICS installation
 #
 #
+patch
 readline-devel
 libXt-devel
 libXp-devel
