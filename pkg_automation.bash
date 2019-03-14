@@ -354,6 +354,12 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+    *tessa*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Linux Mint tessa is detected as $dist";
+	fi
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+	;;
     *Fedora*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Fedora is detected as $dist";
