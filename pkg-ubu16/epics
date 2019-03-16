@@ -37,6 +37,9 @@ mercurial
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev
+# ADPluginCalib/Edge
+libopencv-dev
+libpng-dev
 #ADPonitGrey Vendor lib has the libraw1394 dep.
 libraw1394-11
-libopencv-dev
+

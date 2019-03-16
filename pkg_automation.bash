@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (c) 2014 - 2018 Jeong Han Lee
+#  Copyright (c) 2014 - 2019    Jeong Han Lee
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Thursday, November 15 20:25:59 CET 2018
-#  version : 1.0.1
+#  Date    : 
+#  version : 1.0.2
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -58,7 +58,8 @@
 #          * Updated messgages
 #   - 1.0.1
 #          * use N as default
-
+#   - 1.0.2
+#          * add Mint tessa 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -171,6 +172,9 @@ function install_pkg_rpm()
 
     ${SUDO_CMD} systemctl stop packagekit
     ${SUDO_CMD} systemctl disable packagekit
+    ${SUDO_CMD} systemctl stop firewalld
+    ${SUDO_CMD} systemctrl disable firewalld
+    
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
@@ -182,7 +186,7 @@ function install_pkg_rpm()
 	fi
     fi
 
-    ${SUDO_CMD} yum -y remove PackageKit motif-devel;
+    ${SUDO_CMD} yum -y remove PackageKit motif-devel firewalld;
     ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
@@ -193,8 +197,9 @@ function install_pkg_rpm()
 function yes_or_no_to_go() {
 
     printf  "> \n";
-    printf  "> This procedure could help users to install \n"
-    printf  "> required packages for E3 installation.\n"
+    printf  "> This procedure could help to install    \n"
+    printf  "> required packages for EPICS installation\n"
+    printf  "> and others.\n";
     printf  "> \n";
     printf  "> $1\n";
     read -p ">> Do you want to continue (y/N)? " answer
@@ -354,6 +359,12 @@ case "$dist" in
     *tara*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint tara is detected as $dist";
+	fi
+	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+	;;
+    *tessa*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Linux Mint tessa is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
