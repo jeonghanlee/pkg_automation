@@ -36,5 +36,5 @@ libraw1394.x86_64
 #
 hg
 # ASYN needs 
-libntirpc-devel
-libntirpc
+libtirpc-devel
+libtirpc

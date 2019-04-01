@@ -33,5 +33,5 @@ libraw1394.x86_64
 #
 hg
 #
-libntirpc-devel
-libntirpc
+libtirpc-devel
+libtirpc
