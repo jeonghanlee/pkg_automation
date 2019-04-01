@@ -32,3 +32,6 @@ systemd-devel
 libraw1394.x86_64
 #
 hg
+#
+libntirpc-devel
+libntirpc
