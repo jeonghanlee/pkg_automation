@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 
-#  version : 1.0.2
+#  Date    : Thursday, April 25 18:03:12 CEST 2019
+#  version : 1.0.3
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -60,7 +60,9 @@
 #          * use N as default
 #   - 1.0.2
 #          * add Mint tessa 
-
+#   - 1.0.3
+#          * added the systemd functions which stop, disable, and mask the service
+#
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -87,6 +89,19 @@ function find_dist() {
 
  
 }
+
+
+function disable_system_service
+{
+    local disable_services=$1; shift
+    
+    printf "Disable service ... %s\n" "${disable_services}"
+    ${SUDO_CMD} systemctl stop    ${disable_services} | echo ">>> Stop    : $disable_services do not exist"
+    ${SUDO_CMD} systemctl disable ${disable_services} | echo ">>> Disalbe : $disable_services do not exist"
+    ${SUDO_CMD} systemctl mask    ${disable_services} | echo ">>> Mask    : $disable_services do not exist"
+
+}
+
 
 
 function pkg_list()
@@ -141,8 +156,8 @@ function install_pkg_dnf()
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    ${SUDO_CMD} systemctl stop packagekit
-    ${SUDO_CMD} systemctl disable packagekit
+    disable_system_service packagekit
+    disable_system_service firewalld
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
@@ -154,7 +169,7 @@ function install_pkg_dnf()
 	fi
     fi
 
-    ${SUDO_CMD} dnf -y remove PackageKit motif-devel;
+    ${SUDO_CMD} dnf -y remove PackageKit motif-devel firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install ${1};
@@ -170,11 +185,8 @@ function install_pkg_rpm()
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    ${SUDO_CMD} systemctl stop packagekit
-    ${SUDO_CMD} systemctl disable packagekit
-    ${SUDO_CMD} systemctl stop firewalld
-    ${SUDO_CMD} systemctrl disable firewalld
-    
+    disable_system_service packagekit
+    disable_system_service firewalld
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
