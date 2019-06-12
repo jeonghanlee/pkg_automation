@@ -2,6 +2,7 @@
 # EPICS installation
 #
 #
+patch
 readline-devel
 libXt-devel
 libXp-devel
@@ -25,6 +26,8 @@ boost-devel
 pcre-devel
 opencv-devel
 libcurl-devel
+# ADSupport libjpeg.h
+libjpeg-turbo-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel
@@ -35,3 +38,5 @@ hg
 #
 libtirpc-devel
 libtirpc
+rpcgen
+
