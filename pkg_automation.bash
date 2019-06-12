@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Thursday, April 25 18:03:12 CEST 2019
-#  version : 1.0.3
+#  Date    : Wednesday, June 12 13:20:50 CEST 2019
+#  version : 1.0.4
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -62,6 +62,9 @@
 #          * add Mint tessa 
 #   - 1.0.3
 #          * added the systemd functions which stop, disable, and mask the service
+#
+#   - 1.0.4
+#          * remove motif-devel in the removal list in dnf
 #
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -169,7 +172,7 @@ function install_pkg_dnf()
 	fi
     fi
 
-    ${SUDO_CMD} dnf -y remove PackageKit motif-devel firewalld;
+    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install ${1};
