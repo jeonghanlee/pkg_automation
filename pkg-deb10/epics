@@ -20,10 +20,7 @@ libsnmp-dev
 re2c
 darcs
 python-dev
-libnetcdf-dev
-libhdf5-dev
 libbz2-dev
-libxml2-dev
 libusb-dev
 # asyn, USBTSM libusb-1.0
 libusb-1.0-0-dev
@@ -31,6 +28,13 @@ remake
 libudev-dev
 libsystemd-dev 
 linux-source
+# ADSupport External libs
+libxml2-dev
+libnetcdf-dev
+libhdf5-dev
+libblosc-dev
+libtiff-dev
+libjpeg-dev 
 #
 #
 #
@@ -40,11 +44,12 @@ mercurial
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
 # ADPluginCalib/Edge
 libopencv-dev
 # Debian 9
 libpng-dev
-#ADPonitGrey Vendor lib has the libraw1394 dep.
-libraw1394-11
+
 # asyn
 libtirpc-dev
