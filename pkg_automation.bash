@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 
-#  version : 1.0.2
+#  Date    : 2019 0707 00:43
+#  version : 1.0.5
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -60,7 +60,15 @@
 #          * use N as default
 #   - 1.0.2
 #          * add Mint tessa 
-
+#   - 1.0.3
+#          * added the systemd functions which stop, disable, and mask the service
+#
+#   - 1.0.4
+#          * remove motif-devel in the removal list in dnf
+#
+#   - 1.0.5
+#          * Debian 10
+#
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -87,6 +95,19 @@ function find_dist() {
 
  
 }
+
+
+function disable_system_service
+{
+    local disable_services=$1; shift
+    
+    printf "Disable service ... %s\n" "${disable_services}"
+    ${SUDO_CMD} systemctl stop    ${disable_services} | echo ">>> Stop    : $disable_services do not exist"
+    ${SUDO_CMD} systemctl disable ${disable_services} | echo ">>> Disalbe : $disable_services do not exist"
+    ${SUDO_CMD} systemctl mask    ${disable_services} | echo ">>> Mask    : $disable_services do not exist"
+
+}
+
 
 
 function pkg_list()
@@ -141,8 +162,8 @@ function install_pkg_dnf()
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    ${SUDO_CMD} systemctl stop packagekit
-    ${SUDO_CMD} systemctl disable packagekit
+    disable_system_service packagekit
+    disable_system_service firewalld
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
@@ -154,7 +175,7 @@ function install_pkg_dnf()
 	fi
     fi
 
-    ${SUDO_CMD} dnf -y remove PackageKit motif-devel;
+    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install ${1};
@@ -170,11 +191,8 @@ function install_pkg_rpm()
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    ${SUDO_CMD} systemctl stop packagekit
-    ${SUDO_CMD} systemctl disable packagekit
-    ${SUDO_CMD} systemctl stop firewalld
-    ${SUDO_CMD} systemctrl disable firewalld
-    
+    disable_system_service packagekit
+    disable_system_service firewalld
     
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
@@ -217,14 +235,18 @@ function yes_or_no_to_go() {
 
 declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
+declare -a PKG_DEB10_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_DNF_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
+#
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
+declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
+#
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
@@ -233,6 +255,7 @@ declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
+declare -ga pkg_deb10_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_rpm_list
@@ -240,6 +263,7 @@ declare -ga pkg_dnf_list
 
 pkg_deb_list=("epics" "ess")
 pkg_deb9_list=("epics" "ess")
+pkg_deb10_list=("epics" "ess")
 pkg_rpi_list=("epics" "ess")
 pkg_ubu16_list=("epics" "ess")
 pkg_rpm_list=("epics" "ess")
@@ -258,6 +282,15 @@ for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=" ";
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
+
+PKG_DEB10_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_deb10_list[@]}; do
+    PKG_DEB10_ARRAY+=" ";
+    PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
+done
+
+
 
 PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -326,6 +359,12 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
 	;;
+    *buster*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
+	fi
+	install_pkg_deb "${PKG_DEB10_ARRAY[@]}"
+	;;	
     *CentOS*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS is detected as $dist";

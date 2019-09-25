@@ -46,3 +46,5 @@ libxp-dev
 libnexus0-dev
 # ADSupport
 libjpeg62-turbo-dev
+#
+libtirpc-dev

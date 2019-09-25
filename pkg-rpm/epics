@@ -15,26 +15,31 @@ perl-devel
 net-snmp
 net-snmp-utils
 net-snmp-devel
-libxml2-devel
-libpng12-devel
 libzip-devel
 libusb-devel
 python-devel
 darcs
-hdf5-devel
 boost-devel
 pcre-devel
-opencv-devel
 libcurl-devel
-# ADSupport libjpeg.h
+# ADSupport  External libs
+libxml2-devel
+hdf5-devel
+netcdf-devel
+blosc-devel
+libtiff-devel
 libjpeg-turbo-devel
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394.x86_64
+# ADPluginCalib/Edge
+opencv-devel
+#
+libpng12-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel
-#ADPonitGrey Vendor lib has the libraw1394 dep.
-libraw1394.x86_64
 #
 hg
 # ASYN needs 
-libntirpc-devel
-libntirpc
+libtirpc-devel
+libtirpc

@@ -40,4 +40,5 @@ mercurial
 libnet1-dev
 libpcap-dev
 # asyn
-libntirpc-dev
+libtirpc-dev
+

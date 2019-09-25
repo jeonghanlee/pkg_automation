@@ -1,9 +1,10 @@
-# Required DEB Packages for EPICS installation
+# Required DEB 10 Packages for EPICS installation
 #
 build-essential
 libreadline-dev
 libxt-dev
-x11proto-print-dev
+# Do we really need the following? 
+#x11proto-print-dev
 libxmu-headers
 libxmu-dev
 libxmu6
@@ -14,33 +15,41 @@ libpcre++-dev
 #
 #
 #
+libmotif-dev
 libsnmp-dev
 re2c
 darcs
 python-dev
-libnetcdf-dev
-libhdf5-dev
-#libnexus0-dev # NeXus scientific data file format
-libpng-dev
 libbz2-dev
-libxml2-dev
 libusb-dev
 # asyn, USBTSM libusb-1.0
 libusb-1.0-0-dev
 remake
 libudev-dev
-libsystemd-dev
+libsystemd-dev 
 linux-source
+# ADSupport External libs
+libxml2-dev
+libnetcdf-dev
+libhdf5-dev
+libblosc-dev
+libtiff-dev
+libjpeg-dev 
+#
+#
 #
 mercurial
+#
 # llrf (nds)
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev
-# ADPluginCalib/Edge
-libopencv-dev
-libpng-dev
 #ADPonitGrey Vendor lib has the libraw1394 dep.
 libraw1394-11
+# ADPluginCalib/Edge
+libopencv-dev
+# Debian 9
+libpng-dev
+
 # asyn
 libtirpc-dev
