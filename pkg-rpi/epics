@@ -38,6 +38,6 @@ mercurial
 #
 # synApps
 libnet1-dev
-ibpcap-dev
+libpcap-dev
 # asyn
 libntirpc-dev
