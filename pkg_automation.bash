@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 2019 0707 00:43
-#  version : 1.0.5
+#  Date    : 2019 1017 
+#  version : 1.0.6
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -69,6 +69,10 @@
 #   - 1.0.5
 #          * Debian 10
 #
+#   - 1.0.6
+#          * CentOS 8 (missing darcs, tclx, blosc-devel)
+#
+
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
@@ -392,16 +396,13 @@ case "$dist" in
 	    yes_or_no_to_go "CentOS is detected as $dist";
 	fi
 	centos_version=$(centos_dist)
-	case "$centos_version" in
-	    8*)
-		echo $centos_version
-		sudo yum config-manager --set-enabled PowerTools
-		install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}"
-		;;
-	    *)
-		install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
-		;;
-	esac
+	if [ "$centos_version" == "8" ]; then
+	    echo $centos_version
+	    sudo yum config-manager --set-enabled PowerTools
+	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}"
+	else
+	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
+	fi
 	;;
     *xenial*)
 	if [ "$ANSWER" == "NO" ]; then

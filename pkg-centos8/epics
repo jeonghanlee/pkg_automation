@@ -8,7 +8,7 @@ libXt-devel
 libXp-devel
 libXmu-devel
 libXpm-devel
-lesstif-devel
+motif-devel
 gcc-c++
 ncurses-devel
 perl-devel
@@ -17,8 +17,8 @@ net-snmp-utils
 net-snmp-devel
 libzip-devel
 libusb-devel
-python-devel
-darcs
+platform-python-devel
+#darcs
 boost-devel
 pcre-devel
 libcurl-devel
@@ -26,7 +26,7 @@ libcurl-devel
 libxml2-devel
 hdf5-devel
 netcdf-devel
-blosc-devel
+#blosc-devel
 libtiff-devel
 libjpeg-turbo-devel
 #ADPonitGrey Vendor lib has the libraw1394 dep.
@@ -34,7 +34,7 @@ libraw1394.x86_64
 # ADPluginCalib/Edge
 opencv-devel
 #
-libpng12-devel
+libpng-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
 systemd-devel
