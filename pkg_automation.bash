@@ -79,6 +79,15 @@ declare -g  KERNEL_VER=$(uname -r)
 . ${SC_TOP}/functions
 
 
+function centos_dist
+{
+
+    local VERSION_ID
+    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=")
+    echo ${VERSION_ID}
+}
+
+
 function find_dist() {
 
     local dist_id dist_cn dist_rs PRETTY_NAME
@@ -239,6 +248,7 @@ declare -a PKG_DEB10_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_RPM_ARRAY
+declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
@@ -250,6 +260,7 @@ declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
+declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 
 
@@ -259,6 +270,7 @@ declare -ga pkg_deb10_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_rpm_list
+declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 
 pkg_deb_list=("epics" "ess")
@@ -267,6 +279,7 @@ pkg_deb10_list=("epics" "ess")
 pkg_rpi_list=("epics" "ess")
 pkg_ubu16_list=("epics" "ess")
 pkg_rpm_list=("epics" "ess")
+pkg_centos8_list=("epics" "ess")
 pkg_dnf_list=("epics" "ess")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -313,6 +326,14 @@ PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 for rpm_file in ${pkg_rpm_list[@]}; do
     PKG_RPM_ARRAY+=" ";
     PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
+done
+
+
+PKG_CENTOS8_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for rpm_file in ${pkg_centos8_list[@]}; do
+    PKG_CENTOS8_ARRAY+=" ";
+    PKG_CENTOS8_ARRAY+=$(pkg_list "${CENTOS8_PATH}/${rpm_file}");
 done
 
 
@@ -366,10 +387,21 @@ case "$dist" in
 	install_pkg_deb "${PKG_DEB10_ARRAY[@]}"
 	;;	
     *CentOS*)
+
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS is detected as $dist";
 	fi
-	install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
+	centos_version=$(centos_dist)
+	case "$centos_version" in
+	    8*)
+		echo $centos_version
+		sudo yum config-manager --set-enabled PowerTools
+		install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}"
+		;;
+	    *)
+		install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
+		;;
+	esac
 	;;
     *xenial*)
 	if [ "$ANSWER" == "NO" ]; then
