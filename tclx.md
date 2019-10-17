@@ -4,5 +4,5 @@ git clone https://github.com/flightaware/tclx
 cd tclx
 ./configure
 make
-make test
 sudo make install
+sudo ln -s /usr/lib/tclx8.6/ /usr/share/tcl8.6/tclx8.6

@@ -121,6 +121,25 @@ function disable_system_service
 
 }
 
+function install_tclx_centos8
+{
+    ${SUDO_CMD} yum install tcl-devel tk-devel
+
+  
+    mkdir -p ${HOME}/.tclx
+    pushd ${HOME}/.tclx
+      
+    git clone https://github.com/flightaware/tclx
+    pushd tclx
+    ./configure
+    make
+    ${SUDO_CMD} make install
+    ${SUDO_CMD} ln -sf /usr/lib/tclx8.6/ /usr/share/tcl8.6/tclx8.6
+    popd
+    popd
+    
+
+}
 
 
 function pkg_list()
@@ -400,6 +419,7 @@ case "$dist" in
 	    echo $centos_version
 	    sudo yum config-manager --set-enabled PowerTools
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}"
+	    install_tclx_centos8
 	else
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"
 	fi
