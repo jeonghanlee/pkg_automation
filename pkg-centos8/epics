@@ -40,6 +40,9 @@ libusbx-devel
 systemd-devel
 #
 hg
-# ASYN needs 
+# ASYN needs
 libtirpc-devel
 libtirpc
+# PowerTools
+rpcgen
+
