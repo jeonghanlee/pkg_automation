@@ -14,7 +14,8 @@ m4
 # EPICS Base
 re2c
 # E3 require needs
-tclx
+tcl
+#tclx
 #realpath
 coreutils
 #
