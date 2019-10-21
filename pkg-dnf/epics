@@ -39,4 +39,5 @@ hg
 libtirpc-devel
 libtirpc
 rpcgen
-
+# require
+tclx
