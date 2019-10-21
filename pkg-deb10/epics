@@ -53,3 +53,5 @@ libpng-dev
 
 # asyn
 libtirpc-dev
+# require
+tclx
