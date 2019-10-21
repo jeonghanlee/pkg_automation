@@ -44,3 +44,5 @@ libpng-dev
 libraw1394-11
 # asyn
 libtirpc-dev
+# require
+tclx
