@@ -38,6 +38,8 @@ mercurial
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev 
+# require
+tclx
 # ADPluginCalib/Edge
 libopencv-dev
 # Debian 8
