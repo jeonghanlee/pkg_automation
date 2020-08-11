@@ -445,7 +445,7 @@ case "$dist" in
 	if [ "$centos_version" == "8" ]; then
 	    echo $centos_version
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
-	    install_tclx_centos8
+#	    install_tclx_centos8
 	else
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
 	fi
