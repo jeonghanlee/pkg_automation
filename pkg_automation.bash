@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (c) 2014 - 2019    Jeong Han Lee
+#  Copyright (c) 2014 - 2021    Jeong Han Lee
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 2019 1019
-#  version : 1.0.6
+#  Date    : 2021/02/26
+#  version : 1.0.7
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -73,6 +73,10 @@
 #          * CentOS 8 (missing darcs, tclx, blosc-devel)
 #          * CentOS 8 (improved to handle CentOS8 case)
 #            
+#   - 1.0.7  
+#          * Ubuntu 20
+#
+#
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -298,6 +302,7 @@ declare -a PKG_DEB9_ARRAY
 declare -a PKG_DEB10_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
+declare -a PKG_UBU20_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
@@ -310,6 +315,7 @@ declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
 #
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
+declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
@@ -320,18 +326,20 @@ declare -ga pkg_deb9_list
 declare -ga pkg_deb10_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
+declare -ga pkg_ubu20_list
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 
-pkg_deb_list=("epics" "ess")
-pkg_deb9_list=("epics" "ess")
-pkg_deb10_list=("epics" "ess")
-pkg_rpi_list=("epics" "ess")
-pkg_ubu16_list=("epics" "ess")
-pkg_rpm_list=("epics" "ess")
-pkg_centos8_list=("epics" "ess")
-pkg_dnf_list=("epics" "ess")
+pkg_deb_list=("epics" "extra")
+pkg_deb9_list=("epics" "extra")
+pkg_deb10_list=("epics" "extra")
+pkg_rpi_list=("epics" "extra")
+pkg_ubu16_list=("epics" "extra")
+pkg_ubu20_list=("epics" "extra")
+pkg_rpm_list=("epics" "extra")
+pkg_centos8_list=("epics" "extra")
+pkg_dnf_list=("epics" "extra")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -370,6 +378,16 @@ for deb_file in ${pkg_ubu16_list[@]}; do
     PKG_UBU16_ARRAY+=" ";
     PKG_UBU16_ARRAY+=$(pkg_list "${UBU16_PATH}/${deb_file}");
 done
+
+
+PKG_UBU20_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_ubu20_list[@]}; do
+    PKG_UBU20_ARRAY+=" ";
+    PKG_UBU20_ARRAY+=$(pkg_list "${UBU20_PATH}/${deb_file}");
+done
+
+
 
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -468,6 +486,12 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+    *focal*)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu focal is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+        ;;
     *sylvia*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
