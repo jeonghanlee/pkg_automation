@@ -1,17 +1,15 @@
-A Script of several packages installation for EPICS and personal environment.
----
+# Package Installation Script for the EPICS environment and my personal environment.
 
-[![Build Status](https://travis-ci.org/jeonghanlee/pkg_automation.svg?branch=master)](https://travis-ci.org/jeonghanlee/pkg_automation)
+It is the most cumbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. This ugly script helps me to save my time to install many packages among many Linux distributions.
+And it was tested with the following distributions:
 
-It is the most cumbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. Most frequent used Linux flavors are CentOS and Debian. Thus, this script covers only these Linux one. 
-
-It is tested with
 * CentOS 
 * Debian 
 * Ubuntu 
 * LinuxMint
 * Fedora
 * Raspbian
+* Rocky 8
 
 And sudo permission is needed. 
 
