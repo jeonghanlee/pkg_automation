@@ -307,7 +307,6 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
-    ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
     ${SUDO_CMD} dnf -y install ${pkg_list};
 }
 
@@ -381,7 +380,7 @@ pkg_ubu20_list=("epics" "extra")
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("epics" "extra")
 pkg_dnf_list=("epics" "extra")
-pkg_rocky8_list=("epics" "extra")
+pkg_rocky8_list=("common" "epics" "extra")
 
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -456,8 +455,6 @@ for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=" ";
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
-
-PKG_ROCKY8_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=" ";
