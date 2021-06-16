@@ -185,14 +185,21 @@ function pkg_list
 function install_pkg_deb
 {
     declare -a pkg_list=${1}
-    
-    printf "\n\n";
-    printf "The following package list will be installed:\n\n"
-    printf "$pkg_list linux-headers-${KERNEL_VER}\n";
-    printf "\n\n"
 
-    ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    # Debian Docker, we cannot find the linux-headers,
+    # Unable to locate package linux-headers-5.8.0-1033-azure
+    # linux-headers are not necessary for a commom application.
+    # We ignore within Docker image
+    ${SUDO_CMD} apt update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
+        printf "%s linux-headers-%s\n" "${pkg_list}" "$KERNEL_VER}";
+        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    else
+        printf "%s\n" "${pkg_list}";
+        ${SUDO_CMD} apt -y install ${pkg_list}
+    fi
 }
 
 
