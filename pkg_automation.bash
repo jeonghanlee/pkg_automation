@@ -284,6 +284,8 @@ function install_pkg_rocky8
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
+    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
+
     disable_system_service packagekit
     disable_system_service firewalld
     
@@ -305,6 +307,7 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
     ${SUDO_CMD} dnf -y install ${pkg_list};
 }
 
