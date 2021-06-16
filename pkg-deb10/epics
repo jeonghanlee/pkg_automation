@@ -50,8 +50,13 @@ libraw1394-11
 libopencv-dev
 # Debian 9
 libpng-dev
-
 # asyn
 libtirpc-dev
 # require
 tclx
+#measComp
+libhidapi-libusb0
+libhidapi-dev
+libusb-1.0-0-dev
+libusb-1.0-0
+

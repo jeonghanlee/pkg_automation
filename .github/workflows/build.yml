@@ -1,0 +1,19 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }} 
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ubuntu-18.04 ]
+    steps:
+      - name: Install the packages
+        run: |
+          sudo apt update -y 
+          sudo apt install -y bash sudo
+      - uses: actions/checkout@v1
+      - name: Run
+        run: bash pkg_automation.bash -y

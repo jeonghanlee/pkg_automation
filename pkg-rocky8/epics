@@ -46,3 +46,8 @@ libtirpc
 # PowerTools
 rpcgen
 re2c
+#
+hidapi-devel
+hidapi
+libusb-devel
+libusb

@@ -45,3 +45,9 @@ libraw1394-11
 libtirpc-dev
 # require
 tclx
+#
+libhidapi-dev
+libhidapi-libusb0
+libhidapi-dev
+libusb-1.0-0
+
