@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : 2021/02/26
-#  version : 1.0.7
+#  Date    : Wed Jun 16 00:04:58 PDT 2021
+#  version : 1.0.8
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -76,7 +76,8 @@
 #   - 1.0.7  
 #          * Ubuntu 20
 #
-#
+#   - 1.0.8
+#          * Rocky 8
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME=${0##*/}
@@ -274,6 +275,38 @@ function install_pkg_rpm
     ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y install ${pkg_list}
 }
+
+function install_pkg_rocky8
+{
+    declare -a pkg_list=${1}
+    printf "\n";
+    printf "$pkg_list\n";
+    printf "\n\n\n"
+    declare -r yum_pid="/var/run/yum.pid"
+
+    disable_system_service packagekit
+    disable_system_service firewalld
+    
+    # Somehow, yum is running due to PackageKit, so if so, kill it
+    #
+    if [[ -e ${yum_pid} ]]; then
+	${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	if [ $? -ne 0 ]; then
+	    printf "Remove the orphan yum pid\n";
+	    ${SUDO_CMD} rm -rf ${yum_pid}
+	fi
+    fi
+    ${SUDO_CMD} dnf config-manager --set-enabled PowerTools
+
+    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y groupinstall "Development tools"
+    ${SUDO_CMD} dnf -y install "epel-release"
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y install ${pkg_list};
+}
+
+
 
 function yes_or_no_to_go
 {
@@ -485,7 +518,7 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Rocky is detected as $dist";
 	fi
-        install_pkg_dnf "${PKG_ROCKY8_ARRAY[@]}"
+        install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
 	;;
 
     *xenial*)
