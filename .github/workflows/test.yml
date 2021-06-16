@@ -49,7 +49,7 @@ jobs:
           bash pkg_automation.bash -y
         name: Test on CentOS7 Docker
 
-   CentOS8:
+  CentOS8:
     runs-on: ubuntu-latest
     container: centos8
     steps:
@@ -61,4 +61,3 @@ jobs:
           bash pkg_automation.bash -y
         name: Test on Rocky Docker
  
-
