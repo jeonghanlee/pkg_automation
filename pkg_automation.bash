@@ -278,7 +278,9 @@ function install_pkg_rpm
     
     if [ "$version" == "8" ]; then
 	pkgs_should_be_removed+=" "
-	${SUDO_CMD} yum config-manager --set-enabled PowerTools
+	${SUDO_CMD} yum -y install dnf-plugins-core;
+        ${SUDO_CMD} yum update;
+        ${SUDO_CMD} yum config-manager --set-enabled PowerTools
     else
 	pkgs_should_be_removed+=" "
 	pkgs_should_be_removed+="motif-devel"
@@ -290,7 +292,7 @@ function install_pkg_rpm
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum update;
-    ${SUDO_CMD} yum -y install ${pkg_list}
+    ${SUDO_CMD} yum -y install ${pkg_list};
 }
 
 function install_pkg_rocky8
@@ -596,4 +598,4 @@ case "$dist" in
 	;;
 esac
 
-exit 0;
+exit;
