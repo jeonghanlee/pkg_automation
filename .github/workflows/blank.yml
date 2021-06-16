@@ -4,12 +4,12 @@ on:
   push:
     branches: [ master ]
 
-
 jobs:
   vm:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - run: bash pkg_automation.bash -y
         name: Run on Runner ubuntu-latest
     
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     container: rockylinux/rockylinux:8.4-rc1
     steps:
+      - uses: actions/checkout@v2
       - run: bash pkg_automation.bash -y
-        name: Run on Docker 
-        
+        name: Run on Docker
         
