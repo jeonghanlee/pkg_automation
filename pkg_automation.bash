@@ -397,7 +397,7 @@ pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
 pkg_rpm_list=("epics" "extra")
-pkg_centos8_list=("epics" "extra")
+pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
 
@@ -458,8 +458,6 @@ for rpm_file in ${pkg_rpm_list[@]}; do
     PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
 done
 
-
-PKG_CENTOS8_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for rpm_file in ${pkg_centos8_list[@]}; do
     PKG_CENTOS8_ARRAY+=" ";
