@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  vm:
+  Ubuntu:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,11 +13,15 @@ jobs:
       - run: bash pkg_automation.bash -y
         name: Run on Runner ubuntu-latest
     
-  container:
+  Rocky:
     runs-on: ubuntu-latest
     container: rockylinux/rockylinux:8.4-rc1
     steps:
       - uses: actions/checkout@v2
-      - run: bash pkg_automation.bash -y
+      - run: |
+          dnf install -y sudo 
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y
         name: Run on Docker
-        
+      
