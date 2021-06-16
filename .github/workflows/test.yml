@@ -36,4 +36,29 @@ jobs:
           apt update && apt install -y sudo
           bash pkg_automation.bash -y
         name: Test on Debian Docker
-     
+
+  CentOS7:
+    runs-on: ubuntu-latest
+    container: centos:7.9.2009
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          yum install -y sudo 
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y
+        name: Test on CentOS7 Docker
+
+   CentOS8:
+    runs-on: ubuntu-latest
+    container: centos8
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          dnf install -y sudo 
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y
+        name: Test on Rocky Docker
+ 
+
