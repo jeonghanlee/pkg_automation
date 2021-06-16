@@ -280,7 +280,7 @@ function install_pkg_rpm
 	pkgs_should_be_removed+=" "
 	${SUDO_CMD} yum -y install dnf-plugins-core;
         ${SUDO_CMD} yum update;
-        ${SUDO_CMD} yum config-manager --set-enabled PowerTools
+        ${SUDO_CMD} yum config-manager --set-enabled powertools;
     else
 	pkgs_should_be_removed+=" "
 	pkgs_should_be_removed+="motif-devel"
