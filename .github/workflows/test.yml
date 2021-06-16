@@ -23,5 +23,17 @@ jobs:
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
           bash pkg_automation.bash -y
-        name: Run on Docker
-      
+        name: Test on Rocky Docker
+
+  Debian:
+    runs-on: ubuntu-latest
+    container: debian:stable-slim
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          apt install -y sudo 
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y
+        name: Test on Debian Docker
+     
