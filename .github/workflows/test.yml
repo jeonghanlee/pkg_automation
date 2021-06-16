@@ -33,6 +33,7 @@ jobs:
       - run: |
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
+          apt update && apt install -y sudo
           bash pkg_automation.bash -y
         name: Test on Debian Docker
      
