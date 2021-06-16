@@ -296,8 +296,8 @@ function install_pkg_rocky8
 	    ${SUDO_CMD} rm -rf ${yum_pid}
 	fi
     fi
-    ${SUDO_CMD} dnf config-manager --set-enabled PowerTools
-
+    ${SUDO_CMD} dnf config-manager --set-enabled powertools
+    ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
