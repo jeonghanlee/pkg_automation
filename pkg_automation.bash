@@ -468,6 +468,21 @@ case "$dist" in
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
 	fi
 	;;
+    *Rocky*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "Rocky is detected as $dist";
+	fi
+        exit
+	centos_version=$(centos_dist)
+	if [ "$centos_version" == "8" ]; then
+	    echo $centos_version
+	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
+#	    install_tclx_centos8
+	else
+	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
+	fi
+	;;
+
     *xenial*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu xenial is detected as $dist";
