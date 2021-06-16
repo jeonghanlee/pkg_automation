@@ -306,6 +306,7 @@ declare -a PKG_UBU20_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
+declare -a PKG_ROCLY8_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 #
@@ -319,7 +320,7 @@ declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
-
+declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
@@ -330,6 +331,8 @@ declare -ga pkg_ubu20_list
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
+declare -ga pkg_rocky8_list
+
 
 pkg_deb_list=("epics" "extra")
 pkg_deb9_list=("epics" "extra")
@@ -340,6 +343,8 @@ pkg_ubu20_list=("epics" "extra")
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("epics" "extra")
 pkg_dnf_list=("epics" "extra")
+pkg_rocky8_list=("epics" "extra")
+
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -414,6 +419,14 @@ for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
 
+PKG_ROCKY8_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for rocky_file in ${pkg_rocky8_list[@]}; do
+    PKG_ROCKY8_ARRAY+=" ";
+    PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
+done
+
+
 ANSWER="NO"
 
 while getopts ":y" opt; do
@@ -472,15 +485,7 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Rocky is detected as $dist";
 	fi
-        exit
-	centos_version=$(centos_dist)
-	if [ "$centos_version" == "8" ]; then
-	    echo $centos_version
-	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
-#	    install_tclx_centos8
-	else
-	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
-	fi
+        install_pkg_dnf "${PKG_ROCKY8_ARRAY[@]}"
 	;;
 
     *xenial*)
