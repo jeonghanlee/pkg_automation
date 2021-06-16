@@ -4,13 +4,13 @@
 It is the most cumbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. This ugly script helps me to save my time to install many packages among many Linux distributions.
 And it was tested with the following distributions:
 
-* CentOS 
-* Debian 
-* Ubuntu 
+* CentOS 7/8 (Github Action)
+* Debian 10 (Github Action)
+* Ubuntu 20 (Github Action)
 * LinuxMint
 * Fedora
 * Raspbian
-* Rocky 8
+* Rocky 8 (Github Action)
 
 And sudo permission is needed. 
 
