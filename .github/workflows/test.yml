@@ -27,7 +27,7 @@ jobs:
 
   Debian:
     runs-on: ubuntu-latest
-    container: debian:stable-slim
+    container: debian:stable
     steps:
       - uses: actions/checkout@v2
       - run: |
