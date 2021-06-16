@@ -301,7 +301,7 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "epel-release"
+#    ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
 }
