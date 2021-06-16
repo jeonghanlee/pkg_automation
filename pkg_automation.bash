@@ -192,7 +192,7 @@ function install_pkg_deb
     printf "\n\n"
 
     ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install "${pkg_list}" "linux-headers-${KERNEL_VER}";
+    ${SUDO_CMD} apt-get -y install ${pkg_list} linux-headers-${KERNEL_VER};
 }
 
 
@@ -202,11 +202,11 @@ function install_pkg_rpi()
     
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    printf "%s raspberrypi-kernel-headers\n" "$pkg_list";
+    printf "$pkg_list raspberrypi-kernel-headers\n";
     printf "\n\n"
 
     ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install "${pkg_list}" raspberrypi-kernel-headers
+    ${SUDO_CMD} apt-get -y install ${pkg_list}  raspberrypi-kernel-headers
 }
 
 
@@ -214,7 +214,7 @@ function install_pkg_dnf
 {
     declare -a pkg_list=${1}
     printf "\n";
-    printf "%s\n" "$pkg_list";
+    printf "$pkg_list\n";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
@@ -234,7 +234,7 @@ function install_pkg_dnf
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "${pkg_list}";
+    ${SUDO_CMD} dnf -y install ${pkg_list};
 }
 
 
@@ -249,7 +249,7 @@ function install_pkg_rpm
     declare -a pkg_list=${1}
     local version="${2}"
     printf "\n";
-    printf "%s\n" "$pkg_list"
+    printf "$pkg_list\n";
     printf "\n\n\n"
 
     declare -r yum_pid="/var/run/yum.pid"
@@ -283,14 +283,14 @@ function install_pkg_rpm
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum update;
-    ${SUDO_CMD} yum -y install "${pkg_list}"
+    ${SUDO_CMD} yum -y install ${pkg_list}
 }
 
 function install_pkg_rocky8
 {
     declare -a pkg_list=${1}
     printf "\n";
-    printf "%s\n" "$pkg_list";
+    printf "$pkg_list\n";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
@@ -305,7 +305,7 @@ function install_pkg_rocky8
 	${SUDO_CMD} kill -9 $(cat ${yum_pid})
 	if [ $? -ne 0 ]; then
 	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf "${yum_pid}"
+	    ${SUDO_CMD} rm -rf ${yum_pid}
 	fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
@@ -317,7 +317,7 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
-    ${SUDO_CMD} dnf -y install "${pkg_list}";
+    ${SUDO_CMD} dnf -y install ${pkg_list};
 }
 
 
@@ -330,7 +330,7 @@ function yes_or_no_to_go
     printf  "> required packages for EPICS installation\n"
     printf  "> and others.\n";
     printf  "> \n";
-    printf  "> %s\n" "$1";
+    printf  "> $1\n";
     read -p ">> Do you want to continue (y/N)? " answer
     case ${answer:0:1} in
 	y|Y )
@@ -353,7 +353,7 @@ declare -a PKG_UBU20_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
-declare -a PKG_ROCKY8_ARRAY
+declare -a PKG_ROCLY8_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 #
@@ -393,48 +393,48 @@ pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
 
 
-PKG_DEB_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_deb_list[@]}"; do
+for deb_file in ${pkg_deb_list[@]}; do
     PKG_DEB_ARRAY+=" ";
     PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${deb_file}");
 done
 
-PKG_DEB9_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_DEB9_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_deb9_list[@]}"; do
+for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=" ";
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
 
-PKG_DEB10_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_DEB10_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_deb10_list[@]}"; do
+for deb_file in ${pkg_deb10_list[@]}; do
     PKG_DEB10_ARRAY+=" ";
     PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
 done
 
 
 
-PKG_RPI_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_rpi_list[@]}"; do
+for deb_file in ${pkg_rpi_list[@]}; do
     PKG_RPI_ARRAY+=" ";
     PKG_RPI_ARRAY+=$(pkg_list "${RPI_PATH}/${deb_file}");
 done
 
 
-PKG_UBU16_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_UBU16_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_ubu16_list[@]}"; do
+for deb_file in ${pkg_ubu16_list[@]}; do
     PKG_UBU16_ARRAY+=" ";
     PKG_UBU16_ARRAY+=$(pkg_list "${UBU16_PATH}/${deb_file}");
 done
 
 
-PKG_UBU20_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_UBU20_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for deb_file in "${pkg_ubu20_list[@]}"; do
+for deb_file in ${pkg_ubu20_list[@]}; do
     PKG_UBU20_ARRAY+=" ";
     PKG_UBU20_ARRAY+=$(pkg_list "${UBU20_PATH}/${deb_file}");
 done
@@ -442,30 +442,31 @@ done
 
 
 
-PKG_RPM_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for rpm_file in "${pkg_rpm_list[@]}"; do
+for rpm_file in ${pkg_rpm_list[@]}; do
     PKG_RPM_ARRAY+=" ";
     PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
 done
 
 
-PKG_CENTOS8_ARRAY+=$(pkg_list "${COM_PATH}/common")
+PKG_CENTOS8_ARRAY=$(pkg_list ${COM_PATH}/common)
 
-for rpm_file in "${pkg_centos8_list[@]}"; do
+for rpm_file in ${pkg_centos8_list[@]}; do
     PKG_CENTOS8_ARRAY+=" ";
     PKG_CENTOS8_ARRAY+=$(pkg_list "${CENTOS8_PATH}/${rpm_file}");
 done
 
 
-PKG_DNF_ARRAY+=$(pkg_list "${COM_PATH}/common")
 
-for dnf_file in "${pkg_dnf_list[@]}"; do
+PKG_DNF_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=" ";
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
 
-for rocky_file in "${pkg_rocky8_list[@]}"; do
+for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=" ";
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
 done
@@ -518,7 +519,7 @@ case "$dist" in
 	fi
 	centos_version=$(centos_dist)
 	if [ "$centos_version" == "8" ]; then
-#	    echo $centos_version
+	    echo $centos_version
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
 #	    install_tclx_centos8
 	else
@@ -582,11 +583,10 @@ case "$dist" in
 	;;
     *)
 	printf "\n";
-	printf "Doesn't support the detected %\n" "$dist";
+	printf "Doesn't support the detected %\n "$dist";
 	printf "Please contact jeonghan.lee@gmail.com\n";
 	printf "\n";
 	;;
 esac
 
-exit 0
-
+exit 0;
