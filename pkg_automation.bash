@@ -194,10 +194,10 @@ function install_pkg_deb
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-        printf "%s linux-headers-%s\n" "${pkg_list}" "$KERNEL_VER}";
+        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
         ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     else
-        printf "%s\n" "${pkg_list}";
+        printf "%s\n\n" "${pkg_list}";
         ${SUDO_CMD} apt -y install ${pkg_list}
     fi
 }
@@ -392,7 +392,7 @@ declare -ga pkg_rocky8_list
 
 pkg_deb_list=("epics" "extra")
 pkg_deb9_list=("epics" "extra")
-pkg_deb10_list=("epics" "extra")
+pkg_deb10_list=("common" "epics" "extra")
 pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
@@ -416,13 +416,11 @@ for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
 
-PKG_DEB10_ARRAY=$(pkg_list ${COM_PATH}/common)
-
+# Debian 10 (Buster)
 for deb_file in ${pkg_deb10_list[@]}; do
     PKG_DEB10_ARRAY+=" ";
     PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
 done
-
 
 
 PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -449,8 +447,6 @@ for deb_file in ${pkg_ubu20_list[@]}; do
 done
 
 
-
-
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for rpm_file in ${pkg_rpm_list[@]}; do
@@ -465,7 +461,6 @@ for rpm_file in ${pkg_centos8_list[@]}; do
 done
 
 
-
 PKG_DNF_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for dnf_file in ${pkg_dnf_list[@]}; do
@@ -473,6 +468,7 @@ for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
 
+# Rocky 8.4-rc1
 for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=" ";
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");

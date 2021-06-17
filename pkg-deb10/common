@@ -1,0 +1,24 @@
+screen
+telnet
+nano
+unzip
+git
+tree
+emacs
+xterm
+ipmitool
+autoconf
+libtool
+automake
+m4
+# EPICS Base
+re2c
+# E3 require needs
+tcl
+#tclx
+#realpath
+coreutils
+#
+graphviz
+
+
