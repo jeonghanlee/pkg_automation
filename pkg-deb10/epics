@@ -38,7 +38,7 @@ libjpeg-dev
 #
 #
 #
-mercurial
+#mercurial
 #
 # llrf (nds)
 libboost-dev
@@ -53,7 +53,7 @@ libpng-dev
 # asyn
 libtirpc-dev
 # require
-tclx
+#tclx
 #measComp
 libhidapi-libusb0
 libhidapi-dev

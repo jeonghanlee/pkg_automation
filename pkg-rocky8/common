@@ -1,17 +1,16 @@
 screen
-telnet
-nano
-unzip
+#telnet
+#nano
+#unzip
 git
 tree
-xterm
-ipmitool
-autoconf
-libtool
-automake
-m4
+#xterm
+#ipmitool
+#autoconf
+#libtool
+#automake
+#m4
 # EPICS Base
 re2c
 graphviz
-
 

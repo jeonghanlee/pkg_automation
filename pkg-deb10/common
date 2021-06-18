@@ -1,24 +1,23 @@
 screen
-telnet
-nano
-unzip
+#telnet
+#nano
+#unzip
 git
 tree
-emacs
-xterm
-ipmitool
-autoconf
-libtool
-automake
-m4
+#emacs
+#xterm
+#ipmitool
+#autoconf
+#libtool
+#automake
+#m4
 # EPICS Base
 re2c
 # E3 require needs
-tcl
+#tcl
 #tclx
-#realpath
+realpath
 coreutils
 #
 graphviz
-
 

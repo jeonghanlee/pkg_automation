@@ -1,9 +1,9 @@
-fonts-liberation
-logrotate
-curl
-net-tools
-symlinks
-dkms
-procserv
+#fonts-liberation
+#logrotate
+#curl
+#net-tools
+#symlinks
+#dkms
+#procserv
 #
-elpa-markdown-mode
+#elpa-markdown-mode

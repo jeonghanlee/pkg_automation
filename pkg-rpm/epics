@@ -39,9 +39,9 @@ libpng12-devel
 libusbx-devel
 systemd-devel
 #
-hg
+#hg
 # ASYN needs 
 libtirpc-devel
 libtirpc
 #require
-tclx
+#tclx
