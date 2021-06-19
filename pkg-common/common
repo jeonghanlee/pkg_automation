@@ -12,7 +12,7 @@ tree
 #automake
 #m4
 # EPICS Base
-#re2c
+re2c
 # E3 require needs
 #tcl
 #tclx
