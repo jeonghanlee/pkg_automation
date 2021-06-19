@@ -45,3 +45,7 @@ libtirpc-devel
 libtirpc
 #require
 #tclx
+hidapi-devel
+hidapi
+libusb-devel
+libusb
