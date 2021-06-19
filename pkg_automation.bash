@@ -85,11 +85,10 @@ declare -g SC_TOP;
 declare -g SUDO_CMD;
 declare -g KERNEL_VER;
 
-SC_SCRIPT=${BASH_SOURCE[0]:-${0}}}
-"$(realpath "$0")";
+SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 #SC_SCRIPTNAME=${0##*/};
-SC_TOP="${SC_SCRIPT%/*}"
-
+SC_TOP="$( cd -P "$( dirname "$SC_SCRIPT" )" && pwd )"
+#"${SC_SCRIPT%/*}"
 
 function pushd { builtin pushd "$@" > /dev/null || exit; }
 function popd  { builtin popd  > /dev/null || exit; }
