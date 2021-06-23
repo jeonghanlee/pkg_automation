@@ -586,7 +586,7 @@ case "$dist" in
 	;;
     *)
 	printf "\n";
-	printf "Doesn't support the detected %\n" "$dist";
+	printf "Doesn't support the detected %s\n" "$dist";
 	printf "Please contact jeonghan.lee@gmail.com\n";
 	printf "\n";
 	;;
