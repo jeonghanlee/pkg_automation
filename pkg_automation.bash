@@ -198,7 +198,7 @@ function install_pkg_deb
 #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
 #    else
      printf "%s\n\n" "${pkg_list}";
-     ${SUDO_CMD} apt -y install ${pkg_list}
+     ${SUDO_CMD} apt -y install --no-install-recommends ${pkg_list}
 #    fi
 }
 
@@ -289,6 +289,7 @@ function install_pkg_rpm
     printf "The following packages are being removed ....\n"
     ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
     ${SUDO_CMD} yum update;
+    ${SUDO_CMD} yum -y upgarde ca-certificates
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum update;
