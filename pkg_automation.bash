@@ -516,7 +516,7 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_DEB10_ARRAY[@]}"
 	;;	
-    *CentOS*)
+    *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS is detected as $dist";
 	fi
