@@ -198,7 +198,7 @@ function install_pkg_deb
 #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
 #    else
      printf "%s\n\n" "${pkg_list}";
-     ${SUDO_CMD} apt -y install --no-install-recommends ${pkg_list}
+     ${SUDO_CMD} apt -y install ${pkg_list}
 #    fi
 }
 
