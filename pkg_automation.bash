@@ -301,8 +301,8 @@ function install_pkg_rpm
     
     if [ "$version" == "8" ]; then
 	pkgs_should_be_removed+=" "
-	${SUDO_CMD} yum -y install dnf-plugins-core;
-        ${SUDO_CMD} yum update;
+	    ${SUDO_CMD} yum -y install dnf-plugins-core;
+        ${SUDO_CMD} yum -y update;
         ${SUDO_CMD} yum config-manager --set-enabled powertools;
     else
 	pkgs_should_be_removed+=" "
@@ -311,11 +311,11 @@ function install_pkg_rpm
     fi
     printf "The following packages are being removed ....\n"
     ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
-    ${SUDO_CMD} yum update;
+    ${SUDO_CMD} yum -y update;
     ${SUDO_CMD} yum -y upgarde ca-certificates
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
-    ${SUDO_CMD} yum update;
+    ${SUDO_CMD} yum -y update;
     ${SUDO_CMD} yum -y install ${pkg_list};
     # Set Python3 as default
     #
