@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Wed Jun 16 00:04:58 PDT 2021
-#  version : 1.0.8
+#  Date    : Fri 25 Jun 2021 10:55:26 AM PDT
+#  version : 1.0.9
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -78,7 +78,9 @@
 #
 #   - 1.0.8
 #          * Rocky 8
-
+#
+#   - 1.0.9 * CentOS7/Rocky8 switch Python 2 -> Python 3
+#
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
@@ -296,7 +298,7 @@ function install_pkg_rpm
     ${SUDO_CMD} yum -y install ${pkg_list};
     # Set Python3 as default
     #
-    if [ "$version" == "7" ]; then
+    if [[ "$version" == "7" || "$version" == *"7."* ]]; then
     	${SUDO_CMD} yum -y install python3;
     	${SUDO_CMD} yum -y install gcc openssl-devel bzip2-devel libffi-devel;
     	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
@@ -480,7 +482,7 @@ for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
 done
 
-# Rocky 8.4-rc1
+# Rocky 8.4
 for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=" ";
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
