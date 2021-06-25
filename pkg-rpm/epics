@@ -49,3 +49,6 @@ hidapi-devel
 hidapi
 libusb-devel
 libusb
+#
+python3-devel
+
