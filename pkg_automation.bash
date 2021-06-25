@@ -205,7 +205,7 @@ funcition install_pkg_deb
 }
 
 
-funcition install_pkg_deb10
+function install_pkg_deb10
 {
     declare -a pkg_list=${1}
 
