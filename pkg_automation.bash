@@ -294,6 +294,17 @@ function install_pkg_rpm
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum update;
     ${SUDO_CMD} yum -y install ${pkg_list};
+    # Set Python3 as default
+    #
+    if [ "$version" == "7" ]; then
+    	${SUDO_CMD} yum -y install python3;
+    	${SUDO_CMD} yum -y install gcc openssl-devel bzip2-devel libffi-devel;
+    	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
+    	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3.6 60
+    	${SUDO_CMD} alternatives --auto python
+    	${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/bin/yum
+    	${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/libexec/urlgrabber-ext-down
+    fi
 }
 
 function install_pkg_rocky8
@@ -519,7 +530,7 @@ case "$dist" in
 	;;	
     *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "CentOS is detected as $dist";
+	    yes_or_no_to_go "CentOS or Scientific is detected as $dist";
 	fi
 	centos_version=$(centos_dist)
 	if [ "$centos_version" == "8" ]; then
