@@ -184,7 +184,7 @@ function pkg_list
 }
 
 
-funcition install_pkg_deb
+function install_pkg_deb
 {
     declare -a pkg_list=${1}
 
