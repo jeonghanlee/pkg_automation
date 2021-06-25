@@ -321,7 +321,6 @@ function install_pkg_rpm
     #
     if [[ "$version" == "7" || "$version" == *"7."* ]]; then
     	${SUDO_CMD} yum -y install python3;
-    	${SUDO_CMD} yum -y install gcc openssl-devel bzip2-devel libffi-devel;
     	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
     	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3.6 60
     	${SUDO_CMD} alternatives --auto python
