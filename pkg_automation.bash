@@ -184,7 +184,7 @@ function pkg_list
 }
 
 
-function install_pkg_deb
+funcition install_pkg_deb
 {
     declare -a pkg_list=${1}
 
@@ -195,15 +195,36 @@ function install_pkg_deb
     ${SUDO_CMD} apt update;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
-#    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-#        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-#        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-#    else
+    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
+    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
+    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    #    else
      printf "%s\n\n" "${pkg_list}";
-     ${SUDO_CMD} apt -y install ${pkg_list}
-#    fi
+    ${SUDO_CMD} apt -y install ${pkg_list}
+    #    fi
 }
 
+
+funcition install_pkg_deb10
+{
+    declare -a pkg_list=${1}
+
+    # Debian Docker, we cannot find the linux-headers,
+    # Unable to locate package linux-headers-5.8.0-1033-azure
+    # linux-headers are not necessary for a commom application.
+    # We ignore within Docker image
+    ${SUDO_CMD} apt update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
+    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
+    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    #    else
+     printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
+    #    fi
+    update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+}
 
 function install_pkg_rpi()
 {
@@ -341,6 +362,8 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
+    # 3.6 is the rocky default
+    ${SUDO_CMD} alternatives --set python /usr/bin/python3
 }
 
 
@@ -528,7 +551,7 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
 	fi
-	install_pkg_deb "${PKG_DEB10_ARRAY[@]}"
+	install_pkg_deb10 "${PKG_DEB10_ARRAY[@]}"
 	;;	
     *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
