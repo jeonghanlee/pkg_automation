@@ -19,4 +19,5 @@ re2c
 coreutils
 #
 graphviz
+cmake
 

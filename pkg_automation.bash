@@ -223,7 +223,7 @@ function install_pkg_deb10
      printf "%s\n\n" "${pkg_list}";
     ${SUDO_CMD} apt -y install ${pkg_list}
     #    fi
-    update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
 
 function install_pkg_rpi()
