@@ -5,10 +5,10 @@
 #  version : 0.0.1
 
 declare -g SC_SCRIPT;
-declare -g SC_TOP;
+#declare -g SC_TOP;
 
 SC_SCRIPT="$(realpath "$0")";
-SC_TOP="${SC_SCRIPT%/*}"
+#SC_TOP="${SC_SCRIPT%/*}"
 
 function pushd { builtin pushd "$@" > /dev/null || exit; }
 function popd  { builtin popd  > /dev/null || exit; }

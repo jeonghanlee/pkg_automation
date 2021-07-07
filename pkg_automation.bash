@@ -85,7 +85,7 @@ declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
 declare -g SUDO_CMD;
-declare -g KERNEL_VER;
+#declare -g KERNEL_VER;
 
 SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 #SC_SCRIPTNAME=${0##*/};
@@ -96,7 +96,7 @@ function pushd { builtin pushd "$@" > /dev/null || exit; }
 function popd  { builtin popd  > /dev/null || exit; }
 
 SUDO_CMD="sudo"
-KERNEL_VER=$(uname -r)
+#KERNEL_VER=$(uname -r)
 
 . ${SC_TOP}/functions
 
@@ -398,7 +398,7 @@ declare -a PKG_UBU20_ARRAY
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
-declare -a PKG_ROCLY8_ARRAY
+declare -a PKG_ROCKY8_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 #
