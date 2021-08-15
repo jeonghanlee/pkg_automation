@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  Date    : Fri 25 Jun 2021 10:55:26 AM PDT
-#  version : 1.0.9
+#  Date    : Sat 14 Aug 2021 07:40:41 PM PDT
+#  version : 1.1.0
 #
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
@@ -81,6 +81,8 @@
 #
 #   - 1.0.9 * CentOS7/Rocky8 switch Python 2 -> Python 3
 #
+#   - 1.1.0 * Debian 11
+#
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
@@ -100,10 +102,8 @@ SUDO_CMD="sudo"
 
 . ${SC_TOP}/functions
 
-
 function centos_dist
 {
-
     local VERSION_ID
     eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=")
     echo ${VERSION_ID}
@@ -112,7 +112,6 @@ function centos_dist
 
 function find_dist
 {
-
     local dist_id dist_cn dist_rs PRETTY_NAME
     
     if [[ -f /usr/bin/lsb_release ]] ; then
@@ -124,8 +123,6 @@ function find_dist
      	eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
 	echo "${PRETTY_NAME}"
     fi
-
- 
 }
 
 
@@ -163,7 +160,6 @@ function install_tclx_centos8
 	
 	popd
     fi
-    
 
 }
 
@@ -225,6 +221,30 @@ function install_pkg_deb10
     #    fi
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
+
+
+
+function install_pkg_deb11
+{
+    declare -a pkg_list=${1}
+
+    # Debian Docker, we cannot find the linux-headers,
+    # Unable to locate package linux-headers-5.8.0-1033-azure
+    # linux-headers are not necessary for a commom application.
+    # We ignore within Docker image
+    ${SUDO_CMD} apt update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
+    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
+    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    #    else
+     printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
+    #    fi
+}
+
+
 
 function install_pkg_rpi()
 {
@@ -392,6 +412,7 @@ function yes_or_no_to_go
 declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
 declare -a PKG_DEB10_ARRAY
+declare -a PKG_DEB11_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
@@ -405,6 +426,7 @@ declare -g COM_PATH=${SC_TOP}/pkg-common
 declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
 declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
+declare -g DEB11_PATH=${SC_TOP}/pkg-deb11
 #
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
@@ -417,6 +439,7 @@ declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
 declare -ga pkg_deb10_list
+declare -ga pkg_deb11_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
@@ -429,6 +452,7 @@ declare -ga pkg_rocky8_list
 pkg_deb_list=("epics" "extra")
 pkg_deb9_list=("epics" "extra")
 pkg_deb10_list=("common" "epics" "extra")
+pkg_deb11_list=("common" "epics" "extra")
 pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
@@ -456,6 +480,12 @@ done
 for deb_file in ${pkg_deb10_list[@]}; do
     PKG_DEB10_ARRAY+=" ";
     PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
+done
+
+# Debian 11 (Bullseye)
+for deb_file in ${pkg_deb11_list[@]}; do
+    PKG_DEB11_ARRAY+=" ";
+    PKG_DEB11_ARRAY+=$(pkg_list "${DEB11_PATH}/${deb_file}");
 done
 
 
@@ -551,7 +581,13 @@ case "$dist" in
 	    yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
 	fi
 	install_pkg_deb10 "${PKG_DEB10_ARRAY[@]}"
-	;;	
+	;;
+    *bullseye*)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian 11 (Bullseye) is detected as $dist"
+        fi
+        install_pkg_deb11 "${PKG_DEB11_ARRAY[@]}"
+        ;;
     *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS or Scientific is detected as $dist";
