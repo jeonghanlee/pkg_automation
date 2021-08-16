@@ -40,7 +40,7 @@ jobs:
 
   Debian11:
     runs-on: ubuntu-latest
-    container: debian:stable
+    container: debian:bullseye
     steps:
       - uses: actions/checkout@v2
       - run: |
