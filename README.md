@@ -5,7 +5,7 @@ It is the most cumbersome thing that is to install required packages for the EPI
 And it was tested with the following distributions:
 
 * CentOS 7/8 (Github Action)
-* Debian 10 (Github Action)
+* Debian 10/11 (Github Action)
 * Ubuntu 20 (Github Action)
 * LinuxMint
 * Fedora
