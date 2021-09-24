@@ -27,7 +27,7 @@ jobs:
 
   Debian10:
     runs-on: ubuntu-latest
-    container: debian:stable
+    container: debian:buster
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -35,7 +35,23 @@ jobs:
           export LC_ALL=C.UTF-8
           apt update && apt install -y sudo
           bash pkg_automation.bash -y
-        name: Test on Debian Docker
+        name: Test on Debian10 Docker
+
+
+  Debian11:
+    runs-on: ubuntu-latest
+    container: debian:bullseye
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          apt update -y && apt install -y sudo
+          bash pkg_automation.bash -y
+        name: Test on Debian11 Docker
+
+
+
 
   CentOS7:
     runs-on: ubuntu-latest
