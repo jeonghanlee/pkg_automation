@@ -402,7 +402,7 @@ function install_pkg_macos11
     printf "\n\n\n"
 
     local command="brew"
-    ${command} -y install ${pkg_list};
+    ${command} install ${pkg_list};
 }
 
 
