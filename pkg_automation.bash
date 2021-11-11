@@ -456,7 +456,7 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
-declare -g MAC11_PATH=${SC_TOP}/pkg-macos11
+declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
@@ -687,7 +687,7 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "macOS is detected as $dist";
 	fi
-	install_pkg_mac "${PKG_MAC11_ARRAY[@]}";
+	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	;;
     *)
 	printf "\n";
