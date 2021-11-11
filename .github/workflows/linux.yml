@@ -1,5 +1,5 @@
 ---
-name: CI
+name: Linux Build
 
 on:
   push:
