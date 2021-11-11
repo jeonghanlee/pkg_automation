@@ -13,5 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          brew install sudo
+          brew install git curl make
           bash pkg_automation.bash -y
