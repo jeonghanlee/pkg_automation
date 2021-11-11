@@ -1,0 +1,12 @@
+unzip
+git
+tree
+autoconf
+libtool
+automake
+#m4
+# EPICS Base
+re2c
+graphviz
+flex
+
