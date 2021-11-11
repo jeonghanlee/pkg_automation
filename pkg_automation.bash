@@ -109,22 +109,36 @@ function centos_dist
     echo ${VERSION_ID}
 }
 
-
+function macos_dist
+{
+    local VERSION
+    VERSION=$(sw_vers -productVersion)
+    echo "$VERSION}"
+}
 function find_dist
 {
+
     local dist_id dist_cn dist_rs PRETTY_NAME
-    
-    if [[ -f /usr/bin/lsb_release ]] ; then
-     	dist_id=$(lsb_release -is)
-     	dist_cn=$(lsb_release -cs)
-     	dist_rs=$(lsb_release -rs)
-     	echo "$dist_id ${dist_cn} ${dist_rs}"
+    local name version
+
+    if [[ $OSTYPE == 'darwin'* ]]; then
+        name=$(sw_vers -productName)
+        version=$(sw_vers -productVersion)
+        echo "$name" "$version"
     else
-     	eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
-	echo "${PRETTY_NAME}"
+        if [[ -f /usr/bin/lsb_release ]] ; then
+     	    dist_id=$(lsb_release -is)
+     	    dist_cn=$(lsb_release -cs)
+     	    dist_rs=$(lsb_release -rs)
+     	    echo "$dist_id" "${dist_cn}" "${dist_rs}"
+        else 
+            # shellcheck disable=SC2046 disable=SC2002
+     	    eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
+            # shellcheck disable=SC2086
+            echo "${PRETTY_NAME}"
+        fi
     fi
 }
-
 
 function disable_system_service
 {
@@ -386,6 +400,18 @@ function install_pkg_rocky8
 }
 
 
+function install_pkg_macos11
+{
+    declare -a pkg_list=${1}
+    printf "\n";
+    printf "$pkg_list\n";
+    printf "\n\n\n"
+
+    local command="brew"
+    ${command} install ${pkg_list};
+}
+
+
 
 function yes_or_no_to_go
 {
@@ -420,6 +446,7 @@ declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
 declare -a PKG_ROCKY8_ARRAY
+declare -a PKG_MACOS11_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
 #
@@ -435,6 +462,7 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
+declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
 
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
@@ -447,6 +475,7 @@ declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
+declare -ga pkg_macos11_list
 
 
 pkg_deb_list=("epics" "extra")
@@ -460,7 +489,7 @@ pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
-
+pkg_macos11_list=("epics")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -540,6 +569,10 @@ for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
 done
 
+for brew_file in ${pkg_macos11_list[@]}; do
+    PKG_MACOS11_ARRAY+=" ";
+    PKG_MACOS11_ARRAY+=$(pkg_list "${MACOS11_PATH}/${brew_file}");
+done
 
 ANSWER="NO"
 
@@ -655,6 +688,22 @@ case "$dist" in
 	    yes_or_no_to_go "Linux Fedora is detected as $dist";
 	fi
 	install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
+	;;
+    *macOS*)
+	if [ "$ANSWER" == "NO" ]; then
+	    yes_or_no_to_go "macOS is detected as $dist";
+	fi
+	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+	macos_version=$(macos_dist)
+
+	if [[ "$macos_version" =~ .*"11.".* ]]; then
+	    echo $macos_version
+	    install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+	else
+            printf "\n";
+	    printf "Doesn't support yet %s\n" "$dist";
+            printf "\n";
+	fi
 	;;
     *)
 	printf "\n";
