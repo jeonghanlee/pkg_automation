@@ -483,7 +483,7 @@ pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
-pkg_macos11_list=("common" "epics")
+pkg_macos11_list=("epics")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
