@@ -2,8 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
-
+    branches: [ main ] 
+    paths:
+      - '.github/workflow/test.yml'
+      - '**'
+    paths-ignore:
+      - '*.md'
+     
 jobs:
   Ubuntu:
     runs-on: ubuntu-latest
@@ -49,9 +54,6 @@ jobs:
           apt update -y && apt install -y sudo
           bash pkg_automation.bash -y
         name: Test on Debian11 Docker
-
-
-
 
   CentOS7:
     runs-on: ubuntu-latest
