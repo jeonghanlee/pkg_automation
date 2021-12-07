@@ -12,6 +12,7 @@ And it was tested with the following distributions:
 * Fedora
 * Raspbian
 * Rocky 8 (Github Action)
+* Alma 8 (Github Action)
 * macOS 11 (Github Action runner with brew)
 
 And sudo permission is needed. 
