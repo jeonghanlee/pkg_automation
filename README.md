@@ -1,16 +1,18 @@
 # Package Installation Script for the EPICS environment and my personal environment.
-[![CI](https://github.com/jeonghanlee/pkg_automation/actions/workflows/test.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/test.yml)
+[![Linux Build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml)
+[![macOS build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml)
 
 It is the most cumbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. This ugly script helps me to save my time to install many packages among many Linux distributions.
 And it was tested with the following distributions:
 
 * CentOS 7/8 (Github Action)
-* Debian 10 (Github Action)
+* Debian 10/11 (Github Action)
 * Ubuntu 20 (Github Action)
 * LinuxMint
 * Fedora
 * Raspbian
 * Rocky 8 (Github Action)
+* macOS 11 (Github Action runner with brew)
 
 And sudo permission is needed. 
 

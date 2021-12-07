@@ -2,7 +2,7 @@
 #
 #  author  : Jeong Han Lee
 #  email   : jeonghan.lee@gmail.com
-#  version : 0.0.1
+#  version : 0.0.2
 
 declare -g SC_SCRIPT;
 #declare -g SC_TOP;
@@ -30,15 +30,16 @@ make -s -C EPICS-env/ patch
 epics_path=$(make -s -C EPICS-env/ print-INSTALL_LOCATION_EPICS)
 base_path=$(make -s -C EPICS-env/ print-INSTALL_LOCATION_BASE)
 modules_path=$(make -s -C EPICS-env/ print-INSTALL_LOCATION_MODS)
-epics_vers=$(make -s -C EPICS-env/ print-PATH_NAME_EPICS)
+epics_vers=$(make -s -C EPICS-env/ print-PATH_NAME_EPICSVERS)
 symlink_epics_path="${INSTALL_LOCATION}/epics/R${epics_vers}"
-make -s -C EPICS-env/ build
-make -s -C EPICS-env/ install
-make -s -C EPICS-env/ symlinks.modules
-mkdir -p ${symlink_epics_path}
-pushd ${symlink_epics_path} || exit
-ln -snf ${epics_path}/setEpicsEnv.bash setEpicsEnv.bash
-ln -snf ${base_path} base
-ln -snf ${modules_path} module
-popd
-popd
+make -s -C EPICS-env/ build || exit
+make -s -C EPICS-env/ install || exit
+make -s -C EPICS-env/ symlinks.modules || exit
+mkdir -p "${symlink_epics_path}" 
+pushd "${symlink_epics_path}" || exit
+ln -snf "${epics_path}/setEpicsEnv.bash" setEpicsEnv.bash
+ln -snf "${base_path}" base
+ln -snf "${modules_path}" module
+popd || exit
+popd || exit
+

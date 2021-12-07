@@ -1,0 +1,26 @@
+unzip
+git
+tree
+autoconf
+libtool
+automake
+#m4
+# EPICS Base
+re2c
+graphviz
+flex
+readline
+darcs
+ipmitool
+rpcgen
+net-snmp
+pcre
+ncurses
+libusb
+curlpp
+libxml2
+libtiff
+libpng
+libnet
+#
+
