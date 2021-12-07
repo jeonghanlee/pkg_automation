@@ -601,9 +601,9 @@ case "$dist" in
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
 	fi
 	;;
-    *Rocky*)
+    *Rocky* | *Alma* )
 	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Rocky is detected as $dist";
+	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
 	fi
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
 	;;
