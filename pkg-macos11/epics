@@ -25,4 +25,6 @@ libnet
 #
 # Not epics, for ip command
 iproute2mac
+# realpath
+coreutils
 
