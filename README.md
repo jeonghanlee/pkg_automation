@@ -14,6 +14,7 @@ And it was tested with the following distributions:
 * Rocky 8 (Github Action)
 * Alma 8 (Github Action)
 * macOS 11 (Github Action runner with brew)
+* macOS 12 (with brew)
 
 And sudo permission is needed. 
 
