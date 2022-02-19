@@ -113,7 +113,7 @@ function macos_dist
 {
     local VERSION
     VERSION=$(sw_vers -productVersion)
-    echo "$VERSION}"
+    echo "$VERSION"
 }
 function find_dist
 {
@@ -693,12 +693,14 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "macOS is detected as $dist";
 	fi
-	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+#	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	macos_version=$(macos_dist)
-
 	if [[ "$macos_version" =~ .*"11.".* ]]; then
 	    echo $macos_version
 	    install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+	elif [[ "$macos_version" =~ .*"12.".* ]]; then
+ 		echo $macos_version
+		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	else
             printf "\n";
 	    printf "Doesn't support yet %s\n" "$dist";
