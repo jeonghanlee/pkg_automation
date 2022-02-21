@@ -27,4 +27,6 @@ libnet
 iproute2mac
 # realpath
 coreutils
+libqrencode
+google-authenticator-libpam
 
