@@ -23,7 +23,7 @@ libtiff
 libpng
 libnet
 #
-pip3
+python3
 #
 # Not epics, for ip command
 iproute2mac
