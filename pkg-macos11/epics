@@ -31,4 +31,4 @@ iproute2mac
 coreutils
 libqrencode
 google-authenticator-libpam
-binutils
+#binutils
