@@ -25,3 +25,10 @@ libnet
 #
 pip3
 #
+# Not epics, for ip command
+iproute2mac
+# realpath
+coreutils
+libqrencode
+google-authenticator-libpam
+binutils
