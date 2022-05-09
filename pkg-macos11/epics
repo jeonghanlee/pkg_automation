@@ -1,5 +1,5 @@
 unzip
-git
+#git
 tree
 autoconf
 libtool
