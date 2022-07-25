@@ -83,6 +83,8 @@
 #
 #   - 1.1.0 * Debian 11
 #
+#   - 1.2.0 * Rocky 9
+#
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
@@ -399,6 +401,42 @@ function install_pkg_rocky8
     ${SUDO_CMD} alternatives --set python /usr/bin/python3
 }
 
+function install_pkg_rocky9
+{
+    declare -a pkg_list=${1}
+    printf "\n";
+    printf "$pkg_list\n";
+    printf "\n\n\n"
+    declare -r yum_pid="/var/run/yum.pid"
+
+    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
+
+    disable_system_service packagekit
+    disable_system_service firewalld
+    
+    # Somehow, yum is running due to PackageKit, so if so, kill it
+    #
+    if [[ -e ${yum_pid} ]]; then
+	${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	if [ $? -ne 0 ]; then
+	    printf "Remove the orphan yum pid\n";
+	    ${SUDO_CMD} rm -rf ${yum_pid}
+	fi
+    fi
+    ${SUDO_CMD} dnf -y install dnf-plugins-core;
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf config-manager --set-enabled powertools
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y groupinstall "Development tools"
+    ${SUDO_CMD} dnf -y install "epel-release"
+    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y install ${pkg_list};
+    # 3.6 is the rocky default
+    ${SUDO_CMD} alternatives --set python /usr/bin/python3
+}
+
 
 function install_pkg_macos11
 {
@@ -425,10 +463,10 @@ function yes_or_no_to_go
     read -p ">> Do you want to continue (y/N)? " answer
     case ${answer:0:1} in
 	y|Y )
-	    printf ">> The following pakcages will be installed ...... ";
+	    printf ">> The following packages will be installed ...... ";
 	    ;;
 	* )
-            printf ">> One should install all required packages by oneself. Stop here.\n";
+        printf ">> One should install all required packages by oneself. Stop here.\n";
 	    exit;
     ;;
     esac
@@ -446,6 +484,7 @@ declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
 declare -a PKG_ROCKY8_ARRAY
+declare -a PKG_ROCKY9_ARRAY
 declare -a PKG_MACOS11_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
@@ -462,6 +501,7 @@ declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
+declare -g ROCKY9_PATH=${SC_TOP}/pkg-rocky9
 declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
 
 declare -ga pkg_deb_list
@@ -475,6 +515,7 @@ declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
+declare -ga pkg_rocky9_list
 declare -ga pkg_macos11_list
 
 
@@ -489,6 +530,7 @@ pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
+pkg_rocky9_list=("common" "epics" "extra")
 pkg_macos11_list=("epics")
 
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -569,6 +611,12 @@ for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
 done
 
+# Rocky 9.0
+for rocky9_file in ${pkg_rocky9_list[@]}; do
+    PKG_ROCKY9_ARRAY+=" ";
+    PKG_ROCKY9_ARRAY+=$(pkg_list "${ROCKY9_PATH}/${rocky9_file}");
+done
+
 for brew_file in ${pkg_macos11_list[@]}; do
     PKG_MACOS11_ARRAY+=" ";
     PKG_MACOS11_ARRAY+=$(pkg_list "${MACOS11_PATH}/${brew_file}");
@@ -634,11 +682,18 @@ case "$dist" in
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
 	fi
 	;;
+
     *Rocky* | *Alma* )
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
 	fi
+
+    rocky_version=$(centos_dist)
+    if [ "$rocky_version" == "8" ]; then
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
+    else
+        install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
+    fi
 	;;
 
     *xenial*)
