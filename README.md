@@ -11,7 +11,7 @@ And it was tested with the following distributions:
 * LinuxMint
 * Fedora
 * Raspbian
-* Rocky 8 (Github Action)
+* Rocky 8/9(WIP) (Github Action)
 * Alma 8 (Github Action)
 * macOS 11 (Github Action runner with brew)
 * macOS 12 (with brew)
@@ -20,10 +20,12 @@ And sudo permission is needed.
 
 ```
 $ bash pkg_automation.bash 
-
->>>> CentOS is detected as CentOS Core 7.4.1708
->>>> Do you want to continue (y/n)?
-
+> This procedure could help to install
+> required packages for EPICS installation
+> and others.
+>
+> Rocky or Alma is detected as Rocky Linux 9.0 (Blue Onyx)
+>> Do you want to continue (y/N)?
 ```
 ## Notice
 * Note that it will remove several packages in CentOS (e.g., PackageIt, Firewalld). 

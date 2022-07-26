@@ -3,7 +3,7 @@ name: Rocky Linux 9
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
     - 'pkg-rocky9/**'
     - 'pkg_automation.bash'
@@ -11,7 +11,7 @@ on:
     - '.github/workflows/rocky9.yml'
 
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 
 jobs:

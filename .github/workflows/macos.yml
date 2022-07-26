@@ -6,6 +6,11 @@ on:
     branches:
       - 'master'
       - 'macos'
+    paths:
+    - 'pkg-macos11/**'
+    - 'pkg_automation.bash'
+    - 'functions'
+    - '.github/workflows/macos.yml'
 
 jobs:
   macOS11:
