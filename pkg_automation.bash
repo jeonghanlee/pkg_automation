@@ -202,7 +202,7 @@ function install_pkg_deb
 
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a commom application.
+    # linux-headers are not necessary for a common application.
     # We ignore within Docker image
     ${SUDO_CMD} apt update;
     printf "\n\n";   
@@ -223,7 +223,7 @@ function install_pkg_deb10
 
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a commom application.
+    # linux-headers are not necessary for a common application.
     # We ignore within Docker image
     ${SUDO_CMD} apt update;
     printf "\n\n";   
@@ -246,7 +246,7 @@ function install_pkg_deb11
 
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a commom application.
+    # linux-headers are not necessary for a common application.
     # We ignore within Docker image
     ${SUDO_CMD} apt update;
     printf "\n\n";   
@@ -689,10 +689,16 @@ case "$dist" in
 	fi
 
     rocky_version=$(centos_dist)
-    if [ "$rocky_version" == "8" ]; then
+ 
+	if [[ "$rocky_version" =~ .*"8.".* ]]; then
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
-    else
+	elif [[ "$rocky_version" =~ .*"9.".* ]]; then
         install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
+	else
+        printf "\n";
+	    printf "Doesn't support %s\n" "$dist";
+        printf "\n";
+   
     fi
 	;;
 
@@ -702,6 +708,7 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+
     *artful*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu artful is detected as $dist";
@@ -715,11 +722,11 @@ case "$dist" in
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *focal*)
-        if [ "$ANSWER" == "NO" ]; then
-            yes_or_no_to_go "Ubuntu focal is detected as $dist";
-        fi
-        install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
-        ;;
+    if [ "$ANSWER" == "NO" ]; then
+        yes_or_no_to_go "Ubuntu focal is detected as $dist";
+    fi
+    install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+    ;;
     *sylvia*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
@@ -757,9 +764,9 @@ case "$dist" in
  		echo $macos_version
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	else
-            printf "\n";
+        printf "\n";
 	    printf "Doesn't support yet %s\n" "$dist";
-            printf "\n";
+        printf "\n";
 	fi
 	;;
     *)
