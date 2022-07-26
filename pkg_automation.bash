@@ -424,9 +424,14 @@ function install_pkg_rocky9
 	fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
+    ${SUDO_CMD} dnf update;i
+## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
+## PowerTools does not exist, so we have to find out several packages
+## I think, it needs some time to show up in somewhere, that is always the Redhat does
+## 
+
+    ${SUDO_CMD} dnf config-manager --set-enabled crb
     ${SUDO_CMD} dnf update;
-#    ${SUDO_CMD} dnf config-manager --set-enabled powertools
-#    ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
