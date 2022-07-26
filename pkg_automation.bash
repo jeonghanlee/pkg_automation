@@ -425,8 +425,8 @@ function install_pkg_rocky9
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf update;
-    ${SUDO_CMD} dnf config-manager --set-enabled powertools
-    ${SUDO_CMD} dnf update;
+#    ${SUDO_CMD} dnf config-manager --set-enabled powertools
+#    ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
