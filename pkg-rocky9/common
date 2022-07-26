@@ -14,5 +14,5 @@ automake
 re2c
 graphviz
 #splint
-flex-devel
+#flex-devel
 
