@@ -433,8 +433,9 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
-    # 3.6 is the rocky default
-    ${SUDO_CMD} alternatives --set python /usr/bin/python3
+    # 3.9 is the rocky 9 default and there is no alternatives python
+    #
+    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1 
 }
 
 
