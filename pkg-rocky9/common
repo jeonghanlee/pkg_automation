@@ -4,6 +4,7 @@ screen
 #unzip
 git
 tree
+which
 #xterm
 #ipmitool
 autoconf
