@@ -32,7 +32,7 @@ libjpeg-turbo-devel
 #ADPonitGrey Vendor lib has the libraw1394 dep.
 #libraw1394.x86_64
 # ADPluginCalib/Edge
-opencv-devel
+#opencv-devel
 #
 libpng-devel
 # asyn, USBTSM libusb-1.0
@@ -47,8 +47,8 @@ libtirpc
 rpcgen
 re2c
 #
-hidapi-devel
-hidapi
+#hidapi-devel
+#hidapi
 libusb-devel
 libusb
 #
