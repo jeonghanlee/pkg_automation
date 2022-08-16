@@ -50,4 +50,5 @@ libhidapi-dev
 libhidapi-libusb0
 libhidapi-dev
 libusb-1.0-0
+libusb-1.0-0-dev
 

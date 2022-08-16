@@ -1,9 +1,10 @@
 screen
 #telnet
 #nano
-#unzip
+unzip
 git
 tree
+which
 #xterm
 #ipmitool
 autoconf

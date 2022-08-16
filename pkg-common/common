@@ -3,12 +3,13 @@ screen
 #nano
 #unzip
 #git
+which
 tree
 #emacs
 #xterm
 #ipmitool
-#autoconf
-#libtool
+autoconf
+libtool
 #automake
 #m4
 # EPICS Base

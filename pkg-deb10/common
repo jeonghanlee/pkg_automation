@@ -1,14 +1,15 @@
 screen
 #telnet
 #nano
-#unzip
+unzip
 git
 tree
+which
 #emacs
 #xterm
 #ipmitool
-#autoconf
-#libtool
+autoconf
+libtool
 #automake
 #m4
 # EPICS Base
