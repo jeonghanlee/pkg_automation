@@ -84,6 +84,7 @@
 #   - 1.1.0 * Debian 11
 #
 #   - 1.2.0 * Rocky 9
+#   - 1.3.0 * Ubuntu 22
 #
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
@@ -505,6 +506,7 @@ declare -g DEB11_PATH=${SC_TOP}/pkg-deb11
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
+declare -g UBU22_PATH=${SC_TOP}/pkg-ubu22
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
@@ -519,6 +521,7 @@ declare -ga pkg_deb11_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
+declare -ga pgk_ubu22_list
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
@@ -534,6 +537,7 @@ pkg_deb11_list=("common" "epics" "extra")
 pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
+pkg_ubu22_list=("epics" "extra")
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
@@ -591,6 +595,13 @@ for deb_file in ${pkg_ubu20_list[@]}; do
     PKG_UBU20_ARRAY+=$(pkg_list "${UBU20_PATH}/${deb_file}");
 done
 
+
+PKG_UBU22_ARRAY=$(pkg_list ${COM_PATH}/common)
+
+for deb_file in ${pkg_ubu22_list[@]}; do
+    PKG_UBU22_ARRAY+=" ";
+    PKG_UBU22_ARRAY+=$(pkg_list "${UBU22_PATH}/${deb_file}");
+done
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -730,10 +741,16 @@ case "$dist" in
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *focal*)
-    if [ "$ANSWER" == "NO" ]; then
-        yes_or_no_to_go "Ubuntu focal is detected as $dist";
-    fi
-    install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+	if [ "$ANSWER" == "NO" ]; then
+        	yes_or_no_to_go "Ubuntu focal is detected as $dist";
+    	fi
+    	install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+    ;;
+    *jammy*)
+	if [ "$ANSWER" == "NO" ]; then
+        	yes_or_no_to_go "Ubuntu jammy is detected as $dist";
+    	fi
+    	install_pkg_deb "${PKG_UBU22_ARRAY[@]}"
     ;;
     *sylvia*)
 	if [ "$ANSWER" == "NO" ]; then
