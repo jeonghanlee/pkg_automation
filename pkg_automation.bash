@@ -788,6 +788,9 @@ case "$dist" in
 	elif [[ "$macos_version" =~ .*"12.".* ]]; then
  		echo $macos_version
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+	elif [[ "$macos_version" =~ .*"13.".* ]]; then
+ 		echo $macos_version
+		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	else
         printf "\n";
 	    printf "Doesn't support yet %s\n" "$dist";
