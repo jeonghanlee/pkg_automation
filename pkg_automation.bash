@@ -428,19 +428,19 @@ function install_pkg_rocky9
 	fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
 ## PowerTools does not exist, so we have to find out several packages
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
 ## 
 
-    ${SUDO_CMD} dnf config-manager --set-enabled crb
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y config-manager --set-enabled crb
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
     # 3.9 is the rocky 9 default and there is no alternatives python
     #
