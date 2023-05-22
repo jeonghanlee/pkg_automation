@@ -118,6 +118,7 @@ function macos_dist
     VERSION=$(sw_vers -productVersion)
     echo "$VERSION"
 }
+
 function find_dist
 {
 
