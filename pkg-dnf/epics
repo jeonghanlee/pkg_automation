@@ -41,3 +41,5 @@ libtirpc
 rpcgen
 # require
 tclx
+# NSLS-II PSC
+libevent-devel

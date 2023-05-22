@@ -32,6 +32,8 @@ libsystemd-dev
 linux-source
 #
 mercurial
+# NSLS-II PSC
+libevent-dev
 # llrf (nds)
 libboost-dev
 libboost-regex-dev

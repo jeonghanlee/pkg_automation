@@ -37,6 +37,8 @@ libtiff-dev
 libjpeg-dev 
 #
 #
+# NSLS-II PSC
+libevent-dev
 #
 #mercurial
 #
