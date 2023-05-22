@@ -227,7 +227,7 @@ function install_pkg_deb10
     # Unable to locate package linux-headers-5.8.0-1033-azure
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
-    ${SUDO_CMD} apt update;
+    ${SUDO_CMD} apt -y update;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
@@ -251,8 +251,8 @@ function install_pkg_deb11
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
 
-    ${SUOD_CMD} apt update;
-    ${SUDO_CMD} apt remove -y python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
+    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
@@ -302,7 +302,7 @@ function install_pkg_dnf
     fi
 
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install ${pkg_list};
 }
@@ -392,14 +392,14 @@ function install_pkg_rocky8
 	fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
-    ${SUDO_CMD} dnf update;
-    ${SUDO_CMD} dnf config-manager --set-enabled powertools
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
+    ${SUDO_CMD} dnf -y config-manager --set-enabled powertools
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
-    ${SUDO_CMD} dnf update;
+    ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
     # 3.6 is the rocky default
     ${SUDO_CMD} alternatives --set python /usr/bin/python3
