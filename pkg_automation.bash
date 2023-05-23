@@ -265,6 +265,28 @@ function install_pkg_deb11
 }
 
 
+function install_pkg_deb12
+{
+    declare -a pkg_list=${1}
+
+    # Debian Docker, we cannot find the linux-headers,
+    # Unable to locate package linux-headers-5.8.0-1033-azure
+    # linux-headers are not necessary for a common application.
+    # We ignore within Docker image
+
+    ${SUOD_CMD} apt -y update;
+#    ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
+    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
+    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
+    #    else
+     printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
+    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+}
+
 
 function install_pkg_rpi()
 {
