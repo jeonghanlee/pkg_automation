@@ -1,4 +1,4 @@
-# Required DEB 10 Packages for EPICS installation
+# Required DEB 12 Packages for EPICS installation
 #
 build-essential
 libreadline-dev
@@ -11,7 +11,10 @@ libxmu6
 libxpm-dev
 libxmuu-dev
 libxmuu1
-libpcre++-dev
+#
+# do we need this?
+#
+libpcre3-dev
 #
 #
 #
