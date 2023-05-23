@@ -275,7 +275,6 @@ function install_pkg_deb12
     # We ignore within Docker image
 
     ${SUOD_CMD} apt -y update;
-#    ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
