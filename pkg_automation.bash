@@ -487,6 +487,7 @@ declare -a PKG_DEB_ARRAY
 declare -a PKG_DEB9_ARRAY
 declare -a PKG_DEB10_ARRAY
 declare -a PKG_DEB11_ARRAY
+declare -a PKG_DEB12_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
@@ -503,6 +504,7 @@ declare -g DEB_PATH=${SC_TOP}/pkg-deb
 declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
 declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
 declare -g DEB11_PATH=${SC_TOP}/pkg-deb11
+declare -g DEB12_PATH=${SC_TOP}/pkg-deb12
 #
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
@@ -519,6 +521,7 @@ declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
 declare -ga pkg_deb10_list
 declare -ga pkg_deb11_list
+declare -ga pkg_deb12_list
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
@@ -535,6 +538,7 @@ pkg_deb_list=("epics" "extra")
 pkg_deb9_list=("epics" "extra")
 pkg_deb10_list=("common" "epics" "extra")
 pkg_deb11_list=("common" "epics" "extra")
+pkg_deb12_list=("common" "epics" "extra")
 pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
@@ -570,6 +574,12 @@ done
 for deb_file in ${pkg_deb11_list[@]}; do
     PKG_DEB11_ARRAY+=" ";
     PKG_DEB11_ARRAY+=$(pkg_list "${DEB11_PATH}/${deb_file}");
+done
+
+# Debian 12 (bookworm)
+for deb_file in ${pkg_deb12_list[@]}; do
+    PKG_DEB12_ARRAY+=" ";
+    PKG_DEB12_ARRAY+=$(pkg_list "${DEB12_PATH}/${deb_file}");
 done
 
 
@@ -688,6 +698,12 @@ case "$dist" in
             yes_or_no_to_go "Debian 11 (Bullseye) is detected as $dist"
         fi
         install_pkg_deb11 "${PKG_DEB11_ARRAY[@]}"
+        ;;
+    *bookworm*)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian 12 (bookworm) is detected as $dist"
+        fi
+        install_pkg_deb12 "${PKG_DEB12_ARRAY[@]}"
         ;;
     *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
