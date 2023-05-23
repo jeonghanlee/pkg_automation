@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  Rocky9:
+  Debian12:
     runs-on: ubuntu-latest
     container: amd64/debian:testing-slim
     steps:
