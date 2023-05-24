@@ -818,7 +818,7 @@ case "$dist" in
     *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
     if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
-    	install_pkg_deb "${PKG_UBU22_ARRAY[@]}"
+    	install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
     else
         printf "\n";
         printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
