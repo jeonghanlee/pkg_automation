@@ -9,4 +9,10 @@
 #elpa-markdown-mode
 cu
 nmap
+# Static Code Analyzer
+shellcheck
+splint
+cppcheck
+gcovr
+flawfinder
 
