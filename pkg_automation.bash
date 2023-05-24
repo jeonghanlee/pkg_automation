@@ -112,6 +112,13 @@ function centos_dist
     echo ${VERSION_ID}
 }
 
+function ubuntu_dist
+{
+    local VERSION_ID
+    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=")
+    echo ${VERSION_ID}
+}
+
 function macos_dist
 {
     local VERSION
@@ -783,6 +790,16 @@ case "$dist" in
         	yes_or_no_to_go "Ubuntu focal is detected as $dist";
     	fi
     	install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+    ;;
+    *Ubuntu*)
+    ubuntu_version=$(ubuntu_dist)
+    if [[ "ubuntu_version" =~ .*"22.04.".* ]]; then
+    	install_pkg_deb "${PKG_UBU22_ARRAY[@]}"
+    else
+        printf "\n";
+        printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
+        printf "\n";
+    fi
     ;;
     *jammy*)
 	if [ "$ANSWER" == "NO" ]; then
