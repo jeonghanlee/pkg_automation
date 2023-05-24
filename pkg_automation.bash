@@ -696,6 +696,8 @@ done
 
 dist=$(find_dist)
 
+echo "Distriution is >>>${dist}<<"
+
 case "$dist" in
     Raspbian*)
 	if [ "$ANSWER" == "NO" ]; then
@@ -750,7 +752,7 @@ case "$dist" in
     *Rocky* | *Alma* )
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
-	fi
+    fi
 
     rocky_version=$(centos_dist)
  
@@ -793,7 +795,7 @@ case "$dist" in
     ;;
     *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
-    if [[ "ubuntu_version" =~ .*"22.".* ]]; then
+    if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
     	install_pkg_deb "${PKG_UBU22_ARRAY[@]}"
     else
         printf "\n";
