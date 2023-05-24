@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  Ubuntu 22.04:
+  Ubuntu22:
     runs-on: ubuntu-latest
     container: ubuntu:22.04
     steps:
