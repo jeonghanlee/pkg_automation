@@ -791,9 +791,9 @@ case "$dist" in
     	fi
     	install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
     ;;
-    *LTS*)
+    *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
-    if [[ "ubuntu_version" =~ .*"22.04.".* ]]; then
+    if [[ "ubuntu_version" =~ .*"22.".* ]]; then
     	install_pkg_deb "${PKG_UBU22_ARRAY[@]}"
     else
         printf "\n";
