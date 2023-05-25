@@ -8,18 +8,39 @@
 It is the most cumbersome thing that is to install required packages for the EPICS base, modules, and other applications in different Linux flavors. This ugly script helps me to save my time to install many packages among many Linux distributions.
 And it was tested with the following distributions:
 
-* CentOS 7/8 (Github Action)
-* Debian 10/11 (Github Action)
-* Ubuntu 20 (Github Action)
-* LinuxMint
-* Fedora
-* Raspbian
-* Rocky 8/9(WIP) (Github Action)
-* Alma 8 (Github Action)
-* macOS 11 (Github Action runner with brew)
-* macOS 12 (with brew)
+## Tested
+
+### Focus
+
+* Debian 12 testing (Bookworm)
+* Debian 11 (Bullseye)
+* Rocky 9 (Blue Onyx)
+* Rocky 8 (Green Obsidian)
+* macOS 13 (Ventura, with brew)
+
+### Eye
+
+* Debian 10 (Buster)
+* Ubuntu 22.04 LTS (Jammy Jellyfish)
+* Alma 8
+* Fedora 32
+* CentOS 7
+* Ubuntu 18.04/20.04
+* Raspbian GNU/Linux 10
+* macOS 12.0.1 (21A559)
+* macOS 11.1 (20C69)
+* macOS 11
+
+### Obsolete 
+* ~~Scientific Linux 7~~
+* ~~CentOS 8~~ 
+
 
 And sudo permission is needed. 
+
+## Procedure
+
+Note that there are various examples in the `.github/workflow` path.
 
 ```
 $ bash pkg_automation.bash 
