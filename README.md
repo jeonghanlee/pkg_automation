@@ -1,6 +1,6 @@
 # Package Installation Script for the EPICS environment and my personal environment.
 [![Linux Build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml)
-[![Debian 12 testing](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
+[![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
 [![Rocky Linux 9](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml)
 [![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 [![macOS build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml)
