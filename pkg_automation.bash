@@ -507,6 +507,10 @@ function install_pkg_macos11
 
     local command="brew"
     ${command} install ${pkg_list};
+    #
+    # net-snmp-config in /usr/bin has very strange codes, so we have to overwrite it with brew net-snmp
+    # 2023-08-21
+    ${command}link --force --overwrite net-snmp
 }
 
 
