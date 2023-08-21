@@ -510,8 +510,10 @@ function install_pkg_macos11
     #
     # net-snmp-config in /usr/bin has very strange codes, so we have to overwrite it with brew net-snmp
     # 2023-08-21
+    printf "brew upgrade, and reconfigure net-snmp\n"
+    ${command} upgrade
     ${command} reinstall net-snmp
-    sudo ${command} link --force --overwrite net-snmp
+    ${command} link --force --overwrite net-snmp
 }
 
 
