@@ -13,10 +13,10 @@ on:
     - '.github/workflows/macos.yml'
 
 jobs:
-  macOS11:
-    runs-on: macos-11
+  macOS13:
+    runs-on: macos-13
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           brew install git curl make bash
           bash pkg_automation.bash -y
