@@ -15,4 +15,6 @@ splint
 cppcheck
 gcovr
 flawfinder
-
+libheif-examples
+libheif1
+#
