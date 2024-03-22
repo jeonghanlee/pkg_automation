@@ -74,4 +74,6 @@ python3-pyparsing
 # Gradle : Archiver Appliance
 gradle
 gradle-completion 
+openjdk-17-jdk
+#
 #
