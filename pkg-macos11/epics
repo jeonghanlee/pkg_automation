@@ -32,3 +32,4 @@ coreutils
 libqrencode
 google-authenticator-libpam
 #binutils
+python-setuptools
