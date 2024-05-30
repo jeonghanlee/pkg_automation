@@ -58,3 +58,5 @@ perl-FindBin
 
 # NSLS-II PSC
 libevent-devel
+#pvxs
+cmake

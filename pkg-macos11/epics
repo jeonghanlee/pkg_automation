@@ -33,3 +33,6 @@ libqrencode
 google-authenticator-libpam
 #binutils
 python-setuptools
+#pvxs
+cmake
+

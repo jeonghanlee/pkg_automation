@@ -56,4 +56,5 @@ libusb-devel
 libusb
 #
 python3-devel
-
+# pvxs
+cmake

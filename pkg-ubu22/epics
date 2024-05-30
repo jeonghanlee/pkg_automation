@@ -59,4 +59,5 @@ python3-pip
 python3-nose
 python3-numpy
 python3-pyparsing
-
+#pvxs
+cmake
