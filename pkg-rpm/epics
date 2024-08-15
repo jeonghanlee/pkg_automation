@@ -54,3 +54,6 @@ python3-devel
 
 # NSLS-II PSC
 libevent-devel
+# pvxs
+cmake
+
