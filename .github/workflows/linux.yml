@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on Ubuntu
         run: |
           bash pkg_automation.bash -y
@@ -23,7 +23,7 @@ jobs:
     container: rockylinux/rockylinux:8.5
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on Rocky 8 Docker
         run: |
           dnf install -y sudo
@@ -36,7 +36,7 @@ jobs:
     container: almalinux:8.5
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on Alma 8 Docker
         run: |
           dnf install -y sudo
@@ -49,7 +49,7 @@ jobs:
     container: debian:buster
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on Debian 10 Docker
         run: |
           export LC_CTYPE=C.UTF-8
@@ -62,7 +62,7 @@ jobs:
     container: debian:bullseye
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on Debian 11 Docker
         run: |
           export LC_CTYPE=C.UTF-8
@@ -75,9 +75,11 @@ jobs:
     container: centos:7
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test on CentOS 7 Docker
         run: |
+          sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+          sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
           yum install -y sudo
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
