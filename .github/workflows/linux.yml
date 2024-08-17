@@ -7,6 +7,7 @@ on:
     paths:
     - 'pkg_automation.bash'
     - 'functions'
+    - '.github/workflow/linux.yml'
 
 jobs:
   Ubuntu:
@@ -20,7 +21,7 @@ jobs:
 
   Rocky8:
     runs-on: ubuntu-latest
-    container: rockylinux/rockylinux:8.5
+    container: rockylinux/rockylinux:8
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,12 +34,13 @@ jobs:
 
   Alma8:
     runs-on: ubuntu-latest
-    container: almalinux:8.5
+    container: almalinux:8
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Test on Alma 8 Docker
         run: |
+          dnf update -y
           dnf install -y sudo
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
