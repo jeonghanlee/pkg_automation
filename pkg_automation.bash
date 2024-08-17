@@ -109,7 +109,9 @@ function sudo_exist
 {
     if ! command -v ${SUDO_CMD} &> /dev/null
     then
-        echo "${SUDO_CMD} is required. Please install it first"
+        echo ""
+        echo ">>>>>>>>>> ${SUDO_CMD} is required. Please install it first."
+        echo ""
         exit 1
     fi
 }
