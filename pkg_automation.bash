@@ -105,6 +105,15 @@ SUDO_CMD="sudo"
 
 . ${SC_TOP}/functions
 
+function sudo_exist
+{
+    if ! command -v ${SUDO_CMD} &> /dev/null
+    then
+        echo "${SUDO_CMD} is required. Please install it first"
+        exit 1
+    fi
+}
+
 function centos_dist
 {
     local VERSION_ID
@@ -209,6 +218,7 @@ function install_pkg_deb
 {
     declare -a pkg_list=${1}
 
+    sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
     # linux-headers are not necessary for a common application.
@@ -234,6 +244,7 @@ function install_pkg_ubu22
     # Unable to locate package linux-headers-5.8.0-1033-azure
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
+    sudo_exist;
 
     ${SUOD_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
@@ -251,6 +262,7 @@ function install_pkg_ubu22
 function install_pkg_deb10
 {
     declare -a pkg_list=${1}
+    sudo_exist;
 
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
@@ -274,7 +286,7 @@ function install_pkg_deb10
 function install_pkg_deb11
 {
     declare -a pkg_list=${1}
-
+    sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
     # linux-headers are not necessary for a common application.
@@ -297,7 +309,7 @@ function install_pkg_deb11
 function install_pkg_deb12
 {
     declare -a pkg_list=${1}
-
+    sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
     # linux-headers are not necessary for a common application.
@@ -319,7 +331,7 @@ function install_pkg_deb12
 function install_pkg_rpi()
 {
     declare -a pkg_list=${1}
-    
+    sudo_exist;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "$pkg_list raspberrypi-kernel-headers\n";
@@ -337,6 +349,7 @@ function install_pkg_dnf
     printf "$pkg_list\n";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
+    sudo_exist;
 
     disable_system_service packagekit
     disable_system_service firewalld
@@ -375,7 +388,7 @@ function install_pkg_rpm
     declare -r yum_pid="/var/run/yum.pid"
 
     local pkgs_should_be_removed="PackageKit firewalld"
-    
+    sudo_exist;
     disable_system_service packagekit
     disable_system_service firewalld
     
@@ -428,6 +441,7 @@ function install_pkg_rocky8
     declare -r yum_pid="/var/run/yum.pid"
 
     local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
+    sudo_exist;
 
     disable_system_service packagekit
     disable_system_service firewalld
@@ -435,11 +449,11 @@ function install_pkg_rocky8
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	if [ $? -ne 0 ]; then
-	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf ${yum_pid}
-	fi
+	    ${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	    if [ $? -ne 0 ]; then
+	        printf "Remove the orphan yum pid\n";
+	        ${SUDO_CMD} rm -rf ${yum_pid}
+	    fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
@@ -464,6 +478,7 @@ function install_pkg_rocky9
     declare -r yum_pid="/var/run/yum.pid"
 
     local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
+    sudo_exist;
 
     disable_system_service packagekit
     disable_system_service firewalld
@@ -724,7 +739,6 @@ while getopts ":y" opt; do
 	    ;;
     esac
 done
-
 dist=$(find_dist)
 
 echo "Distriution is >>>${dist}<<"
