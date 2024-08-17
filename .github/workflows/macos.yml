@@ -16,7 +16,7 @@ jobs:
   macOS13:
     runs-on: macos-13
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           echo 'export PATH="/usr/local/opt/net-snmp/bin:$PATH"' >> /Users/runner/.bash_profile
           echo 'export PATH="/usr/local/opt/net-snmp/sbin:$PATH"' >> /Users/runner/.bash_profile
