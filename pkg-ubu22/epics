@@ -61,3 +61,7 @@ python3-numpy
 python3-pyparsing
 #pvxs
 cmake
+#pmac
+libssh2-1
+libssh2-1-dev
+#
