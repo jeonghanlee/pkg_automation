@@ -60,3 +60,7 @@ perl-FindBin
 libevent-devel
 #pvxs
 cmake
+#pmac
+libssh2-devel
+libssh2
+#
