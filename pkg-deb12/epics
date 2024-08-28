@@ -72,3 +72,6 @@ python3-nose
 python3-numpy
 python3-pyparsing
 #
+libssh2-1
+libssh2-1-dev
+#
