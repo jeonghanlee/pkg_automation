@@ -1,4 +1,4 @@
-# Required DEB 12 Packages for EPICS installation
+# Required DEB 13 Packages for EPICS installation
 #
 build-essential
 libreadline-dev
@@ -12,16 +12,10 @@ libxpm-dev
 libxmuu-dev
 libxmuu1
 #
-# do we need this?
-#
-libpcre3-dev
-#
-#
 #
 libmotif-dev
 libsnmp-dev
 re2c
-darcs
 libbz2-dev
 libusb-dev
 # asyn, USBTSM libusb-1.0
@@ -39,10 +33,8 @@ libtiff-dev
 libjpeg-dev 
 #
 # NSLS-II PSC
+# It will be removed after we migrate to PVXS bundle one
 libevent-dev
-#
-#
-#mercurial
 #
 # llrf (nds)
 libboost-dev
@@ -72,6 +64,6 @@ python3-nose
 python3-numpy
 python3-pyparsing
 #
-libssh2-1
+libssh2-1t64
 libssh2-1-dev
 #

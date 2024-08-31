@@ -4,8 +4,6 @@ git
 tree
 autoconf
 libtool
-# EPICS Base
-re2c
 coreutils
 graphviz
 cmake
