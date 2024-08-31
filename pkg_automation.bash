@@ -92,6 +92,7 @@ declare -g SC_TOP;
 declare -g SUDO_CMD;
 #declare -g KERNEL_VER;
 
+
 SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 #SC_SCRIPTNAME=${0##*/};
 SC_TOP="$( cd -P "$( dirname "$SC_SCRIPT" )" && pwd )"
@@ -199,7 +200,6 @@ function install_tclx_centos8
 
 }
 
-
 function pkg_list
 {
     local i
@@ -214,7 +214,6 @@ function pkg_list
     done < ${1}
     echo ${packagelist[@]}
 }
-
 
 function install_pkg_deb
 {
@@ -236,7 +235,6 @@ function install_pkg_deb
     ${SUDO_CMD} apt -y install ${pkg_list}
     #    fi
 }
-
 
 function install_pkg_ubu22
 {
@@ -283,8 +281,6 @@ function install_pkg_deb10
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
 
-
-
 function install_pkg_deb11
 {
     declare -a pkg_list=${1}
@@ -307,19 +303,6 @@ function install_pkg_deb11
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
-
-function install_pkg_deb13
-{
-    declare -a pkg_list=${1}
-    sudo_exist;
-    ${SUOD_CMD} apt -y update;
-    printf "\n\n";   
-    printf "The following package list will be installed:\n\n"
-    printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
-}
-
-
 function install_pkg_deb12
 {
     declare -a pkg_list=${1}
@@ -341,6 +324,17 @@ function install_pkg_deb12
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
+function install_pkg_deb13
+{
+    declare -a pkg_list=${1}
+    sudo_exist;
+    ${SUOD_CMD} apt -y update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
+}
+
 function install_pkg_rpi()
 {
     declare -a pkg_list=${1}
@@ -353,7 +347,6 @@ function install_pkg_rpi()
     ${SUDO_CMD} apt-get update
     ${SUDO_CMD} apt-get -y install ${pkg_list}  raspberrypi-kernel-headers
 }
-
 
 function install_pkg_dnf
 {
@@ -382,7 +375,6 @@ function install_pkg_dnf
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install ${pkg_list};
 }
-
 
 # CentOS8 yum is the same as dnf
 # ls -ltar /usr/bin/{dnf,yum}
@@ -525,7 +517,6 @@ function install_pkg_rocky9
     ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1 
 }
 
-
 function install_pkg_macos11
 {
     declare -a pkg_list=${1}
@@ -546,8 +537,6 @@ function install_pkg_macos11
     net-snmp-config --cflags
 }
 
-
-
 function yes_or_no_to_go
 {
 
@@ -567,7 +556,6 @@ function yes_or_no_to_go
 	    exit;
     ;;
     esac
-
 }
 
 declare -a PKG_DEB_ARRAY
@@ -576,14 +564,18 @@ declare -a PKG_DEB10_ARRAY
 declare -a PKG_DEB11_ARRAY
 declare -a PKG_DEB12_ARRAY
 declare -a PKG_DEB13_ARRAY
+#
 declare -a PKG_RPI_ARRAY
+#
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
+#
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
 declare -a PKG_ROCKY8_ARRAY
 declare -a PKG_ROCKY9_ARRAY
+#
 declare -a PKG_MACOS11_ARRAY
 
 declare -g COM_PATH=${SC_TOP}/pkg-common
@@ -596,51 +588,62 @@ declare -g DEB12_PATH=${SC_TOP}/pkg-deb12
 declare -g DEB13_PATH=${SC_TOP}/pkg-deb13
 #
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
+#
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
 declare -g UBU22_PATH=${SC_TOP}/pkg-ubu22
+#
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
 declare -g ROCKY9_PATH=${SC_TOP}/pkg-rocky9
+#
 declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
-
+#
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
 declare -ga pkg_deb10_list
 declare -ga pkg_deb11_list
 declare -ga pkg_deb12_list
-declare -ga pkg_deb1333ist
+declare -ga pkg_deb13_list
+#
 declare -ga pkg_rpi_list
+#
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
 declare -ga pgk_ubu22_list
+#
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
 declare -ga pkg_rocky9_list
+#
 declare -ga pkg_macos11_list
 
-
+#
 pkg_deb_list=("epics" "extra")
 pkg_deb9_list=("epics" "extra")
 pkg_deb10_list=("common" "epics" "extra")
 pkg_deb11_list=("common" "epics" "extra")
 pkg_deb12_list=("common" "epics" "extra")
 pkg_deb13_list=("common" "epics" "extra")
+#
 pkg_rpi_list=("epics" "extra")
+#
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
 pkg_ubu22_list=("epics" "extra")
+#
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
 pkg_rocky9_list=("common" "epics" "extra")
+#
 pkg_macos11_list=("epics")
-
+#
 PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
 
 for deb_file in ${pkg_deb_list[@]}; do
@@ -649,83 +652,68 @@ for deb_file in ${pkg_deb_list[@]}; do
 done
 
 PKG_DEB9_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for deb_file in ${pkg_deb9_list[@]}; do
     PKG_DEB9_ARRAY+=" ";
     PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
 done
-
 # Debian 10 (Buster)
 for deb_file in ${pkg_deb10_list[@]}; do
     PKG_DEB10_ARRAY+=" ";
     PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
 done
-
 # Debian 11 (Bullseye)
 for deb_file in ${pkg_deb11_list[@]}; do
     PKG_DEB11_ARRAY+=" ";
     PKG_DEB11_ARRAY+=$(pkg_list "${DEB11_PATH}/${deb_file}");
 done
-
 # Debian 12 (bookworm)
 for deb_file in ${pkg_deb12_list[@]}; do
     PKG_DEB12_ARRAY+=" ";
     PKG_DEB12_ARRAY+=$(pkg_list "${DEB12_PATH}/${deb_file}");
 done
-
 # Debian 13 (trixie)
+PKG_DEB13_ARRAY=$(pkg_list ${COM_PATH}/common)
 for deb_file in ${pkg_deb13_list[@]}; do
     PKG_DEB13_ARRAY+=" ";
     PKG_DEB13_ARRAY+=$(pkg_list "${DEB13_PATH}/${deb_file}");
 done
-
+#
 PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for deb_file in ${pkg_rpi_list[@]}; do
     PKG_RPI_ARRAY+=" ";
     PKG_RPI_ARRAY+=$(pkg_list "${RPI_PATH}/${deb_file}");
 done
-
-
+#
 PKG_UBU16_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for deb_file in ${pkg_ubu16_list[@]}; do
     PKG_UBU16_ARRAY+=" ";
     PKG_UBU16_ARRAY+=$(pkg_list "${UBU16_PATH}/${deb_file}");
 done
-
-
+#
 PKG_UBU20_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for deb_file in ${pkg_ubu20_list[@]}; do
     PKG_UBU20_ARRAY+=" ";
     PKG_UBU20_ARRAY+=$(pkg_list "${UBU20_PATH}/${deb_file}");
 done
-
-
+#
 PKG_UBU22_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for deb_file in ${pkg_ubu22_list[@]}; do
     PKG_UBU22_ARRAY+=" ";
     PKG_UBU22_ARRAY+=$(pkg_list "${UBU22_PATH}/${deb_file}");
 done
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for rpm_file in ${pkg_rpm_list[@]}; do
     PKG_RPM_ARRAY+=" ";
     PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
 done
-
-
+#
 for rpm_file in ${pkg_centos8_list[@]}; do
     PKG_CENTOS8_ARRAY+=" ";
     PKG_CENTOS8_ARRAY+=$(pkg_list "${CENTOS8_PATH}/${rpm_file}");
 done
-
-
+#
 PKG_DNF_ARRAY=$(pkg_list ${COM_PATH}/common)
-
 for dnf_file in ${pkg_dnf_list[@]}; do
     PKG_DNF_ARRAY+=" ";
     PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
@@ -736,13 +724,12 @@ for rocky_file in ${pkg_rocky8_list[@]}; do
     PKG_ROCKY8_ARRAY+=" ";
     PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
 done
-
 # Rocky 9.0
 for rocky9_file in ${pkg_rocky9_list[@]}; do
     PKG_ROCKY9_ARRAY+=" ";
     PKG_ROCKY9_ARRAY+=$(pkg_list "${ROCKY9_PATH}/${rocky9_file}");
 done
-
+#
 for brew_file in ${pkg_macos11_list[@]}; do
     PKG_MACOS11_ARRAY+=" ";
     PKG_MACOS11_ARRAY+=$(pkg_list "${MACOS11_PATH}/${brew_file}");
@@ -828,7 +815,7 @@ case "$dist" in
     fi
 
     rocky_version=$(centos_dist)
- 
+
 	if [[ "$rocky_version" =~ .*"8.".* ]]; then
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
 	elif [[ "$rocky_version" =~ .*"9.".* ]]; then
@@ -837,7 +824,6 @@ case "$dist" in
         printf "\n";
 	    printf "Doesn't support %s\n" "$dist";
         printf "\n";
-   
     fi
 	;;
 
@@ -860,12 +846,14 @@ case "$dist" in
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+
     *focal*)
 	if [ "$ANSWER" == "NO" ]; then
         	yes_or_no_to_go "Ubuntu focal is detected as $dist";
     	fi
     	install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
     ;;
+
     *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
     if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
@@ -877,35 +865,40 @@ case "$dist" in
     fi
     ;;
     *jammy*)
-	if [ "$ANSWER" == "NO" ]; then
-        	yes_or_no_to_go "Ubuntu jammy is detected as $dist";
-    	fi
-    	install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
+    if [ "$ANSWER" == "NO" ]; then
+        yes_or_no_to_go "Ubuntu jammy is detected as $dist";
+    fi
+    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
     ;;
+
     *sylvia*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+
     *tara*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint tara is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+
     *tessa*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint tessa is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
+
     *Fedora*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Fedora is detected as $dist";
 	fi
 	install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
 	;;
+
     *macOS*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "macOS is detected as $dist";
@@ -930,10 +923,11 @@ case "$dist" in
         printf "\n";
 	fi
 	;;
+
     *)
-	printf "\n";
-	printf "Doesn't support the detected %s\n" "$dist";
-	printf "Please contact jeonghan.lee@gmail.com\n";
+	printf "----------------------------------\n";
+	printf ">> Doesn't support the detected %s\n" "$dist";
+	printf ">> Please contact jeonghan.lee@gmail.com or feel free to do pull requests.\n";
 	printf "\n";
 	;;
 esac
