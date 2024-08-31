@@ -4,10 +4,6 @@ name: Linux Build
 on:
   push:
     branches: [ master ]
-    paths:
-    - 'pkg_automation.bash'
-    - 'functions'
-    - '.github/workflow/linux.yml'
 
 jobs:
   Ubuntu:
