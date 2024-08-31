@@ -77,7 +77,7 @@ jobs:
     container: centos:7
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v2
       - name: Test on CentOS 7 Docker
         run: |
           sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
