@@ -1,0 +1,77 @@
+# Required DEB 12 Packages for EPICS installation
+#
+build-essential
+libreadline-dev
+libxt-dev
+# Do we really need the following? 
+#x11proto-print-dev
+libxmu-headers
+libxmu-dev
+libxmu6
+libxpm-dev
+libxmuu-dev
+libxmuu1
+#
+# do we need this?
+#
+libpcre3-dev
+#
+#
+#
+libmotif-dev
+libsnmp-dev
+re2c
+darcs
+libbz2-dev
+libusb-dev
+# asyn, USBTSM libusb-1.0
+libusb-1.0-0-dev
+remake
+libudev-dev
+libsystemd-dev 
+linux-source
+# ADSupport External libs
+libxml2-dev
+libnetcdf-dev
+libhdf5-dev
+libblosc-dev
+libtiff-dev
+libjpeg-dev 
+#
+# NSLS-II PSC
+libevent-dev
+#
+#
+#mercurial
+#
+# llrf (nds)
+libboost-dev
+libboost-regex-dev
+libboost-filesystem-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
+# ADPluginCalib/Edge
+libopencv-dev
+# Debian 9
+libpng-dev
+# asyn
+libtirpc-dev
+# require
+#tclx
+#measComp
+libhidapi-libusb0
+libhidapi-dev
+libusb-1.0-0-dev
+libusb-1.0-0
+#
+# Python
+libpython3-all-dev
+python-dev-is-python3
+python3-pip
+python3-nose
+python3-numpy
+python3-pyparsing
+#
+libssh2-1
+libssh2-1-dev
+#

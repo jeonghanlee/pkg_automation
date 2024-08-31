@@ -302,9 +302,21 @@ function install_pkg_deb11
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-     printf "%s\n\n" "${pkg_list}";
+    printf "%s\n\n" "${pkg_list}";
     ${SUDO_CMD} apt -y install ${pkg_list}
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+}
+
+
+function install_pkg_deb13
+{
+    declare -a pkg_list=${1}
+    sudo_exist;
+    ${SUOD_CMD} apt -y update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
 }
 
 
@@ -328,7 +340,6 @@ function install_pkg_deb12
     ${SUDO_CMD} apt -y install ${pkg_list}
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
-
 
 function install_pkg_rpi()
 {
@@ -564,6 +575,7 @@ declare -a PKG_DEB9_ARRAY
 declare -a PKG_DEB10_ARRAY
 declare -a PKG_DEB11_ARRAY
 declare -a PKG_DEB12_ARRAY
+declare -a PKG_DEB13_ARRAY
 declare -a PKG_RPI_ARRAY
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
@@ -581,6 +593,7 @@ declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
 declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
 declare -g DEB11_PATH=${SC_TOP}/pkg-deb11
 declare -g DEB12_PATH=${SC_TOP}/pkg-deb12
+declare -g DEB13_PATH=${SC_TOP}/pkg-deb13
 #
 declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
@@ -598,6 +611,7 @@ declare -ga pkg_deb9_list
 declare -ga pkg_deb10_list
 declare -ga pkg_deb11_list
 declare -ga pkg_deb12_list
+declare -ga pkg_deb1333ist
 declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
@@ -615,6 +629,7 @@ pkg_deb9_list=("epics" "extra")
 pkg_deb10_list=("common" "epics" "extra")
 pkg_deb11_list=("common" "epics" "extra")
 pkg_deb12_list=("common" "epics" "extra")
+pkg_deb13_list=("common" "epics" "extra")
 pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
@@ -658,6 +673,11 @@ for deb_file in ${pkg_deb12_list[@]}; do
     PKG_DEB12_ARRAY+=$(pkg_list "${DEB12_PATH}/${deb_file}");
 done
 
+# Debian 13 (trixie)
+for deb_file in ${pkg_deb13_list[@]}; do
+    PKG_DEB13_ARRAY+=" ";
+    PKG_DEB13_ARRAY+=$(pkg_list "${DEB13_PATH}/${deb_file}");
+done
 
 PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
 
@@ -781,6 +801,12 @@ case "$dist" in
             yes_or_no_to_go "Debian 12 (bookworm) is detected as $dist"
         fi
         install_pkg_deb12 "${PKG_DEB12_ARRAY[@]}"
+        ;;
+    *trixie*)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian 13 (trixie) is detected as $dist"
+        fi
+        install_pkg_deb13 "${PKG_DEB13_ARRAY[@]}"
         ;;
     *CentOS* | *Scientific* )
 	if [ "$ANSWER" == "NO" ]; then
