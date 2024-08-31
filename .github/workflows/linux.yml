@@ -3,7 +3,7 @@ name: Linux Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   Ubuntu:
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     container: centos:7
     steps:
-      - pre: Fix Node20 for CentOS
+      - name: Fix Node20 for CentOS
         run: |
           echo "GHA_USE_NODE_20=false" >> $GITHUB_ENV
           echo "ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true" >> $GITHUB_ENV
@@ -86,4 +86,3 @@ jobs:
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
           bash pkg_automation.bash -y
-
