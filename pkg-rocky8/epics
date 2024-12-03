@@ -58,3 +58,7 @@ libusb
 python3-devel
 # pvxs
 cmake
+# pmac
+libssh2-devel
+libssh2
+#

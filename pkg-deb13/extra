@@ -1,0 +1,20 @@
+#fonts-liberation
+#logrotate
+#curl
+#net-tools
+#symlinks
+#dkms
+#procserv
+#
+#elpa-markdown-mode
+cu
+nmap
+# Static Code Analyzer
+shellcheck
+splint
+cppcheck
+gcovr
+flawfinder
+libheif-examples
+libheif1
+#
