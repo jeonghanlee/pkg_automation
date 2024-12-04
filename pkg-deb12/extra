@@ -17,4 +17,6 @@ gcovr
 flawfinder
 libheif-examples
 libheif1
+heif-gdk-pixbuf
+heif-thumbnailer
 #
