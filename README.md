@@ -24,9 +24,7 @@ And it was tested with the following distributions:
 
 * Debian 10 (Buster)
 * Ubuntu 22.04 LTS (Jammy Jellyfish)
-* Alma 8
 * Fedora 32
-* CentOS 7
 * Ubuntu 18.04/20.04
 * Raspbian GNU/Linux 10
 * macOS 12.0.1 (21A559)
@@ -35,7 +33,9 @@ And it was tested with the following distributions:
 
 ### Obsolete 
 * ~~Scientific Linux 7~~
-* ~~CentOS 8~~ 
+* ~~CentOS 8~~
+* ~~CentOS 7~~
+* ~~Alma 8~~
 
 
 And sudo permission is needed. 
