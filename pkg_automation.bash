@@ -652,7 +652,7 @@ pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
 pkg_ubu22_list=("epics" "extra")
-pkg_ubu24_list=("epics" "extra")
+pkg_ubu24_list=("common" "epics" "extra")
 #
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
