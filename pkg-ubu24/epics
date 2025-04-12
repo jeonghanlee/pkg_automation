@@ -1,0 +1,67 @@
+# Required DEB Packages for EPICS installation
+#
+build-essential
+libreadline-dev
+libxt-dev
+libxmu-headers
+libxmu-dev
+libxmu6
+libxpm-dev
+libxmuu-dev
+libxmuu1
+libpcre++-dev
+#
+#
+#
+libsnmp-dev
+re2c
+#darcs
+libnetcdf-dev
+libhdf5-dev
+#libnexus0-dev # NeXus scientific data file format
+libpng-dev
+libbz2-dev
+libxml2-dev
+libusb-dev
+# asyn, USBTSM libusb-1.0
+libusb-1.0-0-dev
+remake
+libudev-dev
+libsystemd-dev
+linux-source
+#
+mercurial
+# NSLS-II PSC
+libevent-dev
+# llrf (nds)
+libboost-dev
+libboost-regex-dev
+libboost-filesystem-dev
+# ADPluginCalib/Edge
+libopencv-dev
+libpng-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
+# asyn
+libtirpc-dev
+# require
+tclx8.4
+#
+libhidapi-dev
+libhidapi-libusb0
+libhidapi-dev
+libusb-1.0-0
+libusb-1.0-0-dev
+#
+libpython3-all-dev
+python-dev-is-python3
+python3-pip
+python3-nose
+python3-numpy
+python3-pyparsing
+#pvxs
+cmake
+#pmac
+libssh2-1
+libssh2-1-dev
+#

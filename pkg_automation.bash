@@ -259,6 +259,20 @@ function install_pkg_ubu22
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
+function install_pkg_ubu24
+{
+    declare -a pkg_list=${1}
+
+    sudo_exist;
+
+    ${SUOD_CMD} apt -y update;
+    printf "\n\n";   
+    printf "The following package list will be installed:\n\n"
+    printf "%s\n\n" "${pkg_list}";
+    ${SUDO_CMD} apt -y install ${pkg_list}
+    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+}
+
 function install_pkg_deb10
 {
     declare -a pkg_list=${1}
@@ -569,6 +583,7 @@ declare -a PKG_RPI_ARRAY
 #
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
+declare -a PKG_UBU24_ARRAY
 #
 declare -a PKG_RPM_ARRAY
 declare -a PKG_CENTOS8_ARRAY
@@ -592,6 +607,7 @@ declare -g RPI_PATH=${SC_TOP}/pkg-rpi
 declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
 declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
 declare -g UBU22_PATH=${SC_TOP}/pkg-ubu22
+declare -g UBU24_PATH=${SC_TOP}/pkg-ubu24
 #
 declare -g RPM_PATH=${SC_TOP}/pkg-rpm
 declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
@@ -613,6 +629,7 @@ declare -ga pkg_rpi_list
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
 declare -ga pgk_ubu22_list
+declare -ga pgk_ubu24_list
 #
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
@@ -635,6 +652,7 @@ pkg_rpi_list=("epics" "extra")
 pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
 pkg_ubu22_list=("epics" "extra")
+pkg_ubu24_list=("epics" "extra")
 #
 pkg_rpm_list=("epics" "extra")
 pkg_centos8_list=("common" "epics" "extra")
@@ -700,6 +718,12 @@ PKG_UBU22_ARRAY=$(pkg_list ${COM_PATH}/common)
 for deb_file in ${pkg_ubu22_list[@]}; do
     PKG_UBU22_ARRAY+=" ";
     PKG_UBU22_ARRAY+=$(pkg_list "${UBU22_PATH}/${deb_file}");
+done
+
+PKG_UBU2i4_ARRAY=$(pkg_list ${COM_PATH}/common)
+for deb_file in ${pkg_ubu24_list[@]}; do
+    PKG_UBU24_ARRAY+=" ";
+    PKG_UBU24_ARRAY+=$(pkg_list "${UBU24_PATH}/${deb_file}");
 done
 
 PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
@@ -859,20 +883,13 @@ case "$dist" in
     if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
     install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
     elif [[ "$ubuntu_version" =~ .*"24.".* ]]; then
-    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
+    install_pkg_ubu24 "${PKG_UBU24_ARRAY[@]}"
     else
         printf "\n";
         printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
         printf "\n";
     fi
     ;;
-    *jammy*)
-    if [ "$ANSWER" == "NO" ]; then
-        yes_or_no_to_go "Ubuntu jammy is detected as $dist";
-    fi
-    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
-    ;;
-
     *sylvia*)
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
