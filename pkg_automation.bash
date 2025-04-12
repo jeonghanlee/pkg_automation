@@ -850,14 +850,16 @@ case "$dist" in
     *focal*)
 	if [ "$ANSWER" == "NO" ]; then
         	yes_or_no_to_go "Ubuntu focal is detected as $dist";
-    	fi
-    	install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+    fi
+    install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
     ;;
 
     *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
     if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
-    	install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
+    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
+    elif [[ "$ubuntu_version" =~ .*"24.".* ]]; then
+    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
     else
         printf "\n";
         printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
