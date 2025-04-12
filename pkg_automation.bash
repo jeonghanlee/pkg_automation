@@ -880,6 +880,9 @@ case "$dist" in
 
     *Ubuntu*)
     ubuntu_version=$(ubuntu_dist)
+    if [ "$ANSWER" == "NO" ]; then
+        yes_or_no_to_go "Ubuntu is detected as $dist"
+    fi
     if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
     install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
     elif [[ "$ubuntu_version" =~ .*"24.".* ]]; then
