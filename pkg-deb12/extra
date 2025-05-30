@@ -20,4 +20,5 @@ libheif1
 heif-gdk-pixbuf
 heif-thumbnailer
 git-lfs
+libxml2-utils
 #
