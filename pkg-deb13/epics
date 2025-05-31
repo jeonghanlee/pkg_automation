@@ -3,7 +3,7 @@
 build-essential
 libreadline-dev
 libxt-dev
-# Do we really need the following? 
+# Do we really need the following?
 #x11proto-print-dev
 libxmu-headers
 libxmu-dev
@@ -22,7 +22,7 @@ libusb-dev
 libusb-1.0-0-dev
 remake
 libudev-dev
-libsystemd-dev 
+libsystemd-dev
 linux-source
 # ADSupport External libs
 libxml2-dev
@@ -30,7 +30,8 @@ libnetcdf-dev
 libhdf5-dev
 libblosc-dev
 libtiff-dev
-libjpeg-dev 
+libjpeg-dev
+libz-dev
 #
 # NSLS-II PSC
 # It will be removed after we migrate to PVXS bundle one
