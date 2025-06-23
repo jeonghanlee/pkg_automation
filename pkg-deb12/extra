@@ -22,3 +22,5 @@ heif-thumbnailer
 git-lfs
 libxml2-utils
 #
+chrpath
+#
