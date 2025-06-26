@@ -30,7 +30,15 @@ libudev-dev
 libsystemd-dev
 linux-source
 #
-mercurial
+# ADSupport External libs
+libxml2-dev
+libnetcdf-dev
+libhdf5-dev
+libblosc-dev
+libtiff-dev
+libjpeg-dev
+libz-dev
+#
 # NSLS-II PSC
 libevent-dev
 # llrf (nds)
