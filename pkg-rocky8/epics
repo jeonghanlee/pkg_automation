@@ -61,4 +61,8 @@ cmake
 # pmac
 libssh2-devel
 libssh2
+# opcua
+openssl3
+openssl3-devel
+compat-openssl10
 #
