@@ -37,6 +37,7 @@ libhdf5-dev
 libblosc-dev
 libtiff-dev
 libjpeg-dev
+libz-dev
 #
 # NSLS-II PSC
 libevent-dev

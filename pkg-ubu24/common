@@ -1,0 +1,10 @@
+screen
+unzip
+git
+tree
+autoconf
+libtool
+coreutils
+graphviz
+cmake
+

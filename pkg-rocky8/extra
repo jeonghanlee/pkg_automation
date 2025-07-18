@@ -15,4 +15,17 @@
 bash-completion
 git-lfs
 xterm
+=======
+ShellCheck
+# Aravis (Camera)
+ninja-build
+meson
+glib2-devel
+gtk-doc
+gtk3-devel
+gstreamer1
+gstreamer1-devel
+gstreamer1-plugins-base-devel
+libnotify-devel
+gobject-introspection-devel
 

@@ -29,6 +29,7 @@ netcdf-devel
 #blosc-devel
 libtiff-devel
 libjpeg-turbo-devel
+zlib-devel
 #ADPonitGrey Vendor lib has the libraw1394 dep.
 #libraw1394.x86_64
 # ADPluginCalib/Edge

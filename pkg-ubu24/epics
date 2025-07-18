@@ -1,22 +1,27 @@
-# Required DEB 13 Packages for EPICS installation
+# Required DEB Packages for EPICS installation
 #
 build-essential
 libreadline-dev
 libxt-dev
-# Do we really need the following?
-#x11proto-print-dev
 libxmu-headers
 libxmu-dev
 libxmu6
 libxpm-dev
 libxmuu-dev
 libxmuu1
+#libpcre++-dev
 #
 #
-libmotif-dev
+#
 libsnmp-dev
 re2c
+#darcs
+libnetcdf-dev
+libhdf5-dev
+#libnexus0-dev # NeXus scientific data file format
+libpng-dev
 libbz2-dev
+libxml2-dev
 libusb-dev
 # asyn, USBTSM libusb-1.0
 libusb-1.0-0-dev
@@ -24,6 +29,7 @@ remake
 libudev-dev
 libsystemd-dev
 linux-source
+#
 # ADSupport External libs
 libxml2-dev
 libnetcdf-dev
@@ -32,43 +38,37 @@ libblosc-dev
 libtiff-dev
 libjpeg-dev
 libz-dev
-#
 # NSLS-II PSC
-# It will be removed after we migrate to PVXS bundle one
 libevent-dev
-#
 # llrf (nds)
 libboost-dev
 libboost-regex-dev
 libboost-filesystem-dev
-#ADPonitGrey Vendor lib has the libraw1394 dep.
-libraw1394-11
 # ADPluginCalib/Edge
 libopencv-dev
-# Debian 9
 libpng-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
 # asyn
 libtirpc-dev
 # require
-#tclx
-#measComp
+tclx8.4
+#
+libhidapi-dev
 libhidapi-libusb0
 libhidapi-dev
-libusb-1.0-0-dev
 libusb-1.0-0
+libusb-1.0-0-dev
 #
-# Python
 libpython3-all-dev
 python-dev-is-python3
 python3-pip
-python3-nose2
+python3-nose
 python3-numpy
 python3-pyparsing
-#
-libssh2-1t64
+#pvxs
+cmake
+#pmac
+libssh2-1
 libssh2-1-dev
-#
-# opcua
-libssl3
-libssl-dev
 #
