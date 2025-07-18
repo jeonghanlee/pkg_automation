@@ -42,19 +42,6 @@ jobs:
           export LC_ALL=C.UTF-8
           bash pkg_automation.bash -y
 
-  Debian10:
-    runs-on: ubuntu-latest
-    container: debian:buster
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Test on Debian 10 Docker
-        run: |
-          export LC_CTYPE=C.UTF-8
-          export LC_ALL=C.UTF-8
-          apt update && apt install -y sudo
-          bash pkg_automation.bash -y
-
   Debian11:
     runs-on: ubuntu-latest
     container: debian:bullseye
