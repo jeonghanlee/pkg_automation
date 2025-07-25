@@ -16,7 +16,6 @@ net-snmp
 net-snmp-utils
 net-snmp-devel
 libzip-devel
-libusb-devel
 platform-python-devel
 #darcs
 boost-devel
@@ -41,6 +40,7 @@ libevent-devel
 libpng-devel
 # asyn, USBTSM libusb-1.0
 libusbx-devel
+libusbx
 systemd-devel
 #
 #hg
@@ -53,8 +53,6 @@ re2c
 #
 #hidapi-devel
 #hidapi
-libusb-devel
-libusb
 #
 python3-devel
 # pvxs

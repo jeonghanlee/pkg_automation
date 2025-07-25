@@ -15,7 +15,6 @@
 bash-completion
 git-lfs
 xterm
-=======
 ShellCheck
 # Aravis (Camera)
 ninja-build
