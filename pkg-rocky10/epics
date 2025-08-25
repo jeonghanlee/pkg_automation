@@ -36,8 +36,8 @@ zlib-devel
 #
 libpng-devel
 # asyn, USBTSM libusb-1.0
-libusbx-devel
-libusbx
+libusb1
+libusb1-devel
 systemd-devel
 #
 #hg
