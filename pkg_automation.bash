@@ -85,6 +85,7 @@
 #
 #   - 1.2.0 * Rocky 9
 #   - 1.3.0 * Ubuntu 22
+#   - 1.4.0 * Rocky 10
 #
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
@@ -531,6 +532,49 @@ function install_pkg_rocky9
     ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1 
 }
 
+function install_pkg_rocky10
+{
+    declare -a pkg_list=${1}
+    printf "\n";
+    printf "$pkg_list\n";
+    printf "\n\n\n"
+    declare -r yum_pid="/var/run/yum.pid"
+
+    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
+    sudo_exist;
+
+    disable_system_service packagekit
+    disable_system_service firewalld
+
+    # Somehow, yum is running due to PackageKit, so if so, kill it
+    #
+    if [[ -e ${yum_pid} ]]; then
+	${SUDO_CMD} kill -9 $(cat ${yum_pid})
+	if [ $? -ne 0 ]; then
+	    printf "Remove the orphan yum pid\n";
+	    ${SUDO_CMD} rm -rf ${yum_pid}
+	fi
+    fi
+    ${SUDO_CMD} dnf -y install dnf-plugins-core;
+    ${SUDO_CMD} dnf -y update;
+## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
+## PowerTools does not exist, so we have to find out several packages
+## I think, it needs some time to show up in somewhere, that is always the Redhat does
+##
+
+    ${SUDO_CMD} dnf -y config-manager --set-enabled crb
+    ${SUDO_CMD} dnf -y update;
+    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
+    ${SUDO_CMD} dnf -y update;
+    ${SUDO_CMD} dnf -y groupinstall "Development tools"
+    ${SUDO_CMD} dnf -y install "epel-release"
+    ${SUDO_CMD} dnf -y update;
+    ${SUDO_CMD} dnf -y install ${pkg_list};
+    # 3.9 is the rocky 9 default and there is no alternatives python
+    #
+    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
+}
+
 function install_pkg_macos11
 {
     declare -a pkg_list=${1}
@@ -590,6 +634,7 @@ declare -a PKG_CENTOS8_ARRAY
 declare -a PKG_DNF_ARRAY
 declare -a PKG_ROCKY8_ARRAY
 declare -a PKG_ROCKY9_ARRAY
+declare -a PKG_ROCKY10_ARRAY
 #
 declare -a PKG_MACOS11_ARRAY
 
@@ -614,6 +659,7 @@ declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
 declare -g DNF_PATH=${SC_TOP}/pkg-dnf
 declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
 declare -g ROCKY9_PATH=${SC_TOP}/pkg-rocky9
+declare -g ROCKY10_PATH=${SC_TOP}/pkg-rocky10
 #
 declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
 #
@@ -636,6 +682,7 @@ declare -ga pkg_centos8_list
 declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
 declare -ga pkg_rocky9_list
+declare -ga pkg_rocky10_list
 #
 declare -ga pkg_macos11_list
 
@@ -659,6 +706,7 @@ pkg_centos8_list=("common" "epics" "extra")
 pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
 pkg_rocky9_list=("common" "epics" "extra")
+pkg_rocky10_list=("common" "epics" "extra")
 #
 pkg_macos11_list=("epics")
 #
@@ -753,6 +801,11 @@ for rocky9_file in ${pkg_rocky9_list[@]}; do
     PKG_ROCKY9_ARRAY+=" ";
     PKG_ROCKY9_ARRAY+=$(pkg_list "${ROCKY9_PATH}/${rocky9_file}");
 done
+# Rocky 10.0
+for rocky10_file in ${pkg_rocky10_list[@]}; do
+    PKG_ROCKY10_ARRAY+=" ";
+    PKG_ROCKY10_ARRAY+=$(pkg_list "${ROCKY10_PATH}/${rocky10_file}");
+done
 #
 for brew_file in ${pkg_macos11_list[@]}; do
     PKG_MACOS11_ARRAY+=" ";
@@ -844,6 +897,8 @@ case "$dist" in
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
 	elif [[ "$rocky_version" =~ .*"9.".* ]]; then
         install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
+  elif [[ "$rocky_version" =~ .*"10.".* ]]; then
+    install_pkg_rocky10 "${PKG_ROCKY10_ARRAY[@]}"
 	else
         printf "\n";
 	    printf "Doesn't support %s\n" "$dist";
