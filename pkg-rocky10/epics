@@ -5,10 +5,10 @@
 patch
 readline-devel
 libXt-devel
-libXp-devel
+#libXp-devel
 libXmu-devel
 libXpm-devel
-motif-devel
+# motif-devel # motif not available
 gcc-c++
 ncurses-devel
 perl-devel
@@ -19,7 +19,7 @@ libzip-devel
 platform-python-devel
 #darcs
 boost-devel
-pcre-devel
+#pcre-devel
 libcurl-devel
 # ADSupport  External libs
 libxml2-devel
@@ -36,8 +36,6 @@ zlib-devel
 #
 libpng-devel
 # asyn, USBTSM libusb-1.0
-libusb1
-libusb1-devel
 systemd-devel
 #
 #hg
