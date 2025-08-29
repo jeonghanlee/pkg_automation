@@ -2,6 +2,7 @@
 [![Linux Build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml)
 [![Debian 13](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml)
 [![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
+[![Rocky Linux 9](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml)
 [![Rocky Linux 10](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml)
 [![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 [![macOS build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml)
