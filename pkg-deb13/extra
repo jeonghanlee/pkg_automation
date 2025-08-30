@@ -1,6 +1,6 @@
 #fonts-liberation
 #logrotate
-#curl
+curl
 #net-tools
 #symlinks
 #dkms

@@ -49,9 +49,6 @@ libopencv-dev
 libpng-dev
 # asyn
 libtirpc-dev
-# require
-#tclx
-#measComp
 libhidapi-libusb0
 libhidapi-dev
 libusb-1.0-0-dev
