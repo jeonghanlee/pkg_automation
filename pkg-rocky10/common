@@ -1,0 +1,19 @@
+screen
+#telnet
+#nano
+#unzip
+git
+tree
+which
+#xterm
+#ipmitool
+autoconf
+libtool
+automake
+#m4
+# EPICS Base
+re2c
+graphviz
+#splint
+#flex-devel
+

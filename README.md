@@ -3,6 +3,7 @@
 [![Debian 13](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml)
 [![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
 [![Rocky Linux 9](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml)
+[![Rocky Linux 10](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml)
 [![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 [![macOS build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos.yml)
 
@@ -16,6 +17,7 @@ And it was tested with the following distributions:
 * Debian 13 testing (Trixie)
 * Debian 12 (Bookworm)
 * Debian 11 (Bullseye)
+* Rocky 10 (Red Quartz)
 * Rocky 9 (Blue Onyx)
 * Rocky 8 (Green Obsidian)
 * macOS 13 (Ventura, with brew)
