@@ -36,6 +36,8 @@ zlib-devel
 #
 libpng-devel
 # asyn, USBTSM libusb-1.0
+# Rocky 10, libusb1 now
+libusb1-devel
 systemd-devel
 #
 #hg
@@ -52,7 +54,7 @@ re2c
 python3-devel
 # Perl
 perl-FindBin
-
+perl-Sys-Hostname
 # NSLS-II PSC
 libevent-devel
 #pvxs

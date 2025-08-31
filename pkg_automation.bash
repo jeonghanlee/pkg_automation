@@ -561,8 +561,8 @@ function install_pkg_rocky10
 ## PowerTools does not exist, so we have to find out several packages
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
 ##
-
     ${SUDO_CMD} dnf -y config-manager --set-enabled crb
+    ${SUDO_CMD} /usr/bin/crb enable
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf -y update;
@@ -570,7 +570,7 @@ function install_pkg_rocky10
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
-    # 3.9 is the rocky 9 default and there is no alternatives python
+    # 3.12.9 is the rocky 10.0 default and there is no alternatives python
     #
     ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
