@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  Rocky9:
+  Rocky10:
     runs-on: ubuntu-latest
     container: rockylinux/rockylinux:10
     steps:
