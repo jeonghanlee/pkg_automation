@@ -8,7 +8,7 @@ on:
     - 'pkg-rocky10/**'
     - 'pkg_automation.bash'
     - 'functions'
-    - '.github/workflows/rocky9.yml'
+    - '.github/workflows/rocky10.yml'
 
   pull_request:
     branches: [ master ]
