@@ -219,18 +219,25 @@ function install_tclx_centos8
 
 function pkg_list
 {
-    unset packagelist
-    local i
-    let i=0
+    packagelist=()
+    if [[ ! -f "${1}" ]]; then
+        echo "WARNING: File '${1}' not found." >&2
+        return 0
+    fi
+
+    local i=0
+
     while IFS= read -r line_data; do
-	if [ "$line_data" ]; then
-	    # Skip command #
-	    [[ "$line_data" =~ ^#.*$ ]] && continue
-	    packagelist[i]="${line_data}"
-	    ((++i))
-	fi
-    done < ${1}
-    echo ${packagelist[@]}
+    if [ "$line_data" ]; then
+        if [[ "$line_data" =~ ^#.*$ ]]; then
+            continue
+        fi
+        packagelist[i]="${line_data}"
+        ((++i))
+    fi
+    done < "${1}"
+
+    echo "${packagelist[@]+"${packagelist[@]}"}"
 }
 
 function install_pkg_deb
@@ -264,7 +271,7 @@ function install_pkg_ubu22
     # We ignore within Docker image
     sudo_exist;
 
-    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
@@ -283,7 +290,7 @@ function install_pkg_ubu24
 
     sudo_exist;
 
-    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y update;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     printf "%s\n\n" "${pkg_list}";
@@ -322,7 +329,7 @@ function install_pkg_deb11
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
 
-    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
@@ -344,7 +351,7 @@ function install_pkg_deb12
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
 
-    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y update;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
@@ -360,7 +367,7 @@ function install_pkg_deb13
 {
     declare -a pkg_list=${1}
     sudo_exist;
-    ${SUOD_CMD} apt -y update;
+    ${SUDO_CMD} apt -y update;
     printf "\n\n";   
     printf "The following package list will be installed:\n\n"
     printf "%s\n\n" "${pkg_list}";
@@ -450,7 +457,7 @@ function install_pkg_rpm
     printf "The following packages are being removed ....\n"
     ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
     ${SUDO_CMD} yum -y update;
-    ${SUDO_CMD} yum -y upgarde ca-certificates
+    ${SUDO_CMD} yum -y upgrade ca-certificates
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum -y update;
@@ -686,11 +693,12 @@ declare -ga pkg_rpi_list
 #
 declare -ga pkg_ubu16_list
 declare -ga pkg_ubu20_list
-declare -ga pgk_ubu22_list
-declare -ga pgk_ubu24_list
+declare -ga pkg_ubu22_list
+declare -ga pkg_ubu24_list
 #
 declare -ga pkg_rpm_list
 declare -ga pkg_centos8_list
+#
 declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
 declare -ga pkg_rocky9_list
