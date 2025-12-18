@@ -87,6 +87,23 @@
 #   - 1.3.0 * Ubuntu 22
 #   - 1.4.0 * Rocky 10
 #
+
+set -Eeuo pipefail
+
+trap 'error_handler $? $LINENO "$BASH_COMMAND"' ERR
+
+error_handler() {
+  local exit_code="$1"
+  local line_number="$2"
+  local command="$3"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "[ERROR] Script failed at line $line_number"
+  echo "Command: $command"
+  echo "Exit Code: $exit_code"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  exit "$exit_code"
+}
+
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
@@ -121,14 +138,14 @@ function sudo_exist
 function centos_dist
 {
     local VERSION_ID
-    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=")
+    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=" || true)
     echo ${VERSION_ID}
 }
 
 function ubuntu_dist
 {
     local VERSION_ID
-    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=")
+    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=" || true)
     echo ${VERSION_ID}
 }
 
@@ -169,10 +186,9 @@ function disable_system_service
     local disable_services=$1; shift
     
     printf "Disable service ... %s\n" "${disable_services}"
-    ${SUDO_CMD} systemctl stop    ${disable_services} | echo ">>> Stop    : $disable_services do not exist"
-    ${SUDO_CMD} systemctl disable ${disable_services} | echo ">>> Disalbe : $disable_services do not exist"
-    ${SUDO_CMD} systemctl mask    ${disable_services} | echo ">>> Mask    : $disable_services do not exist"
-
+    ${SUDO_CMD} systemctl stop    "${disable_services}" 2>/dev/null || echo ">>> Stop    : ${disable_services} do not exist/failed"
+    ${SUDO_CMD} systemctl disable "${disable_services}" 2>/dev/null || echo ">>> Disable : ${disable_services} do not exist/failed"
+    ${SUDO_CMD} systemctl mask    "${disable_services}" 2>/dev/null || echo ">>> Mask    : ${disable_services} do not exist/failed"
 }
 
 function install_tclx_centos8
@@ -203,6 +219,7 @@ function install_tclx_centos8
 
 function pkg_list
 {
+    unset packagelist
     local i
     let i=0
     while IFS= read -r line_data; do
@@ -378,11 +395,10 @@ function install_pkg_dnf
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	if [ $? -ne 0 ]; then
-	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf ${yum_pid}
-	fi
+        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
+            printf "Remove the orphan yum pid\n";
+            ${SUDO_CMD} rm -rf "${yum_pid}"
+        fi
     fi
 
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
@@ -415,11 +431,10 @@ function install_pkg_rpm
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	if [ $? -ne 0 ]; then
-	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf ${yum_pid}
-	fi
+        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
+            printf "Remove the orphan yum pid\n";
+            ${SUDO_CMD} rm -rf "${yum_pid}"
+        fi
     fi
     
     if [ "$version" == "8" ]; then
@@ -469,11 +484,10 @@ function install_pkg_rocky8
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	    ${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	    if [ $? -ne 0 ]; then
-	        printf "Remove the orphan yum pid\n";
-	        ${SUDO_CMD} rm -rf ${yum_pid}
-	    fi
+        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
+            printf "Remove the orphan yum pid\n";
+            ${SUDO_CMD} rm -rf "${yum_pid}"
+        fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
@@ -506,11 +520,10 @@ function install_pkg_rocky9
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	if [ $? -ne 0 ]; then
-	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf ${yum_pid}
-	fi
+        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
+            printf "Remove the orphan yum pid\n";
+            ${SUDO_CMD} rm -rf "${yum_pid}"
+        fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
@@ -549,11 +562,10 @@ function install_pkg_rocky10
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
-	${SUDO_CMD} kill -9 $(cat ${yum_pid})
-	if [ $? -ne 0 ]; then
-	    printf "Remove the orphan yum pid\n";
-	    ${SUDO_CMD} rm -rf ${yum_pid}
-	fi
+        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
+            printf "Remove the orphan yum pid\n";
+            ${SUDO_CMD} rm -rf "${yum_pid}"
+        fi
     fi
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
@@ -768,7 +780,7 @@ for deb_file in ${pkg_ubu22_list[@]}; do
     PKG_UBU22_ARRAY+=$(pkg_list "${UBU22_PATH}/${deb_file}");
 done
 
-PKG_UBU2i4_ARRAY=$(pkg_list ${COM_PATH}/common)
+PKG_UBU24_ARRAY=$(pkg_list ${COM_PATH}/common)
 for deb_file in ${pkg_ubu24_list[@]}; do
     PKG_UBU24_ARRAY+=" ";
     PKG_UBU24_ARRAY+=$(pkg_list "${UBU24_PATH}/${deb_file}");
@@ -1009,4 +1021,4 @@ case "$dist" in
 	;;
 esac
 
-exit;
+exit 0
