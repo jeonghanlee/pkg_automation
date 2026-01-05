@@ -19,4 +19,6 @@ libheif-examples
 libheif1
 git-lfs
 libxml2-utils
+# Rust
+cargo
 #
