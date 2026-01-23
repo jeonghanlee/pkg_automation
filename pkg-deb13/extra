@@ -22,3 +22,5 @@ libxml2-utils
 # Rust
 cargo
 #
+xclip
+#
