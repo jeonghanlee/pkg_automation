@@ -24,3 +24,5 @@ cargo
 #
 xclip
 #
+fzf
+#
