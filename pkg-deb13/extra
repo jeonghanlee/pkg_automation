@@ -24,5 +24,9 @@ cargo
 #
 xclip
 #
+universal-ctags
+powerline
+silversearcher-ag
 fzf
+vim-gtk3
 #
