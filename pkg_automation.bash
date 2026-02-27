@@ -24,14 +24,14 @@
 #   - 0.0.1  December 1 00:01 KST 2014, jhlee
 #           * created
 #   - 0.9.0  Monday, September 25 22:28:18 CEST 2017, jhlee
-#           * completely rewrite... 
+#           * completely rewrite...
 #   - 0.9.1  Tuesday, September 26 09:49:56 CEST 2017, jhlee
-#           * first release 
-#   - 0.9.2  
+#           * first release
+#   - 0.9.2
 #           * added Development tools for CentOS
 #   - 0.9.3
 #           * add tclx for require
-#   - 0.9.4 
+#   - 0.9.4
 #           * Debian 9  support
 #   - 0.9.5
 #           * tune CentOS pkgs - first epel-release
@@ -40,9 +40,9 @@
 #   - 0.9.7
 #           * add Linux Mint 18 support
 #   - 0.9.8
-#           * add Fedor 27 
+#           * add Fedor 27
 #   - 0.9.9
-#           * add linux-headers-$(uname -r) in this script for Debian 
+#           * add linux-headers-$(uname -r) in this script for Debian
 #
 #   - 0.9.10
 #           * fix linux-headers-$(uname -r) in this script for Debian
@@ -59,7 +59,7 @@
 #   - 1.0.1
 #          * use N as default
 #   - 1.0.2
-#          * add Mint tessa 
+#          * add Mint tessa
 #   - 1.0.3
 #          * added the systemd functions which stop, disable, and mask the service
 #
@@ -72,8 +72,8 @@
 #   - 1.0.6
 #          * CentOS 8 (missing darcs, tclx, blosc-devel)
 #          * CentOS 8 (improved to handle CentOS8 case)
-#            
-#   - 1.0.7  
+#
+#   - 1.0.7
 #          * Ubuntu 20
 #
 #   - 1.0.8
@@ -172,7 +172,7 @@ function find_dist
      	    dist_cn=$(lsb_release -cs)
      	    dist_rs=$(lsb_release -rs)
      	    echo "$dist_id" "${dist_cn}" "${dist_rs}"
-        else 
+        else
             # shellcheck disable=SC2046 disable=SC2002
      	    eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
             # shellcheck disable=SC2086
@@ -184,7 +184,7 @@ function find_dist
 function disable_system_service
 {
     local disable_services=$1; shift
-    
+
     printf "Disable service ... %s\n" "${disable_services}"
     ${SUDO_CMD} systemctl stop    "${disable_services}" 2>/dev/null || echo ">>> Stop    : ${disable_services} do not exist/failed"
     ${SUDO_CMD} systemctl disable "${disable_services}" 2>/dev/null || echo ">>> Disable : ${disable_services} do not exist/failed"
@@ -211,7 +211,7 @@ function install_tclx_centos8
 	${SUDO_CMD} make install
 	${SUDO_CMD} ln -sf /usr/lib/tclx8.6/ /usr/share/tcl8.6/tclx8.6
 	popd
-	
+
 	popd
     fi
 
@@ -250,7 +250,7 @@ function install_pkg_deb
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
     ${SUDO_CMD} apt update;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
@@ -273,7 +273,7 @@ function install_pkg_ubu22
 
     ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
@@ -291,7 +291,7 @@ function install_pkg_ubu24
     sudo_exist;
 
     ${SUDO_CMD} apt -y update;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n\n" "${pkg_list}";
     ${SUDO_CMD} apt -y install ${pkg_list}
@@ -308,7 +308,7 @@ function install_pkg_deb10
     # linux-headers are not necessary for a common application.
     # We ignore within Docker image
     ${SUDO_CMD} apt -y update;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
@@ -331,7 +331,7 @@ function install_pkg_deb11
 
     ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
@@ -352,7 +352,7 @@ function install_pkg_deb12
     # We ignore within Docker image
 
     ${SUDO_CMD} apt -y update;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
@@ -368,7 +368,7 @@ function install_pkg_deb13
     declare -a pkg_list=${1}
     sudo_exist;
     ${SUDO_CMD} apt -y update;
-    printf "\n\n";   
+    printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n\n" "${pkg_list}";
     ${SUDO_CMD} apt -y install ${pkg_list}
@@ -398,7 +398,7 @@ function install_pkg_dnf
 
     disable_system_service packagekit
     disable_system_service firewalld
-    
+
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
@@ -419,7 +419,7 @@ function install_pkg_dnf
 # lrwxrwxrwx. 1 root root 5 May 13 21:34 /usr/bin/yum -> dnf-3
 # lrwxrwxrwx. 1 root root 5 May 13 21:34 /usr/bin/dnf -> dnf-3
 # so, it may be possible to merge them together with dnf
-# 
+#
 function install_pkg_rpm
 {
     declare -a pkg_list=${1}
@@ -434,7 +434,7 @@ function install_pkg_rpm
     sudo_exist;
     disable_system_service packagekit
     disable_system_service firewalld
-    
+
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
@@ -443,7 +443,7 @@ function install_pkg_rpm
             ${SUDO_CMD} rm -rf "${yum_pid}"
         fi
     fi
-    
+
     if [ "$version" == "8" ]; then
 	pkgs_should_be_removed+=" "
 	    ${SUDO_CMD} yum -y install dnf-plugins-core;
@@ -452,7 +452,7 @@ function install_pkg_rpm
     else
 	pkgs_should_be_removed+=" "
 	pkgs_should_be_removed+="motif-devel"
-	
+
     fi
     printf "The following packages are being removed ....\n"
     ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
@@ -487,7 +487,7 @@ function install_pkg_rocky8
 
     disable_system_service packagekit
     disable_system_service firewalld
-    
+
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
@@ -523,7 +523,7 @@ function install_pkg_rocky9
 
     disable_system_service packagekit
     disable_system_service firewalld
-    
+
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
@@ -537,7 +537,7 @@ function install_pkg_rocky9
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
 ## PowerTools does not exist, so we have to find out several packages
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
-## 
+##
 
     ${SUDO_CMD} dnf -y config-manager --set-enabled crb
     ${SUDO_CMD} dnf -y update;
@@ -549,7 +549,7 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y install ${pkg_list};
     # 3.9 is the rocky 9 default and there is no alternatives python
     #
-    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1 
+    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
 
 function install_pkg_rocky10
@@ -581,7 +581,6 @@ function install_pkg_rocky10
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
 ##
     ${SUDO_CMD} dnf -y config-manager --set-enabled crb
-    ${SUDO_CMD} /usr/bin/crb enable
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf -y update;
