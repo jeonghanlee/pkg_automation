@@ -475,6 +475,31 @@ function install_pkg_rpm
     fi
 }
 
+function install_ctags_from_source
+{
+    local build_dir="/tmp/ctags_build"
+    local ctags_repo="https://github.com/universal-ctags/ctags.git"
+
+    printf "Universal-ctags not found. Starting source build...\n"
+
+    ${SUDO_CMD} dnf -y install autoconf automake pkgconfig gcc make libtool
+
+    if [[ -d "${build_dir}" ]]; then
+        rm -rf "${build_dir}"
+    fi
+
+    git clone "${ctags_repo}" "${build_dir}"
+    cd "${build_dir}" || exit 1
+
+    ./autogen.sh
+    ./configure --prefix=/usr/local
+    make
+    ${SUDO_CMD} make install
+
+    cd - > /dev/null || exit 1
+    rm -rf "${build_dir}"
+}
+
 function install_pkg_rocky8
 {
     declare -a pkg_list=${1}
@@ -507,6 +532,9 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install ${pkg_list};
+    if ! command -v ctags >/dev/null 2>&1; then
+        install_ctags_from_source
+    fi
     # 3.6 is the rocky default
     ${SUDO_CMD} alternatives --set python /usr/bin/python3
 }

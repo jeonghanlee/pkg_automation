@@ -28,3 +28,9 @@ gstreamer1-plugins-base-devel
 libnotify-devel
 gobject-introspection-devel
 
+# vim-pack
+powerline
+fzf
+the_silver_searcher
+universal-ctags
+
