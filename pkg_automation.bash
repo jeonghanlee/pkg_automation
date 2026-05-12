@@ -368,6 +368,7 @@ function install_pkg_deb13
     declare -a pkg_list=${1}
     sudo_exist;
     ${SUDO_CMD} apt -y update;
+    ${SUDO_CMD} apt -y remove exuberant-ctags;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n\n" "${pkg_list}";
