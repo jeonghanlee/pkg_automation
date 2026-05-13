@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2317
 #
 #  Copyright (c) 2014 - 2024    Jeong Han Lee
 #
@@ -90,17 +91,18 @@
 
 set -Eeuo pipefail
 
+# shellcheck disable=SC2317
 trap 'error_handler $? $LINENO "$BASH_COMMAND"' ERR
 
-error_handler() {
+function error_handler {
   local exit_code="$1"
   local line_number="$2"
   local command="$3"
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  echo "[ERROR] Script failed at line $line_number"
-  echo "Command: $command"
-  echo "Exit Code: $exit_code"
-  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  printf "[ERROR] Script failed at line %s\n" "$line_number"
+  printf "Command: %s\n" "$command"
+  printf "Exit Code: %s\n" "$exit_code"
+  printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   exit "$exit_code"
 }
 
@@ -122,61 +124,75 @@ function popd  { builtin popd  > /dev/null || exit; }
 SUDO_CMD="sudo"
 #KERNEL_VER=$(uname -r)
 
-. ${SC_TOP}/functions
+. "${SC_TOP}/functions"
 
 function sudo_exist
 {
-    if ! command -v ${SUDO_CMD} &> /dev/null
+    if ! command -v "${SUDO_CMD}" &> /dev/null
     then
-        echo ""
-        echo ">>>>>>>>>> ${SUDO_CMD} is required. Please install it first."
-        echo ""
+        printf "\n"
+        printf ">>>>>>>>>> %s is required. Please install it first.\n" "${SUDO_CMD}"
+        printf "\n"
         exit 1
     fi
 }
 
+function os_release_value
+{
+    local target_key="$1"
+    local key
+    local value
+
+    while IFS='=' read -r key value || [[ -n "${key}" ]]; do
+        key="${key//$'\r'/}"
+        value="${value//$'\r'/}"
+        if [[ "${key}" != "${target_key}" ]]; then
+            continue
+        fi
+        value="${value%\"}"
+        value="${value#\"}"
+        printf "%s\n" "${value}"
+        return 0
+    done < /etc/os-release
+
+    return 1
+}
+
 function centos_dist
 {
-    local VERSION_ID
-    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=" || true)
-    echo ${VERSION_ID}
+    os_release_value "VERSION_ID"
 }
 
 function ubuntu_dist
 {
-    local VERSION_ID
-    eval $(cat /etc/os-release | grep -E "^(VERSION_ID)=" || true)
-    echo ${VERSION_ID}
+    os_release_value "VERSION_ID"
 }
 
 function macos_dist
 {
     local VERSION
     VERSION=$(sw_vers -productVersion)
-    echo "$VERSION"
+    printf "%s\n" "$VERSION"
 }
 
 function find_dist
 {
 
-    local dist_id dist_cn dist_rs PRETTY_NAME
+    local dist_id dist_cn dist_rs
     local name version
 
     if [[ $OSTYPE == 'darwin'* ]]; then
         name=$(sw_vers -productName)
         version=$(sw_vers -productVersion)
-        echo "$name" "$version"
+        printf "%s %s\n" "$name" "$version"
     else
         if [[ -f /usr/bin/lsb_release ]] ; then
      	    dist_id=$(lsb_release -is)
      	    dist_cn=$(lsb_release -cs)
      	    dist_rs=$(lsb_release -rs)
-     	    echo "$dist_id" "${dist_cn}" "${dist_rs}"
+            printf "%s %s %s\n" "$dist_id" "${dist_cn}" "${dist_rs}"
         else
-            # shellcheck disable=SC2046 disable=SC2002
-     	    eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME)=")
-            # shellcheck disable=SC2086
-            echo "${PRETTY_NAME}"
+            os_release_value "PRETTY_NAME"
         fi
     fi
 }
@@ -186,9 +202,9 @@ function disable_system_service
     local disable_services=$1; shift
 
     printf "Disable service ... %s\n" "${disable_services}"
-    ${SUDO_CMD} systemctl stop    "${disable_services}" 2>/dev/null || echo ">>> Stop    : ${disable_services} do not exist/failed"
-    ${SUDO_CMD} systemctl disable "${disable_services}" 2>/dev/null || echo ">>> Disable : ${disable_services} do not exist/failed"
-    ${SUDO_CMD} systemctl mask    "${disable_services}" 2>/dev/null || echo ">>> Mask    : ${disable_services} do not exist/failed"
+    ${SUDO_CMD} systemctl stop    "${disable_services}" 2>/dev/null || printf ">>> Stop    : %s do not exist/failed\n" "${disable_services}"
+    ${SUDO_CMD} systemctl disable "${disable_services}" 2>/dev/null || printf ">>> Disable : %s do not exist/failed\n" "${disable_services}"
+    ${SUDO_CMD} systemctl mask    "${disable_services}" 2>/dev/null || printf ">>> Mask    : %s do not exist/failed\n" "${disable_services}"
 }
 
 function install_tclx_centos8
@@ -197,12 +213,12 @@ function install_tclx_centos8
 
     local tclx_path=/usr/share/tcl8.6/tclx8.6
 
-    if [[ -d $tclx_path ]]; then
+    if [[ -d "${tclx_path}" ]]; then
 	printf "tclx was detected, skip it\n";
     else
-	mkdir -p ${HOME}/.tclx
-	pushd ${HOME}/.tclx
-	${SUDO_CMD} rm -rf *
+	mkdir -p "${HOME}/.tclx"
+	pushd "${HOME}/.tclx"
+	find . -mindepth 1 -maxdepth 1 -exec "${SUDO_CMD}" rm -rf -- {} +
 	git clone https://github.com/flightaware/tclx
 	pushd tclx
 	git checkout tags/v8.4.3
@@ -210,24 +226,26 @@ function install_tclx_centos8
 	make
 	${SUDO_CMD} make install
 	${SUDO_CMD} ln -sf /usr/lib/tclx8.6/ /usr/share/tcl8.6/tclx8.6
-	popd
+	builtin popd > /dev/null || exit
 
-	popd
+	builtin popd > /dev/null || exit
     fi
 
 }
 
 function pkg_list
 {
-    packagelist=()
+    local -a packagelist=()
+    local line_data
     if [[ ! -f "${1}" ]]; then
-        echo "WARNING: File '${1}' not found." >&2
+        printf "WARNING: File '%s' not found.\n" "${1}" >&2
         return 0
     fi
 
     local i=0
 
     while IFS= read -r line_data; do
+    line_data="${line_data//$'\r'/}"
     if [ "$line_data" ]; then
         if [[ "$line_data" =~ ^#.*$ ]]; then
             continue
@@ -237,12 +255,22 @@ function pkg_list
     fi
     done < "${1}"
 
-    echo "${packagelist[@]+"${packagelist[@]}"}"
+    printf "%s\n" "${packagelist[@]}"
+}
+
+function append_pkg_file
+{
+    local -n target_array="$1"
+    local pkg_file="$2"
+    local -a file_packages=()
+
+    mapfile -t file_packages < <(pkg_list "${pkg_file}")
+    target_array+=("${file_packages[@]}")
 }
 
 function install_pkg_deb
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
 
     sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
@@ -256,14 +284,15 @@ function install_pkg_deb
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-     printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+     printf "%s\n" "${pkg_list[@]}";
+     printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     #    fi
 }
 
 function install_pkg_ubu22
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
 
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
@@ -279,28 +308,30 @@ function install_pkg_ubu22
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-     printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+     printf "%s\n" "${pkg_list[@]}";
+     printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_ubu24
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
 
     sudo_exist;
 
     ${SUDO_CMD} apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_deb10
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     sudo_exist;
 
     # Debian Docker, we cannot find the linux-headers,
@@ -314,15 +345,16 @@ function install_pkg_deb10
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-     printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+     printf "%s\n" "${pkg_list[@]}";
+     printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     #    fi
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
 
 function install_pkg_deb11
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
@@ -337,14 +369,15 @@ function install_pkg_deb11
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-    printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_deb12
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     sudo_exist;
     # Debian Docker, we cannot find the linux-headers,
     # Unable to locate package linux-headers-5.8.0-1033-azure
@@ -358,41 +391,43 @@ function install_pkg_deb12
     #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
     #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
     #    else
-     printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+     printf "%s\n" "${pkg_list[@]}";
+     printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_deb13
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     sudo_exist;
     ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove exuberant-ctags;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    printf "%s\n\n" "${pkg_list}";
-    ${SUDO_CMD} apt -y install ${pkg_list}
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
+    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
 }
 
-function install_pkg_rpi()
+function install_pkg_rpi
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     sudo_exist;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    printf "$pkg_list raspberrypi-kernel-headers\n";
+    printf "%s\n" "${pkg_list[@]}" "raspberrypi-kernel-headers";
     printf "\n\n"
 
     ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install ${pkg_list}  raspberrypi-kernel-headers
+    ${SUDO_CMD} apt-get -y install "${pkg_list[@]}" raspberrypi-kernel-headers
 }
 
 function install_pkg_dnf
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
     sudo_exist;
@@ -412,7 +447,7 @@ function install_pkg_dnf
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install ${pkg_list};
+    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
 }
 
 # CentOS8 yum is the same as dnf
@@ -423,15 +458,15 @@ function install_pkg_dnf
 #
 function install_pkg_rpm
 {
-    declare -a pkg_list=${1}
-    local version="${2}"
+    local -a pkg_list=("${@:1:$(($# - 1))}")
+    local version="${!#}"
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
 
     declare -r yum_pid="/var/run/yum.pid"
 
-    local pkgs_should_be_removed="PackageKit firewalld"
+    local -a pkgs_should_be_removed=("PackageKit" "firewalld")
     sudo_exist;
     disable_system_service packagekit
     disable_system_service firewalld
@@ -446,23 +481,21 @@ function install_pkg_rpm
     fi
 
     if [ "$version" == "8" ]; then
-	pkgs_should_be_removed+=" "
 	    ${SUDO_CMD} yum -y install dnf-plugins-core;
         ${SUDO_CMD} yum -y update;
         ${SUDO_CMD} yum config-manager --set-enabled powertools;
     else
-	pkgs_should_be_removed+=" "
-	pkgs_should_be_removed+="motif-devel"
+	pkgs_should_be_removed+=("motif-devel")
 
     fi
     printf "The following packages are being removed ....\n"
-    ${SUDO_CMD} yum -y remove ${pkgs_should_be_removed}
+    ${SUDO_CMD} yum -y remove "${pkgs_should_be_removed[@]}"
     ${SUDO_CMD} yum -y update;
     ${SUDO_CMD} yum -y upgrade ca-certificates
     ${SUDO_CMD} yum -y groupinstall "Development tools"
     ${SUDO_CMD} yum -y install "epel-release"
     ${SUDO_CMD} yum -y update;
-    ${SUDO_CMD} yum -y install ${pkg_list};
+    ${SUDO_CMD} yum -y install "${pkg_list[@]}";
     # Set Python3 as default
     #
     if [[ "$version" == "7" || "$version" == *"7."* ]]; then
@@ -502,13 +535,12 @@ function install_ctags_from_source
 
 function install_pkg_rocky8
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
     sudo_exist;
 
     disable_system_service packagekit
@@ -531,7 +563,7 @@ function install_pkg_rocky8
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install ${pkg_list};
+    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
@@ -541,13 +573,12 @@ function install_pkg_rocky8
 
 function install_pkg_rocky9
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
     sudo_exist;
 
     disable_system_service packagekit
@@ -575,7 +606,7 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install ${pkg_list};
+    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
     # 3.9 is the rocky 9 default and there is no alternatives python
     #
     ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
@@ -583,13 +614,12 @@ function install_pkg_rocky9
 
 function install_pkg_rocky10
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
     declare -r yum_pid="/var/run/yum.pid"
 
-    local pkgs_should_be_removed="PackageKit firewalld coreutils-single"
     sudo_exist;
 
     disable_system_service packagekit
@@ -616,7 +646,7 @@ function install_pkg_rocky10
     ${SUDO_CMD} dnf -y groupinstall "Development tools"
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install ${pkg_list};
+    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
     # 3.12.9 is the rocky 10.0 default and there is no alternatives python
     #
     ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
@@ -624,13 +654,13 @@ function install_pkg_rocky10
 
 function install_pkg_macos11
 {
-    declare -a pkg_list=${1}
+    local -a pkg_list=("$@")
     printf "\n";
-    printf "$pkg_list\n";
+    printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
 
     local command="brew"
-    ${command} install ${pkg_list};
+    ${command} install "${pkg_list[@]}";
     #
     # net-snmp-config in /usr/bin has very strange codes, so we have to overwrite it with brew net-snmp
     # 2023-08-21
@@ -650,8 +680,9 @@ function yes_or_no_to_go
     printf  "> required packages for EPICS installation\n"
     printf  "> and others.\n";
     printf  "> \n";
-    printf  "> $1\n";
-    read -p ">> Do you want to continue (y/N)? " answer
+    printf  "> %s\n" "$1";
+    printf ">> Do you want to continue (y/N)? "
+    read -r answer
     case ${answer:0:1} in
 	y|Y )
 	    printf ">> The following packages will be installed ...... ";
@@ -674,6 +705,7 @@ declare -a PKG_RPI_ARRAY
 #
 declare -a PKG_UBU16_ARRAY
 declare -a PKG_UBU20_ARRAY
+declare -a PKG_UBU22_ARRAY
 declare -a PKG_UBU24_ARRAY
 #
 declare -a PKG_RPM_ARRAY
@@ -685,30 +717,30 @@ declare -a PKG_ROCKY10_ARRAY
 #
 declare -a PKG_MACOS11_ARRAY
 
-declare -g COM_PATH=${SC_TOP}/pkg-common
+declare -g COM_PATH="${SC_TOP}/pkg-common"
 #
-declare -g DEB_PATH=${SC_TOP}/pkg-deb
-declare -g DEB9_PATH=${SC_TOP}/pkg-deb9
-declare -g DEB10_PATH=${SC_TOP}/pkg-deb10
-declare -g DEB11_PATH=${SC_TOP}/pkg-deb11
-declare -g DEB12_PATH=${SC_TOP}/pkg-deb12
-declare -g DEB13_PATH=${SC_TOP}/pkg-deb13
+declare -g DEB_PATH="${SC_TOP}/pkg-deb"
+declare -g DEB9_PATH="${SC_TOP}/pkg-deb9"
+declare -g DEB10_PATH="${SC_TOP}/pkg-deb10"
+declare -g DEB11_PATH="${SC_TOP}/pkg-deb11"
+declare -g DEB12_PATH="${SC_TOP}/pkg-deb12"
+declare -g DEB13_PATH="${SC_TOP}/pkg-deb13"
 #
-declare -g RPI_PATH=${SC_TOP}/pkg-rpi
+declare -g RPI_PATH="${SC_TOP}/pkg-rpi"
 #
-declare -g UBU16_PATH=${SC_TOP}/pkg-ubu16
-declare -g UBU20_PATH=${SC_TOP}/pkg-ubu20
-declare -g UBU22_PATH=${SC_TOP}/pkg-ubu22
-declare -g UBU24_PATH=${SC_TOP}/pkg-ubu24
+declare -g UBU16_PATH="${SC_TOP}/pkg-ubu16"
+declare -g UBU20_PATH="${SC_TOP}/pkg-ubu20"
+declare -g UBU22_PATH="${SC_TOP}/pkg-ubu22"
+declare -g UBU24_PATH="${SC_TOP}/pkg-ubu24"
 #
-declare -g RPM_PATH=${SC_TOP}/pkg-rpm
-declare -a CENTOS8_PATH=${SC_TOP}/pkg-centos8
-declare -g DNF_PATH=${SC_TOP}/pkg-dnf
-declare -g ROCKY8_PATH=${SC_TOP}/pkg-rocky8
-declare -g ROCKY9_PATH=${SC_TOP}/pkg-rocky9
-declare -g ROCKY10_PATH=${SC_TOP}/pkg-rocky10
+declare -g RPM_PATH="${SC_TOP}/pkg-rpm"
+declare -g CENTOS8_PATH="${SC_TOP}/pkg-centos8"
+declare -g DNF_PATH="${SC_TOP}/pkg-dnf"
+declare -g ROCKY8_PATH="${SC_TOP}/pkg-rocky8"
+declare -g ROCKY9_PATH="${SC_TOP}/pkg-rocky9"
+declare -g ROCKY10_PATH="${SC_TOP}/pkg-rocky10"
 #
-declare -g MACOS11_PATH=${SC_TOP}/pkg-macos11
+declare -g MACOS11_PATH="${SC_TOP}/pkg-macos11"
 #
 declare -ga pkg_deb_list
 declare -ga pkg_deb9_list
@@ -758,106 +790,88 @@ pkg_rocky10_list=("common" "epics" "extra")
 #
 pkg_macos11_list=("epics")
 #
-PKG_DEB_ARRAY=$(pkg_list ${COM_PATH}/common)
+append_pkg_file PKG_DEB_ARRAY "${COM_PATH}/common"
 
-for deb_file in ${pkg_deb_list[@]}; do
-    PKG_DEB_ARRAY+=" ";
-    PKG_DEB_ARRAY+=$(pkg_list "${DEB_PATH}/${deb_file}");
+for deb_file in "${pkg_deb_list[@]}"; do
+    append_pkg_file PKG_DEB_ARRAY "${DEB_PATH}/${deb_file}"
 done
 
-PKG_DEB9_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_deb9_list[@]}; do
-    PKG_DEB9_ARRAY+=" ";
-    PKG_DEB9_ARRAY+=$(pkg_list "${DEB9_PATH}/${deb_file}");
+append_pkg_file PKG_DEB9_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_deb9_list[@]}"; do
+    append_pkg_file PKG_DEB9_ARRAY "${DEB9_PATH}/${deb_file}"
 done
 # Debian 10 (Buster)
-for deb_file in ${pkg_deb10_list[@]}; do
-    PKG_DEB10_ARRAY+=" ";
-    PKG_DEB10_ARRAY+=$(pkg_list "${DEB10_PATH}/${deb_file}");
+for deb_file in "${pkg_deb10_list[@]}"; do
+    append_pkg_file PKG_DEB10_ARRAY "${DEB10_PATH}/${deb_file}"
 done
 # Debian 11 (Bullseye)
-for deb_file in ${pkg_deb11_list[@]}; do
-    PKG_DEB11_ARRAY+=" ";
-    PKG_DEB11_ARRAY+=$(pkg_list "${DEB11_PATH}/${deb_file}");
+for deb_file in "${pkg_deb11_list[@]}"; do
+    append_pkg_file PKG_DEB11_ARRAY "${DEB11_PATH}/${deb_file}"
 done
 # Debian 12 (bookworm)
-for deb_file in ${pkg_deb12_list[@]}; do
-    PKG_DEB12_ARRAY+=" ";
-    PKG_DEB12_ARRAY+=$(pkg_list "${DEB12_PATH}/${deb_file}");
+for deb_file in "${pkg_deb12_list[@]}"; do
+    append_pkg_file PKG_DEB12_ARRAY "${DEB12_PATH}/${deb_file}"
 done
 # Debian 13 (trixie)
-PKG_DEB13_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_deb13_list[@]}; do
-    PKG_DEB13_ARRAY+=" ";
-    PKG_DEB13_ARRAY+=$(pkg_list "${DEB13_PATH}/${deb_file}");
+append_pkg_file PKG_DEB13_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_deb13_list[@]}"; do
+    append_pkg_file PKG_DEB13_ARRAY "${DEB13_PATH}/${deb_file}"
 done
 #
-PKG_RPI_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_rpi_list[@]}; do
-    PKG_RPI_ARRAY+=" ";
-    PKG_RPI_ARRAY+=$(pkg_list "${RPI_PATH}/${deb_file}");
+append_pkg_file PKG_RPI_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_rpi_list[@]}"; do
+    append_pkg_file PKG_RPI_ARRAY "${RPI_PATH}/${deb_file}"
 done
 #
-PKG_UBU16_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_ubu16_list[@]}; do
-    PKG_UBU16_ARRAY+=" ";
-    PKG_UBU16_ARRAY+=$(pkg_list "${UBU16_PATH}/${deb_file}");
+append_pkg_file PKG_UBU16_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_ubu16_list[@]}"; do
+    append_pkg_file PKG_UBU16_ARRAY "${UBU16_PATH}/${deb_file}"
 done
 #
-PKG_UBU20_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_ubu20_list[@]}; do
-    PKG_UBU20_ARRAY+=" ";
-    PKG_UBU20_ARRAY+=$(pkg_list "${UBU20_PATH}/${deb_file}");
+append_pkg_file PKG_UBU20_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_ubu20_list[@]}"; do
+    append_pkg_file PKG_UBU20_ARRAY "${UBU20_PATH}/${deb_file}"
 done
 #
-PKG_UBU22_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_ubu22_list[@]}; do
-    PKG_UBU22_ARRAY+=" ";
-    PKG_UBU22_ARRAY+=$(pkg_list "${UBU22_PATH}/${deb_file}");
+append_pkg_file PKG_UBU22_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_ubu22_list[@]}"; do
+    append_pkg_file PKG_UBU22_ARRAY "${UBU22_PATH}/${deb_file}"
 done
 
-PKG_UBU24_ARRAY=$(pkg_list ${COM_PATH}/common)
-for deb_file in ${pkg_ubu24_list[@]}; do
-    PKG_UBU24_ARRAY+=" ";
-    PKG_UBU24_ARRAY+=$(pkg_list "${UBU24_PATH}/${deb_file}");
+append_pkg_file PKG_UBU24_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_ubu24_list[@]}"; do
+    append_pkg_file PKG_UBU24_ARRAY "${UBU24_PATH}/${deb_file}"
 done
 
-PKG_RPM_ARRAY=$(pkg_list ${COM_PATH}/common)
-for rpm_file in ${pkg_rpm_list[@]}; do
-    PKG_RPM_ARRAY+=" ";
-    PKG_RPM_ARRAY+=$(pkg_list "${RPM_PATH}/${rpm_file}");
+append_pkg_file PKG_RPM_ARRAY "${COM_PATH}/common"
+for rpm_file in "${pkg_rpm_list[@]}"; do
+    append_pkg_file PKG_RPM_ARRAY "${RPM_PATH}/${rpm_file}"
 done
 #
-for rpm_file in ${pkg_centos8_list[@]}; do
-    PKG_CENTOS8_ARRAY+=" ";
-    PKG_CENTOS8_ARRAY+=$(pkg_list "${CENTOS8_PATH}/${rpm_file}");
+for rpm_file in "${pkg_centos8_list[@]}"; do
+    append_pkg_file PKG_CENTOS8_ARRAY "${CENTOS8_PATH}/${rpm_file}"
 done
 #
-PKG_DNF_ARRAY=$(pkg_list ${COM_PATH}/common)
-for dnf_file in ${pkg_dnf_list[@]}; do
-    PKG_DNF_ARRAY+=" ";
-    PKG_DNF_ARRAY+=$(pkg_list "${DNF_PATH}/${dnf_file}");
+append_pkg_file PKG_DNF_ARRAY "${COM_PATH}/common"
+for dnf_file in "${pkg_dnf_list[@]}"; do
+    append_pkg_file PKG_DNF_ARRAY "${DNF_PATH}/${dnf_file}"
 done
 
 # Rocky 8.4
-for rocky_file in ${pkg_rocky8_list[@]}; do
-    PKG_ROCKY8_ARRAY+=" ";
-    PKG_ROCKY8_ARRAY+=$(pkg_list "${ROCKY8_PATH}/${rocky_file}");
+for rocky_file in "${pkg_rocky8_list[@]}"; do
+    append_pkg_file PKG_ROCKY8_ARRAY "${ROCKY8_PATH}/${rocky_file}"
 done
 # Rocky 9.0
-for rocky9_file in ${pkg_rocky9_list[@]}; do
-    PKG_ROCKY9_ARRAY+=" ";
-    PKG_ROCKY9_ARRAY+=$(pkg_list "${ROCKY9_PATH}/${rocky9_file}");
+for rocky9_file in "${pkg_rocky9_list[@]}"; do
+    append_pkg_file PKG_ROCKY9_ARRAY "${ROCKY9_PATH}/${rocky9_file}"
 done
 # Rocky 10.0
-for rocky10_file in ${pkg_rocky10_list[@]}; do
-    PKG_ROCKY10_ARRAY+=" ";
-    PKG_ROCKY10_ARRAY+=$(pkg_list "${ROCKY10_PATH}/${rocky10_file}");
+for rocky10_file in "${pkg_rocky10_list[@]}"; do
+    append_pkg_file PKG_ROCKY10_ARRAY "${ROCKY10_PATH}/${rocky10_file}"
 done
 #
-for brew_file in ${pkg_macos11_list[@]}; do
-    PKG_MACOS11_ARRAY+=" ";
-    PKG_MACOS11_ARRAY+=$(pkg_list "${MACOS11_PATH}/${brew_file}");
+for brew_file in "${pkg_macos11_list[@]}"; do
+    append_pkg_file PKG_MACOS11_ARRAY "${MACOS11_PATH}/${brew_file}"
 done
 
 ANSWER="NO"
@@ -868,14 +882,14 @@ while getopts ":y" opt; do
 	    ANSWER="YES"
 	    ;;
 	\?)
-	    echo "Invalid option: -${OPTARG}" >&2
+	    printf "Invalid option: -%s\n" "${OPTARG}" >&2
 	    exit;
 	    ;;
     esac
 done
 dist=$(find_dist)
 
-echo "Distriution is >>>${dist}<<"
+printf "Distribution is >>>%s<<<\n" "${dist}"
 
 case "$dist" in
     Raspbian*)
@@ -926,7 +940,7 @@ case "$dist" in
 	fi
 	centos_version=$(centos_dist)
 	if [ "$centos_version" == "8" ]; then
-	    echo $centos_version
+	    printf "%s\n" "$centos_version"
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
 #	    install_tclx_centos8
 	else
@@ -1031,16 +1045,16 @@ case "$dist" in
 #	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	macos_version=$(macos_dist)
 	if [[ "$macos_version" =~ .*"11.".* ]]; then
-	    echo $macos_version
+	    printf "%s\n" "$macos_version"
 	    install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	elif [[ "$macos_version" =~ .*"12.".* ]]; then
- 		echo $macos_version
+        printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	elif [[ "$macos_version" =~ .*"13.".* ]]; then
- 		echo $macos_version
+        printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	elif [[ "$macos_version" =~ .*"14.".* ]]; then
- 		echo $macos_version
+        printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	else
         printf "\n";

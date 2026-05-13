@@ -4,12 +4,6 @@
 #  email   : jeonghan.lee@gmail.com
 #  version : 0.0.2
 
-declare -g SC_SCRIPT;
-#declare -g SC_TOP;
-
-SC_SCRIPT="$(realpath "$0")";
-#SC_TOP="${SC_SCRIPT%/*}"
-
 function pushd { builtin pushd "$@" > /dev/null || exit; }
 function popd  { builtin popd  > /dev/null || exit; }
 
@@ -21,9 +15,9 @@ fi
 
 # this script must be called where Dockerfile exists
 #
-pushd ${PWD} || exit
+pushd "${PWD}" || exit
 git clone https://github.com/jeonghanlee/EPICS-env
-echo "INSTALL_LOCATION:=${INSTALL_LOCATION}" > CONFIG_SITE.local 
+printf "INSTALL_LOCATION:=%s\n" "${INSTALL_LOCATION}" > CONFIG_SITE.local
 make -s -C EPICS-env/ init
 make -s -C EPICS-env/ conf
 make -s -C EPICS-env/ patch
@@ -42,4 +36,3 @@ ln -snf "${base_path}" base
 ln -snf "${modules_path}" module
 popd || exit
 popd || exit
-

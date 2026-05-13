@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # -*- mode: sh -*-
 #
 #  Copyright (c) 2016 - 2024 Jeong Han Lee
@@ -25,19 +26,19 @@ E_NOTROOT=101
 EXIST=1
 NON_EXIST=0
 
-function pushd() { builtin pushd "$@" > /dev/null; }
-function popd()  { builtin popd  "$@" > /dev/null; }
+function pushd { builtin pushd "$@" > /dev/null || exit; }
+function popd  { builtin popd  "$@" > /dev/null || exit; }
 
 function __ini_func() { printf "\n>>>> You are entering in  : %s\n" "${1}"; }
 function __end_func() { printf "\n<<<< You are leaving from : %s\n" "${1}"; }
 
-function cmd_exist(){
-    local COMMAND_CMD
-    if ! command -v ${COMMAND_CMD} &> /dev/null
+function cmd_exist {
+    local COMMAND_CMD="$1"
+    if ! command -v "${COMMAND_CMD}" &> /dev/null
     then
-        echo ""
-        echo ">>>>>>>>>> ${COMMAND_CMD} is required. Please install it first."
-        echo ""
+        printf "\n"
+        printf ">>>>>>>>>> %s is required. Please install it first.\n" "${COMMAND_CMD}"
+        printf "\n"
         exit 1
     fi
 }
@@ -49,9 +50,9 @@ function __checkstr() {
     fi
 }
 
-function getHostname() {
+function getHostname {
 
-    local hostname_cmd="$(hostname)";
+    hostname;
     
 }
 
@@ -59,22 +60,24 @@ function getHostname() {
 # 1.0.4 Friday, August 25 11:21:01 CEST 2017
 #
 
-function git_clone() {
+function git_clone {
     
-    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
-    
+    local func_name=${FUNCNAME[*]};
     local git_src_dir=$1;
     local git_src_url=$2;
     local git_src_name=$3;
     local tag_name=$4;
-    local log_date=$(date +%Y%m%d-%H%M);
+    local log_date
+
+    __ini_func "${func_name}";
+    log_date=$(date +%Y%m%d-%H%M);
     
     if [[ ! -d ${git_src_dir} ]]; then
 	printf "No git source repository in the expected location %s\n" "${git_src_dir}";
     else
 	printf "Old git source repository in the expected location %s\n" "${git_src_dir}";
 	printf "The old one is renamed to %s_%s\n" "${git_src_dir}" "${log_date}";
-	mv  ${git_src_dir} ${git_src_dir}_${log_date}
+	mv "${git_src_dir}" "${git_src_dir}_${log_date}"
     fi
     
     # Always fresh cloning ..... in order to workaround any local 
@@ -85,14 +88,15 @@ function git_clone() {
 	git clone --recursive "${git_src_url}/${git_src_name}" "${git_src_dir}";
     else
 	printf "\n"
-	cmd="git clone --recursive -b ${tag_name} --single-branch --depth 1 ${git_src_url}/${git_src_name} ${git_src_dir} "
+	cmd=(git clone --recursive -b "${tag_name}" --single-branch --depth 1 "${git_src_url}/${git_src_name}" "${git_src_dir}")
 
-	echo $cmd
-	$cmd
+	printf "%s " "${cmd[@]}"
+	printf "\n"
+	"${cmd[@]}"
 	
     fi
 
-    __end_func ${func_name};
+    __end_func "${func_name}";
 }
 
 
@@ -105,11 +109,10 @@ function git_clone() {
 # Require Global vairable
 # - SC_SELECTED_GIT_SRC  : Output
 #
-function git_selection() {
+function git_selection {
 
-    local func_name=${FUNCNAME[*]}; ini_func ${func_name};
+    local func_name=${FUNCNAME[*]}; ini_func "${func_name}";
 
-    local git_ckoutcmd=""
     local checked_git_src=""
 
     
@@ -130,19 +133,22 @@ function git_selection() {
 
     git_src_list+=("master")
 
-    git_src_list+=($(git tag -l | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -n${n_tags} | awk '{print $4}'))
+    mapfile -t git_src_list < <(
+        printf "%s\n" "master"
+        git tag -l | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | head -n"${n_tags}" | awk '{print $4}'
+    )
     
     for tag in "${git_src_list[@]}"
     do
 	printf "%2s: git src %34s\n" "$index" "$tag"
-	let "index = $index + 1"
+	index=$((index + 1))
     done
     
-    echo -n "Select master or one of tags which can be built, followed by [ENTER]:"
+    printf "%s" "Select master or one of tags which can be built, followed by [ENTER]:"
 
     # don't wait for 3 characters 
     # read -e -n 2 line
-    read -e line
+    read -r -e line
    
     # convert a string to an integer?
     # do I need this? 
@@ -152,7 +158,7 @@ function git_selection() {
     #
     selected_one=${line}
     
-    let "list_size = ${#git_src_list[@]} - 1"
+    list_size=$((${#git_src_list[@]} - 1))
     
     if [[ "$selected_one" -gt "$list_size" ]]; then
 	printf "\n>>> Please select one number smaller than %s\n" "${list_size}"
@@ -163,52 +169,50 @@ function git_selection() {
 	exit 1;
     fi
 
-    SC_SELECTED_GIT_SRC="$(tr -d ' ' <<< ${git_src_list[line]})"
+    SC_SELECTED_GIT_SRC="$(tr -d ' ' <<< "${git_src_list[line]}")"
     
     printf "\n>>> Selected %34s --- \n" "${SC_SELECTED_GIT_SRC}"
  
-    echo ""
+    printf "\n"
     if [ "$selected_one" -ne "$master_index" ]; then
-	git_ckoutcmd="git checkout tags/${SC_SELECTED_GIT_SRC}"
-	$git_ckoutcmd
+	git checkout "tags/${SC_SELECTED_GIT_SRC}"
 	checked_git_src="$(git describe --exact-match --tags)"
-	checked_git_src="$(tr -d ' ' <<< ${checked_git_src})"
+	checked_git_src="$(tr -d ' ' <<< "${checked_git_src}")"
 	
 	printf "\n>>> Selected : %s --- \n>>> Checkout : %s --- \n" "${SC_SELECTED_GIT_SRC}" "${checked_git_src}"
 	
 	if [ "${SC_SELECTED_GIT_SRC}" != "${checked_git_src}" ]; then
-	    echo "Something is not right, please check your git reposiotry"
+	    printf "Something is not right, please check your git repository\n"
 	    exit 1
 	fi
     else
-	git_ckoutcmd="git checkout ${SC_SELECTED_GIT_SRC}"
-	$git_ckoutcmd
+	git checkout "${SC_SELECTED_GIT_SRC}"
     fi
 
     git submodule update --init --recursive
     
-    end_func ${func_name}
+    end_func "${func_name}"
  
 }
 
 
 
-function checkIfRoot() {
+function checkIfRoot {
 
     if [[ $(id -u) -ne "$ROOT_UID" ]] ; then 
-	echo "Please run it as root or with sudo" ; 
+	printf "Please run it as root or with sudo\n" ;
 	exit $E_NOTROOT ;
     fi
 
 }
 
 
-function checkIfArchappl() {
+function checkIfArchappl {
 
     local pid_list=()
     local no_archappl_running=0
 
-    IFS=' ' read -r -a pid_list <<< $(/sbin/pidof jsvc.exec);
+    IFS=' ' read -r -a pid_list <<< "$(/sbin/pidof jsvc.exec)";
     #    echo "${pid_list[@]}"
     #    echo "${#pid_list[@]}"
 
@@ -220,7 +224,7 @@ function checkIfArchappl() {
 
 }
 
-function checkIfDir() {
+function checkIfDir {
 
     local dir=$1
     local result=""
@@ -231,11 +235,11 @@ function checkIfDir() {
 	result=$EXIST
 	# exist
     fi
-    echo "${result}"
+    printf "%s\n" "${result}"
 
 }
 
-function checkIfFile() {
+function checkIfFile {
 
     local file=$1
     local result=""
@@ -246,12 +250,12 @@ function checkIfFile() {
 	result=$EXIST
 	# exist
     fi
-    echo "${result}"	 
+    printf "%s\n" "${result}"
 }
 
 
 
-function checkIfVar() {
+function checkIfVar {
 
     local var=$1
     local result=""
@@ -262,38 +266,39 @@ function checkIfVar() {
 	result=$EXIST
 	# exist
     fi
-    echo "${result}"	 
+    printf "%s\n" "${result}"
 }
 
 
 # This function is really dangerous
 # use it at your risk.
 
-function removeAllFiles() {
+function removeAllFiles {
     
     local dir=$1
+    local dir1
 
     if [ -z "$dir" ]; then
-	printf "%s should be defined fisrt\n";
+	printf "Directory should be defined first\n";
 	exit
     fi
 
     
     if [ ! -d "$dir" ]; then
-	echo "No $dir" 
+	printf "No %s\n" "$dir"
 	exit
     else
 	dir1=/tmp/dummpy_$RANDOM
-	mkdir -p $dir1
-	rsync -a --delete $dir1 $dir
+	mkdir -p "$dir1"
+	rsync -a --delete "$dir1" "$dir"
 	
-	rm -rf $dir1
-	rm -rf $dir
+	rm -rf -- "$dir1"
+	rm -rf -- "$dir"
     fi
 }
 
 
-function command_exists() {
+function command_exists {
     
     command -v "$1" >/dev/null 2>&1
     
@@ -302,23 +307,21 @@ function command_exists() {
 
 
 
-function execute_cmd() {
-    local cmd=$1
-    local isVar=$(checkIfVar ${cmd})
-    local cmd_proc=0
+function execute_cmd {
+    local isVar
+
+    isVar=$(checkIfVar "${1:-}")
     
     if [[ $isVar -eq "$NON_EXIST" ]]; then
-	echo "Any input command is needed!"
+	printf "Any input command is needed!\n"
+	return 1
     fi
-#    echo $cmd
-    eval $cmd 
-#    cmd_proc=$!
-#    wait "$cmd_proc"
-    echo ""
+    "$@"
+    printf "\n"
 }
 
 
-function compare_strs() {
+function compare_strs {
    
     local str1=$1
     local str2=$2
@@ -332,21 +335,21 @@ function compare_strs() {
         # no
 	result=$NON_EXIST
     fi
-    echo "${result}"	
+    printf "%s\n" "${result}"
 }
 
 
 
-function cat_file () {
-    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+function cat_file {
+    local func_name=${FUNCNAME[*]}; __ini_func "${func_name}";
     local file=$1
 
-    cat $file
-    __end_func ${func_name};
+    cat "$file"
+    __end_func "${func_name}";
 }
 
 
-function printf_tee() {
+function printf_tee {
     local input=${1};
     local target=${2};
     # If target exists, it will be overwritten.
@@ -354,7 +357,7 @@ function printf_tee() {
 };
 
 
-function get_macaddr() {
+function get_macaddr {
     local dev=${1};
-    ip addr show dev ${dev} | grep "link/ether" | awk '{print $2}'
+    ip addr show dev "${dev}" | grep "link/ether" | awk '{print $2}'
 }
