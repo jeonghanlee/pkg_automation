@@ -121,13 +121,20 @@ SC_TOP="$( cd -P "$( dirname "$SC_SCRIPT" )" && pwd )"
 function pushd { builtin pushd "$@" > /dev/null || exit; }
 function popd  { builtin popd  > /dev/null || exit; }
 
-SUDO_CMD="sudo"
+if [[ ${EUID} -eq 0 ]]; then
+    SUDO_CMD=""
+else
+    SUDO_CMD="sudo"
+fi
 #KERNEL_VER=$(uname -r)
 
 . "${SC_TOP}/functions"
 
 function sudo_exist
 {
+    if [[ -z "${SUDO_CMD}" ]]; then
+        return 0
+    fi
     if ! command -v "${SUDO_CMD}" &> /dev/null
     then
         printf "\n"
@@ -137,13 +144,55 @@ function sudo_exist
     fi
 }
 
+function kill_stale_pkgmgr_pid
+{
+    local pid_file="$1"
+    local pid_str
+    local pid
+    local comm
+
+    if [[ ! -e "${pid_file}" ]]; then
+        return 0
+    fi
+
+    pid_str=$(cat "${pid_file}" 2>/dev/null || true)
+    if [[ ! "${pid_str}" =~ ^[1-9][0-9]*$ ]]; then
+        printf "Invalid PID in %s: removing stale file\n" "${pid_file}"
+        ${SUDO_CMD} rm -f -- "${pid_file}"
+        return 0
+    fi
+    pid="${pid_str}"
+
+    if [[ ! -r "/proc/${pid}/comm" ]]; then
+        printf "PID %s no longer alive: removing stale %s\n" "${pid}" "${pid_file}"
+        ${SUDO_CMD} rm -f -- "${pid_file}"
+        return 0
+    fi
+
+    comm=$(cat "/proc/${pid}/comm" 2>/dev/null || true)
+    case "${comm}" in
+        yum|dnf|dnf-3|dnf-4|dnf-5|microdnf|PackageKit|packagekitd)
+            printf "\n"
+            printf ">>> Live package manager detected (PID %s, comm %s).\n" "${pid}" "${comm}"
+            printf ">>> Refusing to kill. Please wait for it to finish or stop it manually,\n"
+            printf ">>> then remove %s before re-running.\n" "${pid_file}"
+            printf "\n"
+            return 1
+            ;;
+        *)
+            printf "PID %s runs %s (not yum/dnf): removing stale %s\n" "${pid}" "${comm}" "${pid_file}"
+            ${SUDO_CMD} rm -f -- "${pid_file}"
+            ;;
+    esac
+}
+
 function os_release_value
 {
     local target_key="$1"
-    local key
-    local value
+    local key=""
+    local value=""
 
-    while IFS='=' read -r key value || [[ -n "${key}" ]]; do
+    while IFS='=' read -r key value || [[ -n "${key:-}" ]]; do
         key="${key//$'\r'/}"
         value="${value//$'\r'/}"
         if [[ "${key}" != "${target_key}" ]]; then
@@ -236,7 +285,7 @@ function install_tclx_centos8
 function pkg_list
 {
     local -a packagelist=()
-    local line_data
+    local line_data=""
     if [[ ! -f "${1}" ]]; then
         printf "WARNING: File '%s' not found.\n" "${1}" >&2
         return 0
@@ -244,17 +293,20 @@ function pkg_list
 
     local i=0
 
-    while IFS= read -r line_data; do
-    line_data="${line_data//$'\r'/}"
-    if [ "$line_data" ]; then
-        if [[ "$line_data" =~ ^#.*$ ]]; then
-            continue
+    while IFS= read -r line_data || [[ -n "${line_data:-}" ]]; do
+        line_data="${line_data//$'\r'/}"
+        if [ "$line_data" ]; then
+            if [[ "$line_data" =~ ^#.*$ ]]; then
+                continue
+            fi
+            packagelist[i]="${line_data}"
+            ((++i))
         fi
-        packagelist[i]="${line_data}"
-        ((++i))
-    fi
     done < "${1}"
 
+    if (( ${#packagelist[@]} == 0 )); then
+        return 0
+    fi
     printf "%s\n" "${packagelist[@]}"
 }
 
@@ -402,7 +454,9 @@ function install_pkg_deb13
     local -a pkg_list=("$@")
     sudo_exist;
     ${SUDO_CMD} apt -y update;
-    ${SUDO_CMD} apt -y remove exuberant-ctags;
+    if dpkg -s exuberant-ctags >/dev/null 2>&1; then
+        ${SUDO_CMD} apt -y remove exuberant-ctags;
+    fi
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
@@ -435,14 +489,8 @@ function install_pkg_dnf
     disable_system_service packagekit
     disable_system_service firewalld
 
-    # Somehow, yum is running due to PackageKit, so if so, kill it
-    #
-    if [[ -e ${yum_pid} ]]; then
-        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
-            printf "Remove the orphan yum pid\n";
-            ${SUDO_CMD} rm -rf "${yum_pid}"
-        fi
-    fi
+    # PackageKit may leave a stale yum/dnf pid; validate before killing.
+    kill_stale_pkgmgr_pid "${yum_pid}"
 
     ${SUDO_CMD} dnf -y remove PackageKit firewalld;
     ${SUDO_CMD} dnf -y update;
@@ -471,14 +519,8 @@ function install_pkg_rpm
     disable_system_service packagekit
     disable_system_service firewalld
 
-    # Somehow, yum is running due to PackageKit, so if so, kill it
-    #
-    if [[ -e ${yum_pid} ]]; then
-        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
-            printf "Remove the orphan yum pid\n";
-            ${SUDO_CMD} rm -rf "${yum_pid}"
-        fi
-    fi
+    # PackageKit may leave a stale yum/dnf pid; validate before killing.
+    kill_stale_pkgmgr_pid "${yum_pid}"
 
     if [ "$version" == "8" ]; then
 	    ${SUDO_CMD} yum -y install dnf-plugins-core;
@@ -510,27 +552,25 @@ function install_pkg_rpm
 
 function install_ctags_from_source
 {
-    local build_dir="/tmp/ctags_build"
+    local build_dir
     local ctags_repo="https://github.com/universal-ctags/ctags.git"
 
     printf "Universal-ctags not found. Starting source build...\n"
 
     ${SUDO_CMD} dnf -y install autoconf automake pkgconfig gcc make libtool
 
-    if [[ -d "${build_dir}" ]]; then
-        rm -rf "${build_dir}"
-    fi
+    build_dir="$(mktemp -d -t ctags_build.XXXXXXXX)"
 
     git clone "${ctags_repo}" "${build_dir}"
-    cd "${build_dir}" || exit 1
+    cd "${build_dir}"
 
     ./autogen.sh
     ./configure --prefix=/usr/local
     make
     ${SUDO_CMD} make install
 
-    cd - > /dev/null || exit 1
-    rm -rf "${build_dir}"
+    cd - > /dev/null
+    rm -rf -- "${build_dir}"
 }
 
 function install_pkg_rocky8
@@ -546,14 +586,8 @@ function install_pkg_rocky8
     disable_system_service packagekit
     disable_system_service firewalld
 
-    # Somehow, yum is running due to PackageKit, so if so, kill it
-    #
-    if [[ -e ${yum_pid} ]]; then
-        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
-            printf "Remove the orphan yum pid\n";
-            ${SUDO_CMD} rm -rf "${yum_pid}"
-        fi
-    fi
+    # PackageKit may leave a stale yum/dnf pid; validate before killing.
+    kill_stale_pkgmgr_pid "${yum_pid}"
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y config-manager --set-enabled powertools
@@ -567,8 +601,8 @@ function install_pkg_rocky8
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
-    # 3.6 is the rocky default
-    ${SUDO_CMD} alternatives --set python /usr/bin/python3
+    # 3.6 is the rocky 8 default; register and select python3 explicitly
+    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
 
 function install_pkg_rocky9
@@ -584,14 +618,8 @@ function install_pkg_rocky9
     disable_system_service packagekit
     disable_system_service firewalld
 
-    # Somehow, yum is running due to PackageKit, so if so, kill it
-    #
-    if [[ -e ${yum_pid} ]]; then
-        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
-            printf "Remove the orphan yum pid\n";
-            ${SUDO_CMD} rm -rf "${yum_pid}"
-        fi
-    fi
+    # PackageKit may leave a stale yum/dnf pid; validate before killing.
+    kill_stale_pkgmgr_pid "${yum_pid}"
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
@@ -625,14 +653,8 @@ function install_pkg_rocky10
     disable_system_service packagekit
     disable_system_service firewalld
 
-    # Somehow, yum is running due to PackageKit, so if so, kill it
-    #
-    if [[ -e ${yum_pid} ]]; then
-        if ! ${SUDO_CMD} kill -9 "$(cat "${yum_pid}")" 2>/dev/null; then
-            printf "Remove the orphan yum pid\n";
-            ${SUDO_CMD} rm -rf "${yum_pid}"
-        fi
-    fi
+    # PackageKit may leave a stale yum/dnf pid; validate before killing.
+    kill_stale_pkgmgr_pid "${yum_pid}"
     ${SUDO_CMD} dnf -y install dnf-plugins-core;
     ${SUDO_CMD} dnf -y update;
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
@@ -672,8 +694,18 @@ function install_pkg_macos11
     net-snmp-config --cflags
 }
 
+function warn_unsupported_target
+{
+    local label="$1"
+    printf "\n"
+    printf ">>> WARNING: %s is not in the supported-target list (see README).\n" "${label}"
+    printf ">>> This installation path is not actively maintained.\n"
+    printf "\n"
+}
+
 function yes_or_no_to_go
 {
+    local answer=""
 
     printf  "> \n";
     printf  "> This procedure could help to install    \n"
@@ -682,7 +714,10 @@ function yes_or_no_to_go
     printf  "> \n";
     printf  "> %s\n" "$1";
     printf ">> Do you want to continue (y/N)? "
-    read -r answer
+    if ! read -r answer; then
+        printf "\n>> Non-interactive stdin detected. Use -y to bypass the prompt.\n";
+        exit 1;
+    fi
     case ${answer:0:1} in
 	y|Y )
 	    printf ">> The following packages will be installed ...... ";
@@ -893,30 +928,35 @@ printf "Distribution is >>>%s<<<\n" "${dist}"
 
 case "$dist" in
     Raspbian*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Raspbian is detected as $dist"
 	fi
 	install_pkg_rpi "${PKG_RPI_ARRAY[@]}"
 	;;
     *jessie*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Debian jessie is detected as $dist"
 	fi
 	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
 	;;
     *stretch*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Debian stretch is detected as $dist"
 	fi
 	install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
 	;;
     *buster*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
 	fi
 	install_pkg_deb10 "${PKG_DEB10_ARRAY[@]}"
 	;;
     *bullseye*)
+        warn_unsupported_target "$dist"
         if [ "$ANSWER" == "NO" ]; then
             yes_or_no_to_go "Debian 11 (Bullseye) is detected as $dist"
         fi
@@ -935,6 +975,7 @@ case "$dist" in
         install_pkg_deb13 "${PKG_DEB13_ARRAY[@]}"
         ;;
     *CentOS* | *Scientific* )
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS or Scientific is detected as $dist";
 	fi
@@ -949,6 +990,9 @@ case "$dist" in
 	;;
 
     *Rocky* | *Alma* )
+    if [[ "${dist}" == *Alma* ]]; then
+        warn_unsupported_target "$dist"
+    fi
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
     fi
@@ -965,10 +1009,12 @@ case "$dist" in
         printf "\n";
 	    printf "Doesn't support %s\n" "$dist";
         printf "\n";
+        exit 1;
     fi
 	;;
 
     *xenial*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu xenial is detected as $dist";
 	fi
@@ -976,12 +1022,14 @@ case "$dist" in
 	;;
 
     *artful*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu artful is detected as $dist";
 	fi
 	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
 	;;
     *bionic*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Ubuntu bionic is detected as $dist";
 	fi
@@ -989,6 +1037,7 @@ case "$dist" in
 	;;
 
     *focal*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
         	yes_or_no_to_go "Ubuntu focal is detected as $dist";
     fi
@@ -1008,9 +1057,11 @@ case "$dist" in
         printf "\n";
         printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
         printf "\n";
+        exit 1;
     fi
     ;;
     *sylvia*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
 	fi
@@ -1018,6 +1069,7 @@ case "$dist" in
 	;;
 
     *tara*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint tara is detected as $dist";
 	fi
@@ -1025,6 +1077,7 @@ case "$dist" in
 	;;
 
     *tessa*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Mint tessa is detected as $dist";
 	fi
@@ -1032,6 +1085,7 @@ case "$dist" in
 	;;
 
     *Fedora*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "Linux Fedora is detected as $dist";
 	fi
@@ -1039,6 +1093,7 @@ case "$dist" in
 	;;
 
     *macOS*)
+	warn_unsupported_target "$dist"
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "macOS is detected as $dist";
 	fi
@@ -1060,6 +1115,7 @@ case "$dist" in
         printf "\n";
 	    printf "Doesn't support yet %s\n" "$dist";
         printf "\n";
+        exit 1;
 	fi
 	;;
 
@@ -1068,6 +1124,7 @@ case "$dist" in
 	printf ">> Doesn't support the detected %s\n" "$dist";
 	printf ">> Please contact jeonghan.lee@gmail.com or feel free to do pull requests.\n";
 	printf "\n";
+	exit 1;
 	;;
 esac
 

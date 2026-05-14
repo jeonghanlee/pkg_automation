@@ -111,7 +111,7 @@ function git_clone {
 #
 function git_selection {
 
-    local func_name=${FUNCNAME[*]}; ini_func "${func_name}";
+    local func_name=${FUNCNAME[*]}; __ini_func "${func_name}";
 
     local checked_git_src=""
 
@@ -190,8 +190,8 @@ function git_selection {
     fi
 
     git submodule update --init --recursive
-    
-    end_func "${func_name}"
+
+    __end_func "${func_name}"
  
 }
 
@@ -274,27 +274,46 @@ function checkIfVar {
 # use it at your risk.
 
 function removeAllFiles {
-    
-    local dir=$1
+
+    local dir="${1:-}"
     local dir1
+    local resolved
 
-    if [ -z "$dir" ]; then
-	printf "Directory should be defined first\n";
-	exit
+    if [[ -z "${dir}" ]]; then
+        printf "removeAllFiles: directory argument is required\n" >&2
+        return 1
+    fi
+    if [[ "${dir}" != /* ]]; then
+        printf "removeAllFiles: refusing relative path: %s\n" "${dir}" >&2
+        return 1
+    fi
+    if [[ -L "${dir}" ]]; then
+        printf "removeAllFiles: refusing symlink: %s\n" "${dir}" >&2
+        return 1
+    fi
+    if [[ ! -d "${dir}" ]]; then
+        printf "removeAllFiles: not a directory: %s\n" "${dir}" >&2
+        return 1
     fi
 
-    
-    if [ ! -d "$dir" ]; then
-	printf "No %s\n" "$dir"
-	exit
-    else
-	dir1=/tmp/dummpy_$RANDOM
-	mkdir -p "$dir1"
-	rsync -a --delete "$dir1" "$dir"
-	
-	rm -rf -- "$dir1"
-	rm -rf -- "$dir"
+    resolved="$(cd -P -- "${dir}" && pwd -P)"
+    case "${resolved}" in
+        /|/root|/home|/bin|/sbin|/usr|/etc|/var|/opt|/boot|/lib|/lib64|/proc|/sys|/dev|/run|/tmp)
+            printf "removeAllFiles: refusing protected path: %s\n" "${resolved}" >&2
+            return 1
+            ;;
+    esac
+    if [[ -n "${HOME:-}" && "${resolved}" == "${HOME}" ]]; then
+        printf "removeAllFiles: refusing \$HOME: %s\n" "${resolved}" >&2
+        return 1
     fi
+
+    dir1="/tmp/dummpy_$RANDOM"
+    mkdir -p "${dir1}"
+    rsync -a --delete "${dir1}" "${dir}"
+
+    rm -rf -- "${dir1}"
+    rm -rf -- "${dir}"
 }
 
 
@@ -350,11 +369,45 @@ function cat_file {
 
 
 function printf_tee {
-    local input=${1};
-    local target=${2};
-    # If target exists, it will be overwritten.
-    ${SUDO_CMD} printf "%s" "${input}" | ${SUDO_CMD} tee "${target}";
-};
+    local input="${1:-}"
+    local target="${2:-}"
+    local parent
+    local tmp
+    local rc=0
+
+    if [[ -z "${target}" || "${target}" != /* ]]; then
+        printf "printf_tee: absolute target path required\n" >&2
+        return 1
+    fi
+    if [[ -L "${target}" ]]; then
+        printf "printf_tee: refusing to write through symlink: %s\n" "${target}" >&2
+        return 1
+    fi
+    if [[ -e "${target}" && ! -f "${target}" ]]; then
+        printf "printf_tee: target exists and is not a regular file: %s\n" "${target}" >&2
+        return 1
+    fi
+    parent="$(dirname -- "${target}")"
+    if [[ ! -d "${parent}" || -L "${parent}" ]]; then
+        printf "printf_tee: parent directory missing or symlink: %s\n" "${parent}" >&2
+        return 1
+    fi
+
+    tmp="$(${SUDO_CMD} mktemp -- "${parent}/.printf_tee.XXXXXXXX")" || return 1
+    if ! printf "%s" "${input}" | ${SUDO_CMD} tee -- "${tmp}" >/dev/null; then
+        rc=1
+    fi
+    if (( rc == 0 )) && ! ${SUDO_CMD} chmod 0644 -- "${tmp}"; then
+        rc=1
+    fi
+    if (( rc == 0 )) && ! ${SUDO_CMD} mv -- "${tmp}" "${target}"; then
+        rc=1
+    fi
+    if (( rc != 0 )); then
+        ${SUDO_CMD} rm -f -- "${tmp}"
+    fi
+    return "${rc}"
+}
 
 
 function get_macaddr {
