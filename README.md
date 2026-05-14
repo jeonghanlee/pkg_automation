@@ -1,11 +1,12 @@
 # Package Automation for EPICS Environments
 
-[![Linux Build](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/linux.yml)
+[![Ubuntu Latest](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu-latest.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu-latest.yml)
+[![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 [![Debian 13](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml)
 [![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
+[![Rocky Linux 8](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml)
 [![Rocky Linux 9](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml)
 [![Rocky Linux 10](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml)
-[![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 
 ## Scope
 
@@ -29,33 +30,17 @@ this repository.
 
 ## Supported Targets
 
-### Primary Targets
-
+- Ubuntu Latest
+- Ubuntu 22.04 LTS (Jammy Jellyfish), standard support through 2027-04
 - Debian 13 testing (Trixie)
 - Debian 12 (Bookworm)
-- Debian 11 (Bullseye)
-- Rocky Linux 10 (Red Quartz)
-- Rocky Linux 9 (Blue Onyx)
 - Rocky Linux 8 (Green Obsidian)
-- macOS 13 (Ventura) with Homebrew
+- Rocky Linux 9 (Blue Onyx)
+- Rocky Linux 10 (Red Quartz)
 
-### Compatibility Targets
-
-- Debian 10 (Buster)
-- Ubuntu 22.04 LTS (Jammy Jellyfish)
-- Ubuntu 20.04 LTS (Focal Fossa)
-- Ubuntu 18.04 LTS (Bionic Beaver)
-- Fedora 32
-- Raspbian GNU/Linux 10
-- macOS 12
-- macOS 11
-
-### Obsolete Targets
-
-- Scientific Linux 7
-- CentOS 8
-- CentOS 7
-- AlmaLinux 8
+Package directories for other distributions may remain in the repository for
+historical reference, but they are not actively maintained or covered by the
+supported-target workflow set.
 
 ## Operation
 

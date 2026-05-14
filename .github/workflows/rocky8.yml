@@ -1,0 +1,31 @@
+---
+name: Rocky Linux 8
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'pkg-rocky8/**'
+    - 'pkg_automation.bash'
+    - 'functions'
+    - '.github/workflows/rocky8.yml'
+
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  Rocky8:
+    runs-on: ubuntu-latest
+    container: rockylinux/rockylinux:8.10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test on Rocky 8 Docker
+        run: |
+          dnf install -y sudo
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y
+
