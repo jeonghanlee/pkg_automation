@@ -601,6 +601,10 @@ function install_pkg_rocky8
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
+    # Rocky 8 pre-registers the python alternatives group with
+    # /usr/bin/unversioned-python as primary link, so --install must
+    # match that primary link instead of /usr/bin/python.
+    ${SUDO_CMD} alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 1
 }
 
 function install_pkg_rocky9
