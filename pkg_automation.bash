@@ -256,32 +256,6 @@ function disable_system_service
     ${SUDO_CMD} systemctl mask    "${disable_services}" 2>/dev/null || printf ">>> Mask    : %s do not exist/failed\n" "${disable_services}"
 }
 
-function install_tclx_centos8
-{
-    ${SUDO_CMD} yum install tcl-devel tk-devel
-
-    local tclx_path=/usr/share/tcl8.6/tclx8.6
-
-    if [[ -d "${tclx_path}" ]]; then
-	printf "tclx was detected, skip it\n";
-    else
-	mkdir -p "${HOME}/.tclx"
-	pushd "${HOME}/.tclx"
-	find . -mindepth 1 -maxdepth 1 -exec "${SUDO_CMD}" rm -rf -- {} +
-	git clone https://github.com/flightaware/tclx
-	pushd tclx
-	git checkout tags/v8.4.3
-	./configure
-	make
-	${SUDO_CMD} make install
-	${SUDO_CMD} ln -sf /usr/lib/tclx8.6/ /usr/share/tcl8.6/tclx8.6
-	builtin popd > /dev/null || exit
-
-	builtin popd > /dev/null || exit
-    fi
-
-}
-
 function pkg_list
 {
     local -a packagelist=()
@@ -979,7 +953,6 @@ case "$dist" in
 	if [ "$centos_version" == "8" ]; then
 	    printf "%s\n" "$centos_version"
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
-#	    install_tclx_centos8
 	else
 	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
 	fi
