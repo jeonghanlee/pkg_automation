@@ -1,6 +1,6 @@
 # Package Automation for EPICS Environments
 
-[![Ubuntu Latest](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu-latest.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu-latest.yml)
+[![Ubuntu 24 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu24.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu24.yml)
 [![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
 [![Debian 13](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml)
 [![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
@@ -30,7 +30,7 @@ this repository.
 
 ## Supported Targets
 
-- Ubuntu Latest
+- Ubuntu 24.04 LTS (Noble Numbat), standard support through 2029-04
 - Ubuntu 22.04 LTS (Jammy Jellyfish), standard support through 2027-04
 - Debian 13 testing (Trixie)
 - Debian 12 (Bookworm)

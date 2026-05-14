@@ -1,5 +1,5 @@
 ---
-name: Ubuntu Latest
+name: Ubuntu 24 LTS
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     - 'pkg-ubu24/**'
     - 'pkg_automation.bash'
     - 'functions'
-    - '.github/workflows/ubuntu-latest.yml'
+    - '.github/workflows/ubuntu24.yml'
 
   pull_request:
     branches: [ master ]
@@ -16,13 +16,13 @@ on:
 
 jobs:
 
-  UbuntuLatest:
+  Ubuntu24:
     runs-on: ubuntu-latest
-    container: ubuntu:latest
+    container: ubuntu:24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Test on Ubuntu Latest
+      - name: Test on Ubuntu 24.04 LTS
         run: |
           apt update -y
           apt install -y sudo
@@ -31,4 +31,3 @@ jobs:
           ln -snf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
           printf "%s\n" "America/Los_Angeles" > /etc/timezone
           bash pkg_automation.bash -y
-
