@@ -89,6 +89,9 @@ shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash functio
 
 - Package installation can remove or disable selected services on RPM-family
   systems, including PackageKit and firewalld.
+- On Rocky systems, the installer registers `/usr/bin/python` as an alternative
+  pointing to `python3` so EPICS build scripts can rely on an unversioned
+  `python` interpreter.
 - Package lists are tailored for this EPICS development environment and are not
   a generic baseline for all hosts.
 - New distribution versions require explicit package-list review before they
