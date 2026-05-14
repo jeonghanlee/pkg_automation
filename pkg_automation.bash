@@ -601,8 +601,6 @@ function install_pkg_rocky8
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
-    # 3.6 is the rocky 8 default; register and select python3 explicitly
-    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
 
 function install_pkg_rocky9
@@ -635,9 +633,6 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
-    # 3.9 is the rocky 9 default and there is no alternatives python
-    #
-    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
 
 function install_pkg_rocky10
@@ -669,9 +664,6 @@ function install_pkg_rocky10
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
-    # 3.12.9 is the rocky 10.0 default and there is no alternatives python
-    #
-    ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3 1
 }
 
 function install_pkg_macos11

@@ -55,6 +55,8 @@ re2c
 #hidapi
 #
 python3-devel
+# /usr/bin/python -> python3 via alternatives (BaseOS)
+python-unversioned-command
 # pvxs
 cmake
 # pmac
