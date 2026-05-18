@@ -55,6 +55,13 @@ bash pkg_automation.bash
 bash pkg_automation.bash -y
 ```
 
+Use `-f` with `-y` in non-interactive CI jobs when Rocky hosts must repair
+the unversioned Python command without a prompt.
+
+```bash
+bash pkg_automation.bash -y -f
+```
+
 The installer uses `/etc/os-release` as parsed data and does not source it as
 shell code. Package lists are read line by line, comments are skipped, Windows
 carriage returns are stripped, and package names are installed through quoted
@@ -80,10 +87,10 @@ flags. Rocky 8 keeps the `python` alternatives group in auto mode with
 `/usr/libexec/no-python` as the highest-priority entry, so EPICS builds need an
 explicit package-automation contract for this command.
 
-On Rocky 8, the installer registers `/usr/bin/python3` with priority `500`,
-selects it through alternatives, and exposes `/usr/local/bin/python` as the
-site-owned command shim. `/usr/bin/python` remains under distribution
-alternatives control.
+On Rocky 8, the installer registers `/usr/bin/python3` with priority `500`
+and selects it through alternatives. On Rocky 9 and Rocky 10, the package list
+includes `python-unversioned-command`, so the package is expected to provide
+the unversioned command.
 
 ```bash
 alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
@@ -92,7 +99,10 @@ ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
 ```
 
 The installer verifies this contract with `command -v python` and
-`python --version` before returning from the Rocky 8 package path.
+`python --version` before returning from each Rocky package path. If `python`
+does not resolve to Python 3, interactive runs prompt before creating the
+site-owned `/usr/local/bin/python` link. CI runs should pass `-f` to force that
+repair without a prompt.
 
 ## Validation
 

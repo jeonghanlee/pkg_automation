@@ -110,6 +110,7 @@ declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
 declare -g SUDO_CMD;
+declare -g FORCE_PYTHON_COMMAND;
 #declare -g KERNEL_VER;
 
 
@@ -547,22 +548,94 @@ function install_ctags_from_source
     rm -rf -- "${build_dir}"
 }
 
+function python_command_is_python3
+{
+    local python_version=""
+
+    if ! command -v python >/dev/null 2>&1; then
+        return 1
+    fi
+
+    python_version="$(python --version 2>&1 || true)"
+    case "${python_version}" in
+        Python\ 3.*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+function configure_rocky_python_link
+{
+    if [[ ! -e /usr/bin/unversioned-python ]]; then
+        printf "%s\n" "error: /usr/bin/unversioned-python is missing"
+        printf "%s\n" "error: install python-unversioned-command or configure alternatives first"
+        exit 1
+    fi
+
+    ${SUDO_CMD} ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
+}
+
+function prompt_rocky_python_link
+{
+    local label="$1"
+    local answer=""
+
+    if [[ "${FORCE_PYTHON_COMMAND}" == "YES" ]]; then
+        configure_rocky_python_link
+        return 0
+    fi
+
+    if [[ ! -t 0 ]]; then
+        printf "error: python command is not linked to Python 3 after %s setup\n" "${label}"
+        printf "%s\n" "error: rerun with -f to force /usr/local/bin/python in non-interactive runs"
+        exit 1
+    fi
+
+    printf ">> python is not linked to Python 3 after %s setup.\n" "${label}"
+    printf ">> Configure /usr/local/bin/python now (y/N)? "
+    if ! read -r answer; then
+        printf "%s\n" "error: failed to read python link confirmation"
+        exit 1
+    fi
+
+    case "${answer:0:1}" in
+        y|Y)
+            configure_rocky_python_link
+            ;;
+        *)
+            printf "%s\n" "error: python command must resolve to Python 3 for EPICS builds"
+            exit 1
+            ;;
+    esac
+}
+
+function verify_rocky_python_command
+{
+    local label="$1"
+
+    if ! python_command_is_python3; then
+        alternatives --display python || true
+        prompt_rocky_python_link "${label}"
+    fi
+
+    if ! python_command_is_python3; then
+        printf "error: python command is not linked to Python 3 after %s setup\n" "${label}"
+        exit 1
+    fi
+
+    python --version
+}
+
 function configure_rocky8_python_command
 {
     # Rocky 8 owns the python alternatives group through /usr/bin/unversioned-python.
     # Keep /usr/bin under alternatives control and expose a site-owned python command.
     ${SUDO_CMD} alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
     ${SUDO_CMD} alternatives --set python /usr/bin/python3
-    ${SUDO_CMD} ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
-
-    alternatives --display python || true
-
-    if ! command -v python >/dev/null 2>&1; then
-        printf "%s\n" "error: python command is missing after Rocky 8 alternatives setup"
-        exit 1
-    fi
-
-    python --version
+    verify_rocky_python_command "Rocky 8 alternatives"
 }
 
 function install_pkg_rocky8
@@ -626,6 +699,7 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
+    verify_rocky_python_command "Rocky 9 package"
 }
 
 function install_pkg_rocky10
@@ -657,6 +731,7 @@ function install_pkg_rocky10
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
+    verify_rocky_python_command "Rocky 10 package"
 }
 
 function install_pkg_macos11
@@ -895,9 +970,13 @@ for brew_file in "${pkg_macos11_list[@]}"; do
 done
 
 ANSWER="NO"
+FORCE_PYTHON_COMMAND="NO"
 
-while getopts ":y" opt; do
+while getopts ":fy" opt; do
     case ${opt} in
+    f)
+        FORCE_PYTHON_COMMAND="YES"
+        ;;
 	y)
 	    ANSWER="YES"
 	    ;;
