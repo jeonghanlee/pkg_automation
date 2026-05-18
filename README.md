@@ -62,6 +62,13 @@ the unversioned Python command without a prompt.
 bash pkg_automation.bash -y -f
 ```
 
+Use `-v` to verify at the end of supported Debian package paths that
+`python` resolves to Python 3.
+
+```bash
+bash pkg_automation.bash -y -v
+```
+
 The installer uses `/etc/os-release` as parsed data and does not source it as
 shell code. Package lists are read line by line, comments are skipped, Windows
 carriage returns are stripped, and package names are installed through quoted
@@ -103,6 +110,13 @@ The installer verifies this contract with `command -v python` and
 does not resolve to Python 3, interactive runs prompt before creating the
 site-owned `/usr/local/bin/python` link. CI runs should pass `-f` to force that
 repair without a prompt.
+
+## Debian Python Command
+
+Debian 12 and Debian 13 keep the unversioned `python` command package-based
+through `python-dev-is-python3`, which depends on `python-is-python3`. When
+`-v` is supplied, the installer verifies the package result with
+`command -v python` and `python --version` after package installation.
 
 ## Validation
 

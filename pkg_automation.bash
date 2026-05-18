@@ -111,6 +111,7 @@ declare -g SC_SCRIPT;
 declare -g SC_TOP;
 declare -g SUDO_CMD;
 declare -g FORCE_PYTHON_COMMAND;
+declare -g VERIFY_PYTHON_COMMAND;
 #declare -g KERNEL_VER;
 
 
@@ -421,7 +422,7 @@ function install_pkg_deb12
      printf "%s\n" "${pkg_list[@]}";
      printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+    verify_python_command_if_requested "Debian 12 package"
 }
 
 function install_pkg_deb13
@@ -437,6 +438,7 @@ function install_pkg_deb13
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
+    verify_python_command_if_requested "Debian 13 package"
 }
 
 function install_pkg_rpi
@@ -567,6 +569,32 @@ function python_command_is_python3
     esac
 }
 
+function verify_python3_command
+{
+    local label="$1"
+
+    if ! python_command_is_python3; then
+        printf "error: python command is not linked to Python 3 after %s setup\n" "${label}"
+        if command -v python >/dev/null 2>&1; then
+            python --version || true
+        fi
+        exit 1
+    fi
+
+    python --version
+}
+
+function verify_python_command_if_requested
+{
+    local label="$1"
+
+    if [[ "${VERIFY_PYTHON_COMMAND}" != "YES" ]]; then
+        return 0
+    fi
+
+    verify_python3_command "${label}"
+}
+
 function configure_rocky_python_link
 {
     if [[ ! -e /usr/bin/unversioned-python ]]; then
@@ -621,12 +649,7 @@ function verify_rocky_python_command
         prompt_rocky_python_link "${label}"
     fi
 
-    if ! python_command_is_python3; then
-        printf "error: python command is not linked to Python 3 after %s setup\n" "${label}"
-        exit 1
-    fi
-
-    python --version
+    verify_python3_command "${label}"
 }
 
 function configure_rocky8_python_command
@@ -971,11 +994,15 @@ done
 
 ANSWER="NO"
 FORCE_PYTHON_COMMAND="NO"
+VERIFY_PYTHON_COMMAND="NO"
 
-while getopts ":fy" opt; do
+while getopts ":fvy" opt; do
     case ${opt} in
     f)
         FORCE_PYTHON_COMMAND="YES"
+        ;;
+    v)
+        VERIFY_PYTHON_COMMAND="YES"
         ;;
 	y)
 	    ANSWER="YES"
