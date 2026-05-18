@@ -547,6 +547,24 @@ function install_ctags_from_source
     rm -rf -- "${build_dir}"
 }
 
+function configure_rocky8_python_command
+{
+    # Rocky 8 owns the python alternatives group through /usr/bin/unversioned-python.
+    # Keep /usr/bin under alternatives control and expose a site-owned python command.
+    ${SUDO_CMD} alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
+    ${SUDO_CMD} alternatives --set python /usr/bin/python3
+    ${SUDO_CMD} ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
+
+    alternatives --display python || true
+
+    if ! command -v python >/dev/null 2>&1; then
+        printf "%s\n" "error: python command is missing after Rocky 8 alternatives setup"
+        exit 1
+    fi
+
+    python --version
+}
+
 function install_pkg_rocky8
 {
     local -a pkg_list=("$@")
@@ -575,10 +593,7 @@ function install_pkg_rocky8
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
-    # Rocky 8 pre-registers the python alternatives group with
-    # /usr/bin/unversioned-python as primary link, so --install must
-    # match that primary link instead of /usr/bin/python.
-    ${SUDO_CMD} alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 1
+    configure_rocky8_python_command
 }
 
 function install_pkg_rocky9

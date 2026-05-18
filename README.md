@@ -73,6 +73,27 @@ bash build_epics_within_pkg_automation.bash /usr/local
 The helper clones `EPICS-env`, writes `CONFIG_SITE.local`, runs the EPICS-env
 initialization and build targets, then creates the versioned EPICS symlinks.
 
+## Rocky Python Command
+
+EPICS Base uses the unversioned `python` command when generating linker RPATH
+flags. Rocky 8 keeps the `python` alternatives group in auto mode with
+`/usr/libexec/no-python` as the highest-priority entry, so EPICS builds need an
+explicit package-automation contract for this command.
+
+On Rocky 8, the installer registers `/usr/bin/python3` with priority `500`,
+selects it through alternatives, and exposes `/usr/local/bin/python` as the
+site-owned command shim. `/usr/bin/python` remains under distribution
+alternatives control.
+
+```bash
+alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
+alternatives --set python /usr/bin/python3
+ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
+```
+
+The installer verifies this contract with `command -v python` and
+`python --version` before returning from the Rocky 8 package path.
+
 ## Validation
 
 The Bash sources are expected to pass:
@@ -89,9 +110,8 @@ shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash functio
 
 - Package installation can remove or disable selected services on RPM-family
   systems, including PackageKit and firewalld.
-- On Rocky systems, the installer registers `/usr/bin/python` as an alternative
-  pointing to `python3` so EPICS build scripts can rely on an unversioned
-  `python` interpreter.
+- On Rocky systems, the installer provides an unversioned `python` command for
+  EPICS build tooling.
 - Package lists are tailored for this EPICS development environment and are not
   a generic baseline for all hosts.
 - New distribution versions require explicit package-list review before they
