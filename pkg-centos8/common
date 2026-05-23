@@ -4,6 +4,8 @@ nano
 unzip
 git
 tree
+acl
+lsof
 emacs
 xterm
 ipmitool

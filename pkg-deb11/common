@@ -4,6 +4,8 @@ screen
 unzip
 git
 tree
+acl
+lsof
 #xterm
 #ipmitool
 autoconf

@@ -2,6 +2,8 @@ screen
 unzip
 git
 tree
+acl
+lsof
 autoconf
 libtool
 # EPICS Base
