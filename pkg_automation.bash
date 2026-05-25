@@ -236,7 +236,7 @@ function find_dist
         version=$(sw_vers -productVersion)
         printf "%s %s\n" "$name" "$version"
     else
-        if [[ -f /usr/bin/lsb_release ]] ; then
+        if command -v lsb_release >/dev/null 2>&1; then
      	    dist_id=$(lsb_release -is)
      	    dist_cn=$(lsb_release -cs)
      	    dist_rs=$(lsb_release -rs)
