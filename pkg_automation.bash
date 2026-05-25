@@ -97,10 +97,10 @@ trap 'error_handler $? $LINENO "$BASH_COMMAND"' ERR
 function error_handler {
   local exit_code="$1"
   local line_number="$2"
-  local command="$3"
+  local failed_command="$3"
   printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   printf "[ERROR] Script failed at line %s\n" "$line_number"
-  printf "Command: %s\n" "$command"
+  printf "Command: %s\n" "$failed_command"
   printf "Exit Code: %s\n" "$exit_code"
   printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   exit "$exit_code"
@@ -208,12 +208,7 @@ function os_release_value
     return 1
 }
 
-function centos_dist
-{
-    os_release_value "VERSION_ID"
-}
-
-function ubuntu_dist
+function os_release_version
 {
     os_release_value "VERSION_ID"
 }
@@ -300,41 +295,24 @@ function install_pkg_deb
     local -a pkg_list=("$@")
 
     sudo_exist;
-    # Debian Docker, we cannot find the linux-headers,
-    # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a common application.
-    # We ignore within Docker image
     ${SUDO_CMD} apt update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-    #    else
      printf "%s\n" "${pkg_list[@]}";
      printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    #    fi
 }
 
 function install_pkg_ubu22
 {
     local -a pkg_list=("$@")
 
-    # Debian Docker, we cannot find the linux-headers,
-    # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a common application.
-    # We ignore within Docker image
     sudo_exist;
 
     ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-    #    else
      printf "%s\n" "${pkg_list[@]}";
      printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
@@ -361,21 +339,12 @@ function install_pkg_deb10
     local -a pkg_list=("$@")
     sudo_exist;
 
-    # Debian Docker, we cannot find the linux-headers,
-    # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a common application.
-    # We ignore within Docker image
     ${SUDO_CMD} apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-    #    else
      printf "%s\n" "${pkg_list[@]}";
      printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    #    fi
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
 
@@ -383,19 +352,10 @@ function install_pkg_deb11
 {
     local -a pkg_list=("$@")
     sudo_exist;
-    # Debian Docker, we cannot find the linux-headers,
-    # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a common application.
-    # We ignore within Docker image
-
     ${SUDO_CMD} apt -y update;
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-    #    else
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
@@ -406,18 +366,9 @@ function install_pkg_deb12
 {
     local -a pkg_list=("$@")
     sudo_exist;
-    # Debian Docker, we cannot find the linux-headers,
-    # Unable to locate package linux-headers-5.8.0-1033-azure
-    # linux-headers are not necessary for a common application.
-    # We ignore within Docker image
-
     ${SUDO_CMD} apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-    #    if [[ ! ${KERNEL_VER} =~ "azure" ]]; then
-    #        printf "%s linux-headers-%s\n\n" "${pkg_list}" "$KERNEL_VER";
-    #        ${SUDO_CMD} apt -y install ${pkg_list} linux-headers-${KERNEL_VER};
-    #    else
      printf "%s\n" "${pkg_list[@]}";
      printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
@@ -728,16 +679,16 @@ function install_pkg_macos11
     printf "%s\n" "${pkg_list[@]}";
     printf "\n\n\n"
 
-    local command="brew"
-    ${command} install "${pkg_list[@]}";
+    local brew_cmd="brew"
+    ${brew_cmd} install "${pkg_list[@]}";
     #
     # net-snmp-config in /usr/bin has very strange codes, so we have to overwrite it with brew net-snmp
     # 2023-08-21
     printf "\n";
     printf ">>> brew upgrade, and reconfigure net-snmp\n"
-    ${command} upgrade
-    ${command} reinstall net-snmp
-    ${command} link --force --overwrite net-snmp
+    ${brew_cmd} upgrade
+    ${brew_cmd} reinstall net-snmp
+    ${brew_cmd} link --force --overwrite net-snmp
     net-snmp-config --cflags
 }
 
@@ -1030,7 +981,7 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "CentOS or Scientific is detected as $dist";
 	fi
-	centos_version=$(centos_dist)
+	centos_version=$(os_release_version)
 	if [ "$centos_version" == "8" ]; then
 	    printf "%s\n" "$centos_version"
 	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
@@ -1047,7 +998,7 @@ case "$dist" in
 	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
     fi
 
-    rocky_version=$(centos_dist)
+    rocky_version=$(os_release_version)
 
 	if [[ "$rocky_version" =~ ^8\. ]]; then
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
@@ -1095,7 +1046,7 @@ case "$dist" in
     ;;
 
     *Ubuntu*)
-    ubuntu_version=$(ubuntu_dist)
+    ubuntu_version=$(os_release_version)
     if [ "$ANSWER" == "NO" ]; then
         yes_or_no_to_go "Ubuntu is detected as $dist"
     fi
@@ -1147,7 +1098,6 @@ case "$dist" in
 	if [ "$ANSWER" == "NO" ]; then
 	    yes_or_no_to_go "macOS is detected as $dist";
 	fi
-#	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	macos_version=$(macos_dist)
 	if [[ "$macos_version" =~ ^11\. ]]; then
 	    printf "%s\n" "$macos_version"
