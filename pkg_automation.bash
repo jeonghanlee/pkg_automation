@@ -110,7 +110,6 @@ declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
 declare -g SUDO_CMD;
-declare -g FORCE_PYTHON_COMMAND;
 declare -g VERIFY_PYTHON_COMMAND;
 #declare -g KERNEL_VER;
 
@@ -595,70 +594,34 @@ function verify_python_command_if_requested
     verify_python3_command "${label}"
 }
 
-function configure_rocky_python_link
-{
-    if [[ ! -e /usr/bin/unversioned-python ]]; then
-        printf "%s\n" "error: /usr/bin/unversioned-python is missing"
-        printf "%s\n" "error: install python-unversioned-command or configure alternatives first"
-        exit 1
-    fi
-
-    ${SUDO_CMD} ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
-}
-
-function prompt_rocky_python_link
-{
-    local label="$1"
-    local answer=""
-
-    if [[ "${FORCE_PYTHON_COMMAND}" == "YES" ]]; then
-        configure_rocky_python_link
-        return 0
-    fi
-
-    if [[ ! -t 0 ]]; then
-        printf "error: python command is not linked to Python 3 after %s setup\n" "${label}"
-        printf "%s\n" "error: rerun with -f to force /usr/local/bin/python in non-interactive runs"
-        exit 1
-    fi
-
-    printf ">> python is not linked to Python 3 after %s setup.\n" "${label}"
-    printf ">> Configure /usr/local/bin/python now (y/N)? "
-    if ! read -r answer; then
-        printf "%s\n" "error: failed to read python link confirmation"
-        exit 1
-    fi
-
-    case "${answer:0:1}" in
-        y|Y)
-            configure_rocky_python_link
-            ;;
-        *)
-            printf "%s\n" "error: python command must resolve to Python 3 for EPICS builds"
-            exit 1
-            ;;
-    esac
-}
-
-function verify_rocky_python_command
-{
-    local label="$1"
-
-    if ! python_command_is_python3; then
-        alternatives --display python || true
-        prompt_rocky_python_link "${label}"
-    fi
-
-    verify_python3_command "${label}"
-}
-
 function configure_rocky8_python_command
 {
-    # Rocky 8 owns the python alternatives group through /usr/bin/unversioned-python.
-    # Keep /usr/bin under alternatives control and expose a site-owned python command.
-    ${SUDO_CMD} alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
-    ${SUDO_CMD} alternatives --set python /usr/bin/python3
-    verify_rocky_python_command "Rocky 8 alternatives"
+    local local_python_target=""
+
+    if [[ ! -x /usr/bin/python3 ]]; then
+        printf "%s\n" "error: /usr/bin/python3 is missing"
+        printf "%s\n" "error: install python3-devel before configuring the python command"
+        exit 1
+    fi
+
+    if [[ -e /usr/bin/python && ! -L /usr/bin/python ]]; then
+        printf "%s\n" "error: /usr/bin/python exists and is not a symbolic link"
+        printf "%s\n" "error: refusing to replace an unmanaged python command"
+        exit 1
+    fi
+
+    ${SUDO_CMD} ln -sfn ./python3 /usr/bin/python
+
+    if [[ -L /usr/local/bin/python ]]; then
+        local_python_target="$(readlink /usr/local/bin/python || true)"
+        case "${local_python_target}" in
+            /usr/bin/unversioned-python|/usr/bin/python|/usr/bin/python3)
+                ${SUDO_CMD} ln -sfn /usr/bin/python /usr/local/bin/python
+                ;;
+        esac
+    fi
+
+    verify_python3_command "Rocky 8 package"
 }
 
 function install_pkg_rocky8
@@ -722,7 +685,7 @@ function install_pkg_rocky9
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
-    verify_rocky_python_command "Rocky 9 package"
+    verify_python3_command "Rocky 9 package"
 }
 
 function install_pkg_rocky10
@@ -754,7 +717,7 @@ function install_pkg_rocky10
     ${SUDO_CMD} dnf -y install "epel-release"
     ${SUDO_CMD} dnf -y update;
     ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
-    verify_rocky_python_command "Rocky 10 package"
+    verify_python3_command "Rocky 10 package"
 }
 
 function install_pkg_macos11
@@ -993,14 +956,10 @@ for brew_file in "${pkg_macos11_list[@]}"; do
 done
 
 ANSWER="NO"
-FORCE_PYTHON_COMMAND="NO"
 VERIFY_PYTHON_COMMAND="NO"
 
-while getopts ":fvy" opt; do
+while getopts ":vy" opt; do
     case ${opt} in
-    f)
-        FORCE_PYTHON_COMMAND="YES"
-        ;;
     v)
         VERIFY_PYTHON_COMMAND="YES"
         ;;

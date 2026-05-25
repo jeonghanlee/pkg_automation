@@ -52,7 +52,7 @@ re2c
 #hidapi
 #
 python3-devel
-# /usr/bin/python -> python3 via alternatives (BaseOS)
+# /usr/bin/python -> ./python3
 python-unversioned-command
 # Perl
 perl-FindBin

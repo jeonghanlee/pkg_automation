@@ -55,13 +55,6 @@ bash pkg_automation.bash
 bash pkg_automation.bash -y
 ```
 
-Use `-f` with `-y` in non-interactive CI jobs when Rocky hosts must repair
-the unversioned Python command without a prompt.
-
-```bash
-bash pkg_automation.bash -y -f
-```
-
 Use `-v` to verify at the end of supported Debian package paths that
 `python` resolves to Python 3.
 
@@ -89,27 +82,16 @@ initialization and build targets, then creates the versioned EPICS symlinks.
 
 ## Rocky Python Command
 
-EPICS Base uses the unversioned `python` command when generating linker RPATH
-flags. Rocky 8 keeps the `python` alternatives group in auto mode with
-`/usr/libexec/no-python` as the highest-priority entry, so EPICS builds need an
-explicit package-automation contract for this command.
+Rocky package paths provide an unversioned `python` command that resolves to
+Python 3 before returning.
 
-On Rocky 8, the installer registers `/usr/bin/python3` with priority `500`
-and selects it through alternatives. On Rocky 9 and Rocky 10, the package list
-includes `python-unversioned-command`, so the package is expected to provide
-the unversioned command.
+Rocky 8 installs `python3-devel`, which provides `/usr/bin/python3` through
+the distribution's Python 3 provider. Rocky 8 does not provide
+`python-unversioned-command`, so the installer creates `/usr/bin/python` as a
+relative symbolic link to `./python3` and verifies `python --version`.
 
-```bash
-alternatives --install /usr/bin/unversioned-python python /usr/bin/python3 500
-alternatives --set python /usr/bin/python3
-ln -sfn /usr/bin/unversioned-python /usr/local/bin/python
-```
-
-The installer verifies this contract with `command -v python` and
-`python --version` before returning from each Rocky package path. If `python`
-does not resolve to Python 3, interactive runs prompt before creating the
-site-owned `/usr/local/bin/python` link. CI runs should pass `-f` to force that
-repair without a prompt.
+Rocky 9 and Rocky 10 install `python-unversioned-command`, which provides
+`/usr/bin/python` as a package-owned link to Python 3.
 
 ## Debian Python Command
 
