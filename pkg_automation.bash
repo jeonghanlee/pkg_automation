@@ -399,79 +399,6 @@ function install_pkg_rpi
     ${SUDO_CMD} apt-get -y install "${pkg_list[@]}" raspberrypi-kernel-headers
 }
 
-function install_pkg_dnf
-{
-    local -a pkg_list=("$@")
-    printf "\n";
-    printf "%s\n" "${pkg_list[@]}";
-    printf "\n\n\n"
-    declare -r yum_pid="/var/run/yum.pid"
-    sudo_exist;
-
-    disable_system_service packagekit
-    disable_system_service firewalld
-
-    # PackageKit may leave a stale yum/dnf pid; validate before killing.
-    kill_stale_pkgmgr_pid "${yum_pid}"
-
-    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
-}
-
-# CentOS8 yum is the same as dnf
-# ls -ltar /usr/bin/{dnf,yum}
-# lrwxrwxrwx. 1 root root 5 May 13 21:34 /usr/bin/yum -> dnf-3
-# lrwxrwxrwx. 1 root root 5 May 13 21:34 /usr/bin/dnf -> dnf-3
-# so, it may be possible to merge them together with dnf
-#
-function install_pkg_rpm
-{
-    local -a pkg_list=("${@:1:$(($# - 1))}")
-    local version="${!#}"
-    printf "\n";
-    printf "%s\n" "${pkg_list[@]}";
-    printf "\n\n\n"
-
-    declare -r yum_pid="/var/run/yum.pid"
-
-    local -a pkgs_should_be_removed=("PackageKit" "firewalld")
-    sudo_exist;
-    disable_system_service packagekit
-    disable_system_service firewalld
-
-    # PackageKit may leave a stale yum/dnf pid; validate before killing.
-    kill_stale_pkgmgr_pid "${yum_pid}"
-
-    if [ "$version" == "8" ]; then
-        ${SUDO_CMD} yum -y install dnf-plugins-core;
-        ${SUDO_CMD} yum -y update;
-        ${SUDO_CMD} yum config-manager --set-enabled powertools;
-    else
-        pkgs_should_be_removed+=("motif-devel")
-
-    fi
-    printf "The following packages are being removed ....\n"
-    ${SUDO_CMD} yum -y remove "${pkgs_should_be_removed[@]}"
-    ${SUDO_CMD} yum -y update;
-    ${SUDO_CMD} yum -y upgrade ca-certificates
-    ${SUDO_CMD} yum -y groupinstall "Development tools"
-    ${SUDO_CMD} yum -y install "epel-release"
-    ${SUDO_CMD} yum -y update;
-    ${SUDO_CMD} yum -y install "${pkg_list[@]}";
-    # Set Python3 as default
-    #
-    if [[ "$version" == "7" || "$version" == *"7."* ]]; then
-        ${SUDO_CMD} yum -y install python3;
-        ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
-        ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3.6 60
-        ${SUDO_CMD} alternatives --auto python
-        ${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/bin/yum
-        ${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/libexec/urlgrabber-ext-down
-    fi
-}
-
 function install_ctags_from_source
 {
     local ctags_repo="https://github.com/universal-ctags/ctags.git"
@@ -736,9 +663,6 @@ declare -a PKG_UBU20_ARRAY
 declare -a PKG_UBU22_ARRAY
 declare -a PKG_UBU24_ARRAY
 #
-declare -a PKG_RPM_ARRAY
-declare -a PKG_CENTOS8_ARRAY
-declare -a PKG_DNF_ARRAY
 declare -a PKG_ROCKY8_ARRAY
 declare -a PKG_ROCKY9_ARRAY
 declare -a PKG_ROCKY10_ARRAY
@@ -761,9 +685,6 @@ declare -g UBU20_PATH="${SC_TOP}/pkg-ubu20"
 declare -g UBU22_PATH="${SC_TOP}/pkg-ubu22"
 declare -g UBU24_PATH="${SC_TOP}/pkg-ubu24"
 #
-declare -g RPM_PATH="${SC_TOP}/pkg-rpm"
-declare -g CENTOS8_PATH="${SC_TOP}/pkg-centos8"
-declare -g DNF_PATH="${SC_TOP}/pkg-dnf"
 declare -g ROCKY8_PATH="${SC_TOP}/pkg-rocky8"
 declare -g ROCKY9_PATH="${SC_TOP}/pkg-rocky9"
 declare -g ROCKY10_PATH="${SC_TOP}/pkg-rocky10"
@@ -784,10 +705,6 @@ declare -ga pkg_ubu20_list
 declare -ga pkg_ubu22_list
 declare -ga pkg_ubu24_list
 #
-declare -ga pkg_rpm_list
-declare -ga pkg_centos8_list
-#
-declare -ga pkg_dnf_list
 declare -ga pkg_rocky8_list
 declare -ga pkg_rocky9_list
 declare -ga pkg_rocky10_list
@@ -809,9 +726,6 @@ pkg_ubu20_list=("epics" "extra")
 pkg_ubu22_list=("epics" "extra")
 pkg_ubu24_list=("common" "epics" "extra")
 #
-pkg_rpm_list=("epics" "extra")
-pkg_centos8_list=("common" "epics" "extra")
-pkg_dnf_list=("epics" "extra")
 pkg_rocky8_list=("common" "epics" "extra")
 pkg_rocky9_list=("common" "epics" "extra")
 pkg_rocky10_list=("common" "epics" "extra")
@@ -869,20 +783,6 @@ done
 append_pkg_file PKG_UBU24_ARRAY "${COM_PATH}/common"
 for deb_file in "${pkg_ubu24_list[@]}"; do
     append_pkg_file PKG_UBU24_ARRAY "${UBU24_PATH}/${deb_file}"
-done
-
-append_pkg_file PKG_RPM_ARRAY "${COM_PATH}/common"
-for rpm_file in "${pkg_rpm_list[@]}"; do
-    append_pkg_file PKG_RPM_ARRAY "${RPM_PATH}/${rpm_file}"
-done
-#
-for rpm_file in "${pkg_centos8_list[@]}"; do
-    append_pkg_file PKG_CENTOS8_ARRAY "${CENTOS8_PATH}/${rpm_file}"
-done
-#
-append_pkg_file PKG_DNF_ARRAY "${COM_PATH}/common"
-for dnf_file in "${pkg_dnf_list[@]}"; do
-    append_pkg_file PKG_DNF_ARRAY "${DNF_PATH}/${dnf_file}"
 done
 
 # Rocky 8.4
@@ -971,20 +871,6 @@ case "$dist" in
         fi
         install_pkg_deb13 "${PKG_DEB13_ARRAY[@]}"
         ;;
-    *CentOS* | *Scientific* )
-        warn_unsupported_target "$dist"
-        if [ "$ANSWER" == "NO" ]; then
-            yes_or_no_to_go "CentOS or Scientific is detected as $dist";
-        fi
-        centos_version=$(os_release_version)
-        if [ "$centos_version" == "8" ]; then
-            printf "%s\n" "$centos_version"
-            install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
-        else
-            install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
-        fi
-        ;;
-
     *Rocky* | *Alma* )
         if [[ "${dist}" == *Alma* ]]; then
             warn_unsupported_target "$dist"
@@ -1078,14 +964,6 @@ case "$dist" in
             yes_or_no_to_go "Linux Mint tessa is detected as $dist";
         fi
         install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-        ;;
-
-    *Fedora*)
-        warn_unsupported_target "$dist"
-        if [ "$ANSWER" == "NO" ]; then
-            yes_or_no_to_go "Linux Fedora is detected as $dist";
-        fi
-        install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
         ;;
 
     *macOS*)
