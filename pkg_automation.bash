@@ -109,7 +109,7 @@ function error_handler {
 declare -g SC_SCRIPT;
 #declare -g SC_SCRIPTNAME;
 declare -g SC_TOP;
-declare -g SUDO_CMD;
+declare -ga SUDO=()
 declare -g VERIFY_PYTHON_COMMAND;
 #declare -g KERNEL_VER;
 
@@ -119,22 +119,20 @@ SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 SC_TOP="$( cd -P "$( dirname "$SC_SCRIPT" )" && pwd )"
 #"${SC_SCRIPT%/*}"
 
-if [[ ${EUID} -eq 0 ]]; then
-    SUDO_CMD=""
-else
-    SUDO_CMD="sudo"
+if [[ ${EUID} -ne 0 ]]; then
+    SUDO=(sudo)
 fi
 #KERNEL_VER=$(uname -r)
 
 function sudo_exist
 {
-    if [[ -z "${SUDO_CMD}" ]]; then
+    if ((${#SUDO[@]} == 0)); then
         return 0
     fi
-    if ! command -v "${SUDO_CMD}" &> /dev/null
+    if ! command -v "${SUDO[0]}" &> /dev/null
     then
         printf "\n"
-        printf ">>>>>>>>>> %s is required. Please install it first.\n" "${SUDO_CMD}"
+        printf ">>>>>>>>>> %s is required. Please install it first.\n" "${SUDO[0]}"
         printf "\n"
         exit 1
     fi
@@ -154,14 +152,14 @@ function kill_stale_pkgmgr_pid
     pid_str=$(cat "${pid_file}" 2>/dev/null || true)
     if [[ ! "${pid_str}" =~ ^[1-9][0-9]*$ ]]; then
         printf "Invalid PID in %s: removing stale file\n" "${pid_file}"
-        ${SUDO_CMD} rm -f -- "${pid_file}"
+        "${SUDO[@]}" rm -f -- "${pid_file}"
         return 0
     fi
     pid="${pid_str}"
 
     if [[ ! -r "/proc/${pid}/comm" ]]; then
         printf "PID %s no longer alive: removing stale %s\n" "${pid}" "${pid_file}"
-        ${SUDO_CMD} rm -f -- "${pid_file}"
+        "${SUDO[@]}" rm -f -- "${pid_file}"
         return 0
     fi
 
@@ -177,7 +175,7 @@ function kill_stale_pkgmgr_pid
             ;;
         *)
             printf "PID %s runs %s (not yum/dnf): removing stale %s\n" "${pid}" "${comm}" "${pid_file}"
-            ${SUDO_CMD} rm -f -- "${pid_file}"
+            "${SUDO[@]}" rm -f -- "${pid_file}"
             ;;
     esac
 }
@@ -242,9 +240,9 @@ function disable_system_service
     local disable_services=$1; shift
 
     printf "Disable service ... %s\n" "${disable_services}"
-    ${SUDO_CMD} systemctl stop    "${disable_services}" 2>/dev/null || printf ">>> Stop    : %s do not exist/failed\n" "${disable_services}"
-    ${SUDO_CMD} systemctl disable "${disable_services}" 2>/dev/null || printf ">>> Disable : %s do not exist/failed\n" "${disable_services}"
-    ${SUDO_CMD} systemctl mask    "${disable_services}" 2>/dev/null || printf ">>> Mask    : %s do not exist/failed\n" "${disable_services}"
+    "${SUDO[@]}" systemctl stop    "${disable_services}" 2>/dev/null || printf ">>> Stop    : %s do not exist/failed\n" "${disable_services}"
+    "${SUDO[@]}" systemctl disable "${disable_services}" 2>/dev/null || printf ">>> Disable : %s do not exist/failed\n" "${disable_services}"
+    "${SUDO[@]}" systemctl mask    "${disable_services}" 2>/dev/null || printf ">>> Mask    : %s do not exist/failed\n" "${disable_services}"
 }
 
 function pkg_list
@@ -290,12 +288,12 @@ function install_pkg_deb
     local -a pkg_list=("$@")
 
     sudo_exist;
-    ${SUDO_CMD} apt update;
+    "${SUDO[@]}" apt update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
 }
 
 function install_pkg_ubu22
@@ -304,14 +302,14 @@ function install_pkg_ubu22
 
     sudo_exist;
 
-    ${SUDO_CMD} apt -y update;
-    ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
+    "${SUDO[@]}" apt -y update;
+    "${SUDO[@]}" apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_ubu24
@@ -320,13 +318,13 @@ function install_pkg_ubu24
 
     sudo_exist;
 
-    ${SUDO_CMD} apt -y update;
+    "${SUDO[@]}" apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_deb10
@@ -334,39 +332,39 @@ function install_pkg_deb10
     local -a pkg_list=("$@")
     sudo_exist;
 
-    ${SUDO_CMD} apt -y update;
+    "${SUDO[@]}" apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
 
 function install_pkg_deb11
 {
     local -a pkg_list=("$@")
     sudo_exist;
-    ${SUDO_CMD} apt -y update;
-    ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
+    "${SUDO[@]}" apt -y update;
+    "${SUDO[@]}" apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
-    ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
 function install_pkg_deb12
 {
     local -a pkg_list=("$@")
     sudo_exist;
-    ${SUDO_CMD} apt -y update;
+    "${SUDO[@]}" apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
     verify_python_command_if_requested "Debian 12 package"
 }
 
@@ -374,15 +372,15 @@ function install_pkg_deb13
 {
     local -a pkg_list=("$@")
     sudo_exist;
-    ${SUDO_CMD} apt -y update;
+    "${SUDO[@]}" apt -y update;
     if dpkg -s exuberant-ctags >/dev/null 2>&1; then
-        ${SUDO_CMD} apt -y remove exuberant-ctags;
+        "${SUDO[@]}" apt -y remove exuberant-ctags;
     fi
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
     printf "%s\n" "${pkg_list[@]}";
     printf "\n"
-    ${SUDO_CMD} apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
     verify_python_command_if_requested "Debian 13 package"
 }
 
@@ -395,8 +393,8 @@ function install_pkg_rpi
     printf "%s\n" "${pkg_list[@]}" "raspberrypi-kernel-headers";
     printf "\n\n"
 
-    ${SUDO_CMD} apt-get update
-    ${SUDO_CMD} apt-get -y install "${pkg_list[@]}" raspberrypi-kernel-headers
+    "${SUDO[@]}" apt-get update
+    "${SUDO[@]}" apt-get -y install "${pkg_list[@]}" raspberrypi-kernel-headers
 }
 
 function install_ctags_from_source
@@ -405,7 +403,7 @@ function install_ctags_from_source
 
     printf "Universal-ctags not found. Starting source build...\n"
 
-    ${SUDO_CMD} dnf -y install autoconf automake pkgconfig gcc make libtool
+    "${SUDO[@]}" dnf -y install autoconf automake pkgconfig gcc make libtool
 
     (
         local build_dir=""
@@ -419,7 +417,7 @@ function install_ctags_from_source
         ./autogen.sh
         ./configure --prefix=/usr/local
         make
-        ${SUDO_CMD} make install
+        "${SUDO[@]}" make install
     )
 }
 
@@ -484,13 +482,13 @@ function configure_rocky8_python_command
         exit 1
     fi
 
-    ${SUDO_CMD} ln -sfn ./python3 /usr/bin/python
+    "${SUDO[@]}" ln -sfn ./python3 /usr/bin/python
 
     if [[ -L /usr/local/bin/python ]]; then
         local_python_target="$(readlink /usr/local/bin/python || true)"
         case "${local_python_target}" in
             /usr/bin/unversioned-python|/usr/bin/python|/usr/bin/python3)
-                ${SUDO_CMD} ln -sfn /usr/bin/python /usr/local/bin/python
+                "${SUDO[@]}" ln -sfn /usr/bin/python /usr/local/bin/python
                 ;;
         esac
     fi
@@ -513,16 +511,16 @@ function install_pkg_rocky8
 
     # PackageKit may leave a stale yum/dnf pid; validate before killing.
     kill_stale_pkgmgr_pid "${yum_pid}"
-    ${SUDO_CMD} dnf -y install dnf-plugins-core;
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y config-manager --set-enabled powertools
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "epel-release"
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
+    "${SUDO[@]}" dnf -y install dnf-plugins-core;
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y config-manager --set-enabled powertools
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y remove PackageKit firewalld;
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y groupinstall "Development tools"
+    "${SUDO[@]}" dnf -y install "epel-release"
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y install "${pkg_list[@]}";
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
@@ -544,21 +542,21 @@ function install_pkg_rocky9
 
     # PackageKit may leave a stale yum/dnf pid; validate before killing.
     kill_stale_pkgmgr_pid "${yum_pid}"
-    ${SUDO_CMD} dnf -y install dnf-plugins-core;
-    ${SUDO_CMD} dnf -y update;
+    "${SUDO[@]}" dnf -y install dnf-plugins-core;
+    "${SUDO[@]}" dnf -y update;
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
 ## PowerTools does not exist, so we have to find out several packages
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
 ##
 
-    ${SUDO_CMD} dnf -y config-manager --set-enabled crb
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "epel-release"
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
+    "${SUDO[@]}" dnf -y config-manager --set-enabled crb
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y remove PackageKit firewalld;
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y groupinstall "Development tools"
+    "${SUDO[@]}" dnf -y install "epel-release"
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y install "${pkg_list[@]}";
     verify_python3_command "Rocky 9 package"
 }
 
@@ -577,20 +575,20 @@ function install_pkg_rocky10
 
     # PackageKit may leave a stale yum/dnf pid; validate before killing.
     kill_stale_pkgmgr_pid "${yum_pid}"
-    ${SUDO_CMD} dnf -y install dnf-plugins-core;
-    ${SUDO_CMD} dnf -y update;
+    "${SUDO[@]}" dnf -y install dnf-plugins-core;
+    "${SUDO[@]}" dnf -y update;
 ## https://wiki.rockylinux.org/rocky/repo/#extra-repositories
 ## PowerTools does not exist, so we have to find out several packages
 ## I think, it needs some time to show up in somewhere, that is always the Redhat does
 ##
-    ${SUDO_CMD} dnf -y config-manager --set-enabled crb
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y remove PackageKit firewalld;
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y groupinstall "Development tools"
-    ${SUDO_CMD} dnf -y install "epel-release"
-    ${SUDO_CMD} dnf -y update;
-    ${SUDO_CMD} dnf -y install "${pkg_list[@]}";
+    "${SUDO[@]}" dnf -y config-manager --set-enabled crb
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y remove PackageKit firewalld;
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y groupinstall "Development tools"
+    "${SUDO[@]}" dnf -y install "epel-release"
+    "${SUDO[@]}" dnf -y update;
+    "${SUDO[@]}" dnf -y install "${pkg_list[@]}";
     verify_python3_command "Rocky 10 package"
 }
 
