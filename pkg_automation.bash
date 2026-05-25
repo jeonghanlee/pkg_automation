@@ -119,17 +119,12 @@ SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 SC_TOP="$( cd -P "$( dirname "$SC_SCRIPT" )" && pwd )"
 #"${SC_SCRIPT%/*}"
 
-function pushd { builtin pushd "$@" > /dev/null || exit; }
-function popd  { builtin popd  > /dev/null || exit; }
-
 if [[ ${EUID} -eq 0 ]]; then
     SUDO_CMD=""
 else
     SUDO_CMD="sudo"
 fi
 #KERNEL_VER=$(uname -r)
-
-. "${SC_TOP}/functions"
 
 function sudo_exist
 {

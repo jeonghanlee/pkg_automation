@@ -22,7 +22,6 @@ this repository.
 
 - `pkg_automation.bash` detects the host distribution, loads package lists,
   confirms the operation, and installs the selected package set.
-- `functions` provides shared Bash helper functions used by the installer.
 - `build_epics_within_pkg_automation.bash` builds and installs EPICS through
   the external `EPICS-env` workflow from a Docker build context.
 - `pkg-*` directories hold package-list fragments grouped by operating system
@@ -105,11 +104,11 @@ through `python-dev-is-python3`, which depends on `python-is-python3`. When
 The Bash sources are expected to pass:
 
 ```bash
-bash -n pkg_automation.bash build_epics_within_pkg_automation.bash functions
+bash -n pkg_automation.bash build_epics_within_pkg_automation.bash
 ```
 
 ```bash
-shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash functions
+shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash
 ```
 
 ## Operational Notes
