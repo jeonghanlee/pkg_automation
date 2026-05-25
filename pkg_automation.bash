@@ -232,9 +232,9 @@ function find_dist
         printf "%s %s\n" "$name" "$version"
     else
         if command -v lsb_release >/dev/null 2>&1; then
-     	    dist_id=$(lsb_release -is)
-     	    dist_cn=$(lsb_release -cs)
-     	    dist_rs=$(lsb_release -rs)
+            dist_id=$(lsb_release -is)
+            dist_cn=$(lsb_release -cs)
+            dist_rs=$(lsb_release -rs)
             printf "%s %s %s\n" "$dist_id" "${dist_cn}" "${dist_rs}"
         else
             os_release_value "PRETTY_NAME"
@@ -298,8 +298,8 @@ function install_pkg_deb
     ${SUDO_CMD} apt update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-     printf "%s\n" "${pkg_list[@]}";
-     printf "\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
 }
 
@@ -313,8 +313,8 @@ function install_pkg_ubu22
     ${SUDO_CMD} apt -y remove python2 libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib python2-minimal python2.7 python2.7-minimal;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-     printf "%s\n" "${pkg_list[@]}";
-     printf "\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
@@ -342,8 +342,8 @@ function install_pkg_deb10
     ${SUDO_CMD} apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-     printf "%s\n" "${pkg_list[@]}";
-     printf "\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     ${SUDO_CMD} update-alternatives --install /usr/bin/python python /usr/bin/python3 3
 }
@@ -369,8 +369,8 @@ function install_pkg_deb12
     ${SUDO_CMD} apt -y update;
     printf "\n\n";
     printf "The following package list will be installed:\n\n"
-     printf "%s\n" "${pkg_list[@]}";
-     printf "\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
     ${SUDO_CMD} apt -y install "${pkg_list[@]}"
     verify_python_command_if_requested "Debian 12 package"
 }
@@ -450,11 +450,11 @@ function install_pkg_rpm
     kill_stale_pkgmgr_pid "${yum_pid}"
 
     if [ "$version" == "8" ]; then
-	    ${SUDO_CMD} yum -y install dnf-plugins-core;
+        ${SUDO_CMD} yum -y install dnf-plugins-core;
         ${SUDO_CMD} yum -y update;
         ${SUDO_CMD} yum config-manager --set-enabled powertools;
     else
-	pkgs_should_be_removed+=("motif-devel")
+        pkgs_should_be_removed+=("motif-devel")
 
     fi
     printf "The following packages are being removed ....\n"
@@ -468,12 +468,12 @@ function install_pkg_rpm
     # Set Python3 as default
     #
     if [[ "$version" == "7" || "$version" == *"7."* ]]; then
-    	${SUDO_CMD} yum -y install python3;
-    	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
-    	${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3.6 60
-    	${SUDO_CMD} alternatives --auto python
-    	${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/bin/yum
-    	${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/libexec/urlgrabber-ext-down
+        ${SUDO_CMD} yum -y install python3;
+        ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python2 50
+        ${SUDO_CMD} alternatives --install /usr/bin/python python /usr/bin/python3.6 60
+        ${SUDO_CMD} alternatives --auto python
+        ${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/bin/yum
+        ${SUDO_CMD} sed -i '1!b;s/python/python2.7/' /usr/libexec/urlgrabber-ext-down
     fi
 }
 
@@ -717,13 +717,13 @@ function yes_or_no_to_go
         exit 1;
     fi
     case ${answer:0:1} in
-	y|Y )
-	    printf ">> The following packages will be installed ...... ";
-	    ;;
-	* )
-        printf ">> One should install all required packages by oneself. Stop here.\n";
-	    exit;
-    ;;
+        y|Y )
+            printf ">> The following packages will be installed ...... ";
+            ;;
+        * )
+            printf ">> One should install all required packages by oneself. Stop here.\n";
+            exit;
+            ;;
     esac
 }
 
@@ -912,16 +912,16 @@ VERIFY_PYTHON_COMMAND="NO"
 
 while getopts ":vy" opt; do
     case ${opt} in
-    v)
-        VERIFY_PYTHON_COMMAND="YES"
-        ;;
-	y)
-	    ANSWER="YES"
-	    ;;
-	\?)
-	    printf "Invalid option: -%s\n" "${OPTARG}" >&2
-	    exit;
-	    ;;
+        v)
+            VERIFY_PYTHON_COMMAND="YES"
+            ;;
+        y)
+            ANSWER="YES"
+            ;;
+        \?)
+            printf "Invalid option: -%s\n" "${OPTARG}" >&2
+            exit;
+            ;;
     esac
 done
 dist=$(find_dist)
@@ -930,33 +930,33 @@ printf "Distribution is >>>%s<<<\n" "${dist}"
 
 case "$dist" in
     Raspbian*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Raspbian is detected as $dist"
-	fi
-	install_pkg_rpi "${PKG_RPI_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Raspbian is detected as $dist"
+        fi
+        install_pkg_rpi "${PKG_RPI_ARRAY[@]}"
+        ;;
     *jessie*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Debian jessie is detected as $dist"
-	fi
-	install_pkg_deb "${PKG_DEB_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian jessie is detected as $dist"
+        fi
+        install_pkg_deb "${PKG_DEB_ARRAY[@]}"
+        ;;
     *stretch*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Debian stretch is detected as $dist"
-	fi
-	install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian stretch is detected as $dist"
+        fi
+        install_pkg_deb "${PKG_DEB9_ARRAY[@]}"
+        ;;
     *buster*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
-	fi
-	install_pkg_deb10 "${PKG_DEB10_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian 10 (Buster) is detected as $dist"
+        fi
+        install_pkg_deb10 "${PKG_DEB10_ARRAY[@]}"
+        ;;
     *bullseye*)
         warn_unsupported_target "$dist"
         if [ "$ANSWER" == "NO" ]; then
@@ -977,155 +977,155 @@ case "$dist" in
         install_pkg_deb13 "${PKG_DEB13_ARRAY[@]}"
         ;;
     *CentOS* | *Scientific* )
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "CentOS or Scientific is detected as $dist";
-	fi
-	centos_version=$(os_release_version)
-	if [ "$centos_version" == "8" ]; then
-	    printf "%s\n" "$centos_version"
-	    install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
-	else
-	    install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
-	fi
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "CentOS or Scientific is detected as $dist";
+        fi
+        centos_version=$(os_release_version)
+        if [ "$centos_version" == "8" ]; then
+            printf "%s\n" "$centos_version"
+            install_pkg_rpm "${PKG_CENTOS8_ARRAY[@]}" "${centos_version}"
+        else
+            install_pkg_rpm "${PKG_RPM_ARRAY[@]}"  "${centos_version}"
+        fi
+        ;;
 
     *Rocky* | *Alma* )
-    if [[ "${dist}" == *Alma* ]]; then
-        warn_unsupported_target "$dist"
-    fi
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Rocky or Alma is detected as $dist";
-    fi
+        if [[ "${dist}" == *Alma* ]]; then
+            warn_unsupported_target "$dist"
+        fi
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Rocky or Alma is detected as $dist";
+        fi
 
-    rocky_version=$(os_release_version)
+        rocky_version=$(os_release_version)
 
-	if [[ "$rocky_version" =~ ^8\. ]]; then
-        install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
-	elif [[ "$rocky_version" =~ ^9\. ]]; then
-        install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
-  elif [[ "$rocky_version" =~ ^10\. ]]; then
-    install_pkg_rocky10 "${PKG_ROCKY10_ARRAY[@]}"
-	else
-        printf "\n";
-	    printf "Doesn't support %s\n" "$dist";
-        printf "\n";
-        exit 1;
-    fi
-	;;
+        if [[ "$rocky_version" =~ ^8\. ]]; then
+            install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
+        elif [[ "$rocky_version" =~ ^9\. ]]; then
+            install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
+        elif [[ "$rocky_version" =~ ^10\. ]]; then
+            install_pkg_rocky10 "${PKG_ROCKY10_ARRAY[@]}"
+        else
+            printf "\n";
+            printf "Doesn't support %s\n" "$dist";
+            printf "\n";
+            exit 1;
+        fi
+        ;;
 
     *xenial*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Ubuntu xenial is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu xenial is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
 
     *artful*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Ubuntu artful is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu artful is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
     *bionic*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Ubuntu bionic is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu bionic is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
 
     *focal*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-        	yes_or_no_to_go "Ubuntu focal is detected as $dist";
-    fi
-    install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
-    ;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu focal is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU20_ARRAY[@]}"
+        ;;
 
     *Ubuntu*)
-    ubuntu_version=$(os_release_version)
-    if [ "$ANSWER" == "NO" ]; then
-        yes_or_no_to_go "Ubuntu is detected as $dist"
-    fi
-    if [[ "$ubuntu_version" =~ ^22\. ]]; then
-    install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
-    elif [[ "$ubuntu_version" =~ ^24\. ]]; then
-    install_pkg_ubu24 "${PKG_UBU24_ARRAY[@]}"
-    else
-        printf "\n";
-        printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
-        printf "\n";
-        exit 1;
-    fi
-    ;;
+        ubuntu_version=$(os_release_version)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Ubuntu is detected as $dist"
+        fi
+        if [[ "$ubuntu_version" =~ ^22\. ]]; then
+            install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
+        elif [[ "$ubuntu_version" =~ ^24\. ]]; then
+            install_pkg_ubu24 "${PKG_UBU24_ARRAY[@]}"
+        else
+            printf "\n";
+            printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
+            printf "\n";
+            exit 1;
+        fi
+        ;;
     *sylvia*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Linux Mint sylvia is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
 
     *tara*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Linux Mint tara is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Linux Mint tara is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
 
     *tessa*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Linux Mint tessa is detected as $dist";
-	fi
-	install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Linux Mint tessa is detected as $dist";
+        fi
+        install_pkg_deb "${PKG_UBU16_ARRAY[@]}"
+        ;;
 
     *Fedora*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "Linux Fedora is detected as $dist";
-	fi
-	install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Linux Fedora is detected as $dist";
+        fi
+        install_pkg_dnf "${PKG_DNF_ARRAY[@]}";
+        ;;
 
     *macOS*)
-	warn_unsupported_target "$dist"
-	if [ "$ANSWER" == "NO" ]; then
-	    yes_or_no_to_go "macOS is detected as $dist";
-	fi
-	macos_version=$(macos_dist)
-	if [[ "$macos_version" =~ ^11\. ]]; then
-	    printf "%s\n" "$macos_version"
-	    install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ ^12\. ]]; then
-        printf "%s\n" "$macos_version"
-		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ ^13\. ]]; then
-        printf "%s\n" "$macos_version"
-		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ ^14\. ]]; then
-        printf "%s\n" "$macos_version"
-		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	else
-        printf "\n";
-	    printf "Doesn't support yet %s\n" "$dist";
-        printf "\n";
-        exit 1;
-	fi
-	;;
+        warn_unsupported_target "$dist"
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "macOS is detected as $dist";
+        fi
+        macos_version=$(macos_dist)
+        if [[ "$macos_version" =~ ^11\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        elif [[ "$macos_version" =~ ^12\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        elif [[ "$macos_version" =~ ^13\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        elif [[ "$macos_version" =~ ^14\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        else
+            printf "\n";
+            printf "Doesn't support yet %s\n" "$dist";
+            printf "\n";
+            exit 1;
+        fi
+        ;;
 
     *)
-	printf "----------------------------------\n";
-	printf ">> Doesn't support the detected %s\n" "$dist";
-	printf ">> Please contact jeonghan.lee@gmail.com or feel free to do pull requests.\n";
-	printf "\n";
-	exit 1;
-	;;
+        printf "----------------------------------\n";
+        printf ">> Doesn't support the detected %s\n" "$dist";
+        printf ">> Please contact jeonghan.lee@gmail.com or feel free to do pull requests.\n";
+        printf "\n";
+        exit 1;
+        ;;
 esac
 
 exit 0
