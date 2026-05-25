@@ -275,7 +275,7 @@ function pkg_list
                 continue
             fi
             packagelist[i]="${line_data}"
-            ((++i))
+            i=$((i + 1))
         fi
     done < "${1}"
 
@@ -528,25 +528,26 @@ function install_pkg_rpm
 
 function install_ctags_from_source
 {
-    local build_dir
     local ctags_repo="https://github.com/universal-ctags/ctags.git"
 
     printf "Universal-ctags not found. Starting source build...\n"
 
     ${SUDO_CMD} dnf -y install autoconf automake pkgconfig gcc make libtool
 
-    build_dir="$(mktemp -d -t ctags_build.XXXXXXXX)"
+    (
+        local build_dir=""
 
-    git clone "${ctags_repo}" "${build_dir}"
-    cd "${build_dir}"
+        build_dir="$(mktemp -d -t ctags_build.XXXXXXXX)"
+        trap 'rm -rf -- "${build_dir}"' EXIT
 
-    ./autogen.sh
-    ./configure --prefix=/usr/local
-    make
-    ${SUDO_CMD} make install
+        git clone "${ctags_repo}" "${build_dir}"
+        cd "${build_dir}"
 
-    cd - > /dev/null
-    rm -rf -- "${build_dir}"
+        ./autogen.sh
+        ./configure --prefix=/usr/local
+        make
+        ${SUDO_CMD} make install
+    )
 }
 
 function python_command_is_python3
