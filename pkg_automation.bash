@@ -1048,11 +1048,11 @@ case "$dist" in
 
     rocky_version=$(centos_dist)
 
-	if [[ "$rocky_version" =~ .*"8.".* ]]; then
+	if [[ "$rocky_version" =~ ^8\. ]]; then
         install_pkg_rocky8 "${PKG_ROCKY8_ARRAY[@]}"
-	elif [[ "$rocky_version" =~ .*"9.".* ]]; then
+	elif [[ "$rocky_version" =~ ^9\. ]]; then
         install_pkg_rocky9 "${PKG_ROCKY9_ARRAY[@]}"
-  elif [[ "$rocky_version" =~ .*"10.".* ]]; then
+  elif [[ "$rocky_version" =~ ^10\. ]]; then
     install_pkg_rocky10 "${PKG_ROCKY10_ARRAY[@]}"
 	else
         printf "\n";
@@ -1098,9 +1098,9 @@ case "$dist" in
     if [ "$ANSWER" == "NO" ]; then
         yes_or_no_to_go "Ubuntu is detected as $dist"
     fi
-    if [[ "$ubuntu_version" =~ .*"22.".* ]]; then
+    if [[ "$ubuntu_version" =~ ^22\. ]]; then
     install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
-    elif [[ "$ubuntu_version" =~ .*"24.".* ]]; then
+    elif [[ "$ubuntu_version" =~ ^24\. ]]; then
     install_pkg_ubu24 "${PKG_UBU24_ARRAY[@]}"
     else
         printf "\n";
@@ -1148,16 +1148,16 @@ case "$dist" in
 	fi
 #	install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	macos_version=$(macos_dist)
-	if [[ "$macos_version" =~ .*"11.".* ]]; then
+	if [[ "$macos_version" =~ ^11\. ]]; then
 	    printf "%s\n" "$macos_version"
 	    install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ .*"12.".* ]]; then
+	elif [[ "$macos_version" =~ ^12\. ]]; then
         printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ .*"13.".* ]]; then
+	elif [[ "$macos_version" =~ ^13\. ]]; then
         printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
-	elif [[ "$macos_version" =~ .*"14.".* ]]; then
+	elif [[ "$macos_version" =~ ^14\. ]]; then
         printf "%s\n" "$macos_version"
 		install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
 	else
