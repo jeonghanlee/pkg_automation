@@ -12,9 +12,9 @@ flex
 readline
 darcs
 ipmitool
-rpcgen
+rpcsvc-proto
 net-snmp
-pcre
+pcre2
 ncurses
 libusb
 curlpp
@@ -29,7 +29,6 @@ python3
 iproute2mac
 # realpath
 coreutils
-libqrencode
 google-authenticator-libpam
 #binutils
 python-setuptools
