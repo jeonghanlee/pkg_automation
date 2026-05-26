@@ -1,0 +1,31 @@
+---
+name: macOS 26
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'pkg-macos11/**'
+    - 'pkg_automation.bash'
+    - '.github/workflows/macos26.yml'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+    - 'pkg-macos11/**'
+    - 'pkg_automation.bash'
+    - '.github/workflows/macos26.yml'
+
+  workflow_dispatch:
+
+
+jobs:
+
+  macOS26:
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test on macOS 26
+        run: |
+          bash pkg_automation.bash -y

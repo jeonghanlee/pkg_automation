@@ -7,6 +7,7 @@
 [![Rocky Linux 8](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml)
 [![Rocky Linux 9](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky9.yml)
 [![Rocky Linux 10](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky10.yml)
+[![macOS 26](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos26.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/macos26.yml)
 
 ## Scope
 
@@ -36,6 +37,11 @@ this repository.
 - Rocky Linux 8 (Green Obsidian)
 - Rocky Linux 9 (Blue Onyx)
 - Rocky Linux 10 (Red Quartz)
+- macOS 26 Tahoe with Homebrew
+
+The Homebrew package path is available for macOS 11 Big Sur through macOS 15
+Sequoia and macOS 26 Tahoe. macOS installs are not covered by the GitHub
+Actions workflow set except for macOS 26 Tahoe.
 
 Package directories for other distributions may remain in the repository for
 historical reference, but they are not actively maintained or covered by the

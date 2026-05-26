@@ -976,11 +976,13 @@ case "$dist" in
         ;;
 
     *macOS*)
-        warn_unsupported_target "$dist"
+        macos_version=$(macos_dist)
+        if [[ ! "$macos_version" =~ ^26\. ]]; then
+            warn_unsupported_target "$dist"
+        fi
         if [ "$ANSWER" == "NO" ]; then
             yes_or_no_to_go "macOS is detected as $dist";
         fi
-        macos_version=$(macos_dist)
         if [[ "$macos_version" =~ ^11\. ]]; then
             printf "%s\n" "$macos_version"
             install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
@@ -991,6 +993,12 @@ case "$dist" in
             printf "%s\n" "$macos_version"
             install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
         elif [[ "$macos_version" =~ ^14\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        elif [[ "$macos_version" =~ ^15\. ]]; then
+            printf "%s\n" "$macos_version"
+            install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
+        elif [[ "$macos_version" =~ ^26\. ]]; then
             printf "%s\n" "$macos_version"
             install_pkg_macos11 "${PKG_MACOS11_ARRAY[@]}";
         else
