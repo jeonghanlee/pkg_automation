@@ -600,15 +600,15 @@ function install_pkg_macos11
     printf "\n\n\n"
 
     local brew_cmd="brew"
-    ${brew_cmd} install "${pkg_list[@]}";
+    "${brew_cmd}" install "${pkg_list[@]}";
     #
     # net-snmp-config in /usr/bin has very strange codes, so we have to overwrite it with brew net-snmp
     # 2023-08-21
     printf "\n";
     printf ">>> brew upgrade, and reconfigure net-snmp\n"
-    ${brew_cmd} upgrade
-    ${brew_cmd} reinstall net-snmp
-    ${brew_cmd} link --force --overwrite net-snmp
+    "${brew_cmd}" upgrade
+    "${brew_cmd}" reinstall net-snmp
+    "${brew_cmd}" link --force --overwrite net-snmp
     net-snmp-config --cflags
 }
 
@@ -647,25 +647,25 @@ function yes_or_no_to_go
     esac
 }
 
-declare -a PKG_DEB_ARRAY
-declare -a PKG_DEB9_ARRAY
-declare -a PKG_DEB10_ARRAY
-declare -a PKG_DEB11_ARRAY
-declare -a PKG_DEB12_ARRAY
-declare -a PKG_DEB13_ARRAY
+declare -a PKG_DEB_ARRAY=()
+declare -a PKG_DEB9_ARRAY=()
+declare -a PKG_DEB10_ARRAY=()
+declare -a PKG_DEB11_ARRAY=()
+declare -a PKG_DEB12_ARRAY=()
+declare -a PKG_DEB13_ARRAY=()
 #
-declare -a PKG_RPI_ARRAY
+declare -a PKG_RPI_ARRAY=()
 #
-declare -a PKG_UBU16_ARRAY
-declare -a PKG_UBU20_ARRAY
-declare -a PKG_UBU22_ARRAY
-declare -a PKG_UBU24_ARRAY
+declare -a PKG_UBU16_ARRAY=()
+declare -a PKG_UBU20_ARRAY=()
+declare -a PKG_UBU22_ARRAY=()
+declare -a PKG_UBU24_ARRAY=()
 #
-declare -a PKG_ROCKY8_ARRAY
-declare -a PKG_ROCKY9_ARRAY
-declare -a PKG_ROCKY10_ARRAY
+declare -a PKG_ROCKY8_ARRAY=()
+declare -a PKG_ROCKY9_ARRAY=()
+declare -a PKG_ROCKY10_ARRAY=()
 #
-declare -a PKG_MACOS11_ARRAY
+declare -a PKG_MACOS11_ARRAY=()
 
 declare -g COM_PATH="${SC_TOP}/pkg-common"
 #
@@ -689,25 +689,25 @@ declare -g ROCKY10_PATH="${SC_TOP}/pkg-rocky10"
 #
 declare -g MACOS11_PATH="${SC_TOP}/pkg-macos11"
 #
-declare -ga pkg_deb_list
-declare -ga pkg_deb9_list
-declare -ga pkg_deb10_list
-declare -ga pkg_deb11_list
-declare -ga pkg_deb12_list
-declare -ga pkg_deb13_list
+declare -ga pkg_deb_list=()
+declare -ga pkg_deb9_list=()
+declare -ga pkg_deb10_list=()
+declare -ga pkg_deb11_list=()
+declare -ga pkg_deb12_list=()
+declare -ga pkg_deb13_list=()
 #
-declare -ga pkg_rpi_list
+declare -ga pkg_rpi_list=()
 #
-declare -ga pkg_ubu16_list
-declare -ga pkg_ubu20_list
-declare -ga pkg_ubu22_list
-declare -ga pkg_ubu24_list
+declare -ga pkg_ubu16_list=()
+declare -ga pkg_ubu20_list=()
+declare -ga pkg_ubu22_list=()
+declare -ga pkg_ubu24_list=()
 #
-declare -ga pkg_rocky8_list
-declare -ga pkg_rocky9_list
-declare -ga pkg_rocky10_list
+declare -ga pkg_rocky8_list=()
+declare -ga pkg_rocky9_list=()
+declare -ga pkg_rocky10_list=()
 #
-declare -ga pkg_macos11_list
+declare -ga pkg_macos11_list=()
 
 #
 pkg_deb_list=("epics" "extra")
