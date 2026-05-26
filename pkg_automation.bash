@@ -91,6 +91,17 @@
 
 set -Eeuo pipefail
 
+unset BASH_ENV ENV
+umask 022
+case "${OSTYPE:-}" in
+    darwin*)
+        export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+        ;;
+    *)
+        export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ;;
+esac
+
 # shellcheck disable=SC2317
 trap 'error_handler $? $LINENO "$BASH_COMMAND"' ERR
 

@@ -6,6 +6,9 @@
 
 set -Eeuo pipefail
 
+unset BASH_ENV ENV
+umask 022
+
 # shellcheck disable=SC2317
 trap 'error_handler $? $LINENO "$BASH_COMMAND"' ERR
 
