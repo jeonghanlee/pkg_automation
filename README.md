@@ -66,6 +66,11 @@ shell code. Package lists are read line by line, comments are skipped, Windows
 carriage returns are stripped, and package names are installed through quoted
 Bash arrays.
 
+At startup, the installer unsets `BASH_ENV` and `ENV`, sets `umask 022`, and
+exports a constrained command `PATH`. The macOS branch keeps Homebrew command
+directories ahead of `/usr/bin` so Homebrew-managed tools are selected where
+the package path expects them.
+
 ## EPICS Build Helper
 
 `build_epics_within_pkg_automation.bash` expects to run from a directory that
@@ -78,6 +83,9 @@ bash build_epics_within_pkg_automation.bash /usr/local
 
 The helper clones `EPICS-env`, writes `CONFIG_SITE.local`, runs the EPICS-env
 initialization and build targets, then creates the versioned EPICS symlinks.
+It unsets `BASH_ENV` and `ENV` and sets `umask 022`, but it preserves the
+caller `PATH` so compiler, cross-toolchain, and ccache selections inherited by
+the EPICS build are not discarded.
 
 ## Rocky Python Command
 
