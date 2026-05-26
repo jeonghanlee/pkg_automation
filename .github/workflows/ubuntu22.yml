@@ -7,7 +7,6 @@ on:
     paths:
     - 'pkg-ubu22/**'
     - 'pkg_automation.bash'
-    - 'functions'
     - '.github/workflows/ubuntu22.yml'
 
   pull_request:

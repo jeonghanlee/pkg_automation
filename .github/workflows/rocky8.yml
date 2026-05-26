@@ -7,7 +7,6 @@ on:
     paths:
     - 'pkg-rocky8/**'
     - 'pkg_automation.bash'
-    - 'functions'
     - '.github/workflows/rocky8.yml'
 
   pull_request:

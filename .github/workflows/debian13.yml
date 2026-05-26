@@ -7,7 +7,6 @@ on:
     paths:
     - 'pkg-deb13/**'
     - 'pkg_automation.bash'
-    - 'functions'
     - '.github/workflows/debian13.yml'
 
   pull_request:

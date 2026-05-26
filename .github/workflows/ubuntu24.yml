@@ -7,7 +7,6 @@ on:
     paths:
     - 'pkg-ubu24/**'
     - 'pkg_automation.bash'
-    - 'functions'
     - '.github/workflows/ubuntu24.yml'
 
   pull_request:
