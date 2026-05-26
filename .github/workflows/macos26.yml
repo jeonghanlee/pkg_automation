@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install modern bash
+        run: brew install bash
       - name: Test on macOS 26
         run: |
-          bash pkg_automation.bash -y
+          BASH_BIN="$(brew --prefix)/bin/bash"
+          "$BASH_BIN" --version | head -1
+          "$BASH_BIN" pkg_automation.bash -y
