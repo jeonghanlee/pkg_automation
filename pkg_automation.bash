@@ -338,6 +338,21 @@ function install_pkg_ubu24
     "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3  1
 }
 
+function install_pkg_ubu26
+{
+    local -a pkg_list=("$@")
+
+    sudo_exist;
+
+    "${SUDO[@]}" apt -y update;
+    printf "\n\n";
+    printf "The following package list will be installed:\n\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    "${SUDO[@]}" update-alternatives --install /usr/bin/python python /usr/bin/python3  1
+}
+
 function install_pkg_deb10
 {
     local -a pkg_list=("$@")
@@ -671,6 +686,7 @@ declare -a PKG_UBU16_ARRAY=()
 declare -a PKG_UBU20_ARRAY=()
 declare -a PKG_UBU22_ARRAY=()
 declare -a PKG_UBU24_ARRAY=()
+declare -a PKG_UBU26_ARRAY=()
 #
 declare -a PKG_ROCKY8_ARRAY=()
 declare -a PKG_ROCKY9_ARRAY=()
@@ -693,6 +709,7 @@ declare -g UBU16_PATH="${SC_TOP}/pkg-ubu16"
 declare -g UBU20_PATH="${SC_TOP}/pkg-ubu20"
 declare -g UBU22_PATH="${SC_TOP}/pkg-ubu22"
 declare -g UBU24_PATH="${SC_TOP}/pkg-ubu24"
+declare -g UBU26_PATH="${SC_TOP}/pkg-ubu26"
 #
 declare -g ROCKY8_PATH="${SC_TOP}/pkg-rocky8"
 declare -g ROCKY9_PATH="${SC_TOP}/pkg-rocky9"
@@ -713,6 +730,7 @@ declare -ga pkg_ubu16_list=()
 declare -ga pkg_ubu20_list=()
 declare -ga pkg_ubu22_list=()
 declare -ga pkg_ubu24_list=()
+declare -ga pkg_ubu26_list=()
 #
 declare -ga pkg_rocky8_list=()
 declare -ga pkg_rocky9_list=()
@@ -734,6 +752,7 @@ pkg_ubu16_list=("epics" "extra")
 pkg_ubu20_list=("epics" "extra")
 pkg_ubu22_list=("epics" "extra")
 pkg_ubu24_list=("common" "epics" "extra")
+pkg_ubu26_list=("common" "epics" "extra")
 #
 pkg_rocky8_list=("common" "epics" "extra")
 pkg_rocky9_list=("common" "epics" "extra")
@@ -792,6 +811,11 @@ done
 append_pkg_file PKG_UBU24_ARRAY "${COM_PATH}/common"
 for deb_file in "${pkg_ubu24_list[@]}"; do
     append_pkg_file PKG_UBU24_ARRAY "${UBU24_PATH}/${deb_file}"
+done
+
+append_pkg_file PKG_UBU26_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_ubu26_list[@]}"; do
+    append_pkg_file PKG_UBU26_ARRAY "${UBU26_PATH}/${deb_file}"
 done
 
 # Rocky 8.4
@@ -944,6 +968,8 @@ case "$dist" in
             install_pkg_ubu22 "${PKG_UBU22_ARRAY[@]}"
         elif [[ "$ubuntu_version" =~ ^24\. ]]; then
             install_pkg_ubu24 "${PKG_UBU24_ARRAY[@]}"
+        elif [[ "$ubuntu_version" =~ ^26\. ]]; then
+            install_pkg_ubu26 "${PKG_UBU26_ARRAY[@]}"
         else
             printf "\n";
             printf "Doesn't support %s : %s\n" "$dist" "$ubuntu_version";
