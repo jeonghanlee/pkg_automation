@@ -1,0 +1,32 @@
+---
+name: Ubuntu 26 LTS
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'pkg-ubu26/**'
+    - 'pkg_automation.bash'
+    - '.github/workflows/ubuntu26.yml'
+
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  Ubuntu26:
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test on Ubuntu 26.04 LTS
+        run: |
+          apt update -y
+          apt install -y sudo
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          ln -snf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+          printf "%s\n" "America/Los_Angeles" > /etc/timezone
+          bash pkg_automation.bash -y
