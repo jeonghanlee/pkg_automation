@@ -20,7 +20,7 @@ jobs:
     container: rockylinux/rockylinux:8.10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Test on Rocky 8 Docker
         run: |
           dnf install -y sudo
