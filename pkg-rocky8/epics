@@ -23,6 +23,7 @@ pcre-devel
 libcurl-devel
 # ADSupport  External libs
 libxml2-devel
+libxml2
 hdf5-devel
 netcdf-devel
 #blosc-devel
@@ -36,6 +37,7 @@ zlib-devel
 #
 # NSLS-II PSC
 libevent-devel
+libevent
 #
 libpng-devel
 # asyn, USBTSM libusb-1.0
