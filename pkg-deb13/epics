@@ -1,6 +1,7 @@
 # Required DEB 13 Packages for EPICS installation
 #
 build-essential
+perl
 libreadline-dev
 libxt-dev
 # Do we really need the following?

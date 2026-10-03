@@ -1,6 +1,7 @@
 # Required DEB Packages for EPICS installation
 #
 build-essential
+perl
 libreadline-dev
 libxt-dev
 libxmu-headers

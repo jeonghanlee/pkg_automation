@@ -57,6 +57,11 @@ re2c
 #hidapi
 #
 python3-devel
+# Perl
+perl-Digest-SHA
+perl-JSON-PP
+perl-Pod-Checker
+perl-Test-Simple
 # pvxs
 cmake
 # pmac

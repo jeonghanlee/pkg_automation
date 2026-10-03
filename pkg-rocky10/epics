@@ -57,6 +57,10 @@ python-unversioned-command
 # Perl
 perl-FindBin
 perl-Sys-Hostname
+perl-Digest-SHA
+perl-JSON-PP
+perl-Pod-Checker
+perl-Test-Simple
 # NSLS-II PSC
 libevent-devel
 #pvxs
