@@ -97,16 +97,29 @@ the EPICS build are not discarded.
 
 ## Rocky Python Command
 
-Rocky package paths provide an unversioned `python` command that resolves to
-Python 3 before returning.
+The project selects `/usr/bin/python3` as the unversioned `python` interpreter
+on Rocky 8, 9, and 10. `ROCKY_PYTHON_TARGET` declares this selection, and the
+package lists install `python3-devel` to provide the interpreter.
 
-Rocky 8 installs `python3-devel`, which provides `/usr/bin/python3` through
-the distribution's Python 3 provider. Rocky 8 does not provide
-`python-unversioned-command`, so the installer creates `/usr/bin/python` as a
-relative symbolic link to `./python3` and verifies `python --version`.
+The installer registers `/usr/local/bin/python` in the dedicated
+`pkg-automation-python` alternatives group and explicitly selects the target
+in manual mode. This command takes precedence on the installer's PATH and
+remains separate from Python RPM scriptlets that manage `/usr/bin`.
 
-Rocky 9 and Rocky 10 install `python-unversioned-command`, which provides
-`/usr/bin/python` as a package-owned link to Python 3.
+Rocky 8 also selects the target in the distribution's existing `python`
+alternatives group, which manages `/usr/bin/unversioned-python` and its
+`/usr/bin/python` slave. Rocky 9 and 10 retain the package-owned command from
+`python-unversioned-command`. The selected target is therefore available
+through `python` with or without `/usr/local/bin` on PATH.
+
+Existing `/usr/local/bin/python` symlinks to `/usr/bin/python`,
+`/usr/bin/unversioned-python`, or `/usr/bin/python3` are converted to the
+dedicated alternatives group. Other files and symlinks at that path are
+preserved, and installation fails with an explicit error.
+
+Each Rocky installation verifies both the resolved command path and its
+Python 3 interpreter before returning. Re-running installation restores the
+configured selection if the dedicated group points elsewhere.
 
 ## Debian Python Command
 
@@ -120,12 +133,29 @@ through `python-dev-is-python3`, which depends on `python-is-python3`. When
 The Bash sources are expected to pass:
 
 ```bash
-bash -n pkg_automation.bash build_epics_within_pkg_automation.bash
+bash -n pkg_automation.bash
+bash -n build_epics_within_pkg_automation.bash
+bash -n tests/rocky-python.bash
 ```
 
 ```bash
-shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash
+shellcheck -x pkg_automation.bash build_epics_within_pkg_automation.bash tests/rocky-python.bash
 ```
+
+Run the Rocky integration test as root inside a disposable Rocky 8, 9, or 10
+container:
+
+```bash
+bash tests/rocky-python.bash
+```
+
+The test runs the complete installer and actual RPM transactions. It checks
+interpreter identity on normal and system-only PATHs, additional Python
+installation on Rocky 8, provider reinstallation, manual selection with a
+higher-priority candidate, selection repair, legacy symlink migration, and
+preservation of unmanaged commands. Logs, native installer statuses, and
+source hashes are retained in `pkg-python.*` under `${TMPDIR:-/tmp}`. Rocky
+CI runs this test and uploads its evidence even when a check fails.
 
 ## Operational Notes
 

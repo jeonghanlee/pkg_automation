@@ -124,6 +124,11 @@ declare -ga SUDO=()
 declare -g VERIFY_PYTHON_COMMAND;
 #declare -g KERNEL_VER;
 
+declare -gr ROCKY_PYTHON_TARGET="/usr/bin/python3"
+declare -gr ROCKY_PYTHON_LINK="/usr/local/bin/python"
+declare -gr ROCKY_PYTHON_ALTERNATIVE="pkg-automation-python"
+declare -gr ROCKY_PYTHON_PRIORITY=500
+
 
 SC_SCRIPT=${BASH_SOURCE[0]:-${0}}
 #SC_SCRIPTNAME=${0##*/};
@@ -449,13 +454,16 @@ function install_ctags_from_source
 
 function python_command_is_python3
 {
+    local python_command="${1:-python}"
     local python_version=""
 
-    if ! command -v python >/dev/null 2>&1; then
+    if ! command -v "${python_command}" >/dev/null 2>&1; then
         return 1
     fi
 
-    python_version="$(python --version 2>&1 || true)"
+    if ! python_version="$("${python_command}" --version 2>&1)"; then
+        return 1
+    fi
     case "${python_version}" in
         Python\ 3.*)
             return 0
@@ -492,34 +500,57 @@ function verify_python_command_if_requested
     verify_python3_command "${label}"
 }
 
-function configure_rocky8_python_command
+function configure_rocky_python_command
 {
+    local rocky_major="$1"
+    local label="Rocky ${rocky_major} alternatives"
     local local_python_target=""
+    local python_path=""
 
-    if [[ ! -x /usr/bin/python3 ]]; then
-        printf "%s\n" "error: /usr/bin/python3 is missing"
-        printf "%s\n" "error: install python3-devel before configuring the python command"
+    if ! python_command_is_python3 "${ROCKY_PYTHON_TARGET}"; then
+        printf "error: %s must be an executable Python 3 interpreter\n" "${ROCKY_PYTHON_TARGET}" >&2
         exit 1
     fi
 
-    if [[ -e /usr/bin/python && ! -L /usr/bin/python ]]; then
-        printf "%s\n" "error: /usr/bin/python exists and is not a symbolic link"
-        printf "%s\n" "error: refusing to replace an unmanaged python command"
+    if [[ -e "${ROCKY_PYTHON_LINK}" && ! -L "${ROCKY_PYTHON_LINK}" ]]; then
+        printf "error: refusing to replace unmanaged %s\n" "${ROCKY_PYTHON_LINK}" >&2
         exit 1
     fi
 
-    "${SUDO[@]}" ln -sfn ./python3 /usr/bin/python
-
-    if [[ -L /usr/local/bin/python ]]; then
-        local_python_target="$(readlink /usr/local/bin/python || true)"
+    if [[ -L "${ROCKY_PYTHON_LINK}" ]]; then
+        local_python_target="$(readlink "${ROCKY_PYTHON_LINK}")"
         case "${local_python_target}" in
-            /usr/bin/unversioned-python|/usr/bin/python|/usr/bin/python3)
-                "${SUDO[@]}" ln -sfn /usr/bin/python /usr/local/bin/python
+            /usr/bin/unversioned-python|/usr/bin/python|/usr/bin/python3|"/etc/alternatives/${ROCKY_PYTHON_ALTERNATIVE}")
+                ;;
+            *)
+                printf "error: refusing to replace unmanaged %s -> %s\n" "${ROCKY_PYTHON_LINK}" "${local_python_target}" >&2
+                exit 1
                 ;;
         esac
     fi
 
-    verify_python3_command "Rocky 8 package"
+    if [[ "${rocky_major}" == 8 ]]; then
+        "${SUDO[@]}" alternatives --set python "${ROCKY_PYTHON_TARGET}"
+    fi
+    "${SUDO[@]}" alternatives --install "${ROCKY_PYTHON_LINK}" "${ROCKY_PYTHON_ALTERNATIVE}" "${ROCKY_PYTHON_TARGET}" "${ROCKY_PYTHON_PRIORITY}"
+    "${SUDO[@]}" alternatives --set "${ROCKY_PYTHON_ALTERNATIVE}" "${ROCKY_PYTHON_TARGET}"
+    hash -r
+
+    python_path="$(command -v python || true)"
+    if [[ "${python_path}" != "${ROCKY_PYTHON_LINK}" ]]; then
+        printf "error: python resolves to %s; expected %s\n" "${python_path:-<missing>}" "${ROCKY_PYTHON_LINK}" >&2
+        exit 1
+    fi
+    if [[ "$(readlink -f "${python_path}")" != "$(readlink -f "${ROCKY_PYTHON_TARGET}")" ]]; then
+        printf "error: python does not resolve to %s after %s setup\n" "${ROCKY_PYTHON_TARGET}" "${label}" >&2
+        exit 1
+    fi
+    if [[ "${rocky_major}" == 8 && "$(readlink -f /usr/bin/python)" != "$(readlink -f "${ROCKY_PYTHON_TARGET}")" ]]; then
+        printf "error: /usr/bin/python does not resolve to %s\n" "${ROCKY_PYTHON_TARGET}" >&2
+        exit 1
+    fi
+
+    verify_python3_command "${label}"
 }
 
 function install_pkg_rocky8
@@ -550,7 +581,7 @@ function install_pkg_rocky8
     if ! command -v ctags >/dev/null 2>&1; then
         install_ctags_from_source
     fi
-    configure_rocky8_python_command
+    configure_rocky_python_command 8
 }
 
 function install_pkg_rocky9
@@ -583,7 +614,7 @@ function install_pkg_rocky9
     "${SUDO[@]}" dnf -y install "epel-release"
     "${SUDO[@]}" dnf -y update;
     "${SUDO[@]}" dnf -y install "${pkg_list[@]}";
-    verify_python3_command "Rocky 9 package"
+    configure_rocky_python_command 9
 }
 
 function install_pkg_rocky10
@@ -615,7 +646,7 @@ function install_pkg_rocky10
     "${SUDO[@]}" dnf -y install "epel-release"
     "${SUDO[@]}" dnf -y update;
     "${SUDO[@]}" dnf -y install "${pkg_list[@]}";
-    verify_python3_command "Rocky 10 package"
+    configure_rocky_python_command 10
 }
 
 function install_pkg_macos11

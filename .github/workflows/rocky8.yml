@@ -7,6 +7,7 @@ on:
     paths:
     - 'pkg-rocky8/**'
     - 'pkg_automation.bash'
+    - 'tests/rocky-python.bash'
     - '.github/workflows/rocky8.yml'
 
   pull_request:
@@ -22,8 +23,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Test on Rocky 8 Docker
+        env:
+          TMPDIR: ${{ runner.temp }}
         run: |
           dnf install -y sudo
           export LC_CTYPE=C.UTF-8
           export LC_ALL=C.UTF-8
-          bash pkg_automation.bash -y
+          bash tests/rocky-python.bash
+      - name: Upload Rocky Python evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rocky8-python
+          path: ${{ runner.temp }}/pkg-python.*
