@@ -1,0 +1,72 @@
+# Required DEB 14 Packages for EPICS installation
+#
+build-essential
+perl
+libreadline-dev
+libxt-dev
+# Do we really need the following?
+#x11proto-print-dev
+libxmu-headers
+libxmu-dev
+libxmu6
+libxpm-dev
+libxmuu-dev
+libxmuu1
+#
+#
+libmotif-dev
+libsnmp-dev
+re2c
+libbz2-dev
+libusb-dev
+# asyn, USBTSM libusb-1.0
+libusb-1.0-0-dev
+remake
+libudev-dev
+libsystemd-dev
+linux-source
+# ADSupport External libs
+libxml2-dev
+libnetcdf-dev
+libhdf5-dev
+libblosc-dev
+libtiff-dev
+libjpeg-dev
+zlib1g-dev
+#
+# NSLS-II PSC
+# It will be removed after we migrate to PVXS bundle one
+libevent-dev
+#
+# llrf (nds)
+libboost-dev
+libboost-regex-dev
+libboost-filesystem-dev
+#ADPonitGrey Vendor lib has the libraw1394 dep.
+libraw1394-11
+# ADPluginCalib/Edge
+libopencv-dev
+# Debian 9
+libpng-dev
+# asyn
+libtirpc-dev
+libhidapi-libusb0
+libhidapi-dev
+libusb-1.0-0-dev
+libusb-1.0-0
+#
+# Python
+libpython3-all-dev
+python-dev-is-python3
+python3-pip
+python3-nose2
+python3-numpy
+python3-pyparsing
+#
+libssh2-1t64
+libssh2-1-dev
+#
+# opcua
+libssl3t64
+libssl-dev
+#

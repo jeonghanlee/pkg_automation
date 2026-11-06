@@ -415,6 +415,22 @@ function install_pkg_deb13
     verify_python_command_if_requested "Debian 13 package"
 }
 
+function install_pkg_deb14
+{
+    local -a pkg_list=("$@")
+    sudo_exist;
+    "${SUDO[@]}" apt -y update;
+    if dpkg -s exuberant-ctags >/dev/null 2>&1; then
+        "${SUDO[@]}" apt -y remove exuberant-ctags;
+    fi
+    printf "\n\n";
+    printf "The following package list will be installed:\n\n"
+    printf "%s\n" "${pkg_list[@]}";
+    printf "\n"
+    "${SUDO[@]}" apt -y install "${pkg_list[@]}"
+    verify_python_command_if_requested "Debian 14 package"
+}
+
 function install_pkg_rpi
 {
     local -a pkg_list=("$@")
@@ -710,6 +726,7 @@ declare -a PKG_DEB10_ARRAY=()
 declare -a PKG_DEB11_ARRAY=()
 declare -a PKG_DEB12_ARRAY=()
 declare -a PKG_DEB13_ARRAY=()
+declare -a PKG_DEB14_ARRAY=()
 #
 declare -a PKG_RPI_ARRAY=()
 #
@@ -733,6 +750,7 @@ declare -g DEB10_PATH="${SC_TOP}/pkg-deb10"
 declare -g DEB11_PATH="${SC_TOP}/pkg-deb11"
 declare -g DEB12_PATH="${SC_TOP}/pkg-deb12"
 declare -g DEB13_PATH="${SC_TOP}/pkg-deb13"
+declare -g DEB14_PATH="${SC_TOP}/pkg-deb14"
 #
 declare -g RPI_PATH="${SC_TOP}/pkg-rpi"
 #
@@ -754,6 +772,7 @@ declare -ga pkg_deb10_list=()
 declare -ga pkg_deb11_list=()
 declare -ga pkg_deb12_list=()
 declare -ga pkg_deb13_list=()
+declare -ga pkg_deb14_list=()
 #
 declare -ga pkg_rpi_list=()
 #
@@ -776,6 +795,7 @@ pkg_deb10_list=("common" "epics" "extra")
 pkg_deb11_list=("common" "epics" "extra")
 pkg_deb12_list=("common" "epics" "extra")
 pkg_deb13_list=("common" "epics" "extra")
+pkg_deb14_list=("common" "epics" "extra")
 #
 pkg_rpi_list=("epics" "extra")
 #
@@ -817,6 +837,11 @@ done
 append_pkg_file PKG_DEB13_ARRAY "${COM_PATH}/common"
 for deb_file in "${pkg_deb13_list[@]}"; do
     append_pkg_file PKG_DEB13_ARRAY "${DEB13_PATH}/${deb_file}"
+done
+# Debian 14 (forky)
+append_pkg_file PKG_DEB14_ARRAY "${COM_PATH}/common"
+for deb_file in "${pkg_deb14_list[@]}"; do
+    append_pkg_file PKG_DEB14_ARRAY "${DEB14_PATH}/${deb_file}"
 done
 #
 append_pkg_file PKG_RPI_ARRAY "${COM_PATH}/common"
@@ -934,6 +959,12 @@ case "$dist" in
             yes_or_no_to_go "Debian 13 (trixie) is detected as $dist"
         fi
         install_pkg_deb13 "${PKG_DEB13_ARRAY[@]}"
+        ;;
+    *forky*)
+        if [ "$ANSWER" == "NO" ]; then
+            yes_or_no_to_go "Debian 14 (forky) is detected as $dist"
+        fi
+        install_pkg_deb14 "${PKG_DEB14_ARRAY[@]}"
         ;;
     *Rocky* | *Alma* )
         if [[ "${dist}" == *Alma* ]]; then
