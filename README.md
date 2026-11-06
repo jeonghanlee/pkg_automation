@@ -3,6 +3,7 @@
 [![Ubuntu 26 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu26.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu26.yml)
 [![Ubuntu 24 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu24.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu24.yml)
 [![Ubuntu 22 LTS](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/ubuntu22.yml)
+[![Debian 14](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian14.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian14.yml)
 [![Debian 13](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian13.yml)
 [![Debian 12](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/debian12.yml)
 [![Rocky Linux 8](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml/badge.svg)](https://github.com/jeonghanlee/pkg_automation/actions/workflows/rocky8.yml)
@@ -34,7 +35,8 @@ this repository.
 - Ubuntu 26.04 LTS (Resolute Raccoon), standard support through 2031-04
 - Ubuntu 24.04 LTS (Noble Numbat), standard support through 2029-04
 - Ubuntu 22.04 LTS (Jammy Jellyfish), standard support through 2027-04
-- Debian 13 testing (Trixie)
+- Debian 14 testing (Forky)
+- Debian 13 (Trixie)
 - Debian 12 (Bookworm)
 - Rocky Linux 8 (Green Obsidian)
 - Rocky Linux 9 (Blue Onyx)
@@ -123,8 +125,9 @@ configured selection if the dedicated group points elsewhere.
 
 ## Debian Python Command
 
-Debian 12 and Debian 13 keep the unversioned `python` command package-based
-through `python-dev-is-python3`, which depends on `python-is-python3`. When
+Debian 12, Debian 13, and Debian 14 (testing) keep the unversioned `python`
+command package-based through `python-dev-is-python3`, which depends on
+`python-is-python3`. When
 `-v` is supplied, the installer verifies the package result with
 `command -v python` and `python --version` after package installation.
 
