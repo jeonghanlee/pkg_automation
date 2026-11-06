@@ -1,0 +1,31 @@
+---
+name: Debian 14 - Forky (testing)
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'pkg-deb14/**'
+    - 'pkg-common/**'
+    - 'pkg_automation.bash'
+    - '.github/workflows/debian14.yml'
+
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  Debian14:
+    runs-on: ubuntu-latest
+    container: amd64/debian:forky-slim
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Test on Debian 14 (testing)
+        run: |
+          apt update -y
+          apt install -y sudo
+          export LC_CTYPE=C.UTF-8
+          export LC_ALL=C.UTF-8
+          bash pkg_automation.bash -y -v
