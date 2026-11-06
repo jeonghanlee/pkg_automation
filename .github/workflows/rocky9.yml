@@ -18,7 +18,7 @@ jobs:
 
   Rocky9:
     runs-on: ubuntu-latest
-    container: rockylinux/rockylinux:9.2
+    container: rockylinux/rockylinux:9
     steps:
       - name: Checkout
         uses: actions/checkout@v6
