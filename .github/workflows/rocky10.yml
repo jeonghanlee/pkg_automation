@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Use the primary Rocky package server
+        run: sed -i 's/^mirrorlist=/#mirrorlist=/; s/^#baseurl=/baseurl=/' /etc/yum.repos.d/rocky*.repo
       - name: Test on Rocky 10 Docker
         env:
           TMPDIR: ${{ runner.temp }}
